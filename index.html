@@ -4,9 +4,9 @@
 <!--
 ====================================================================
 [MAGARI APP - HISTORICAL CHANGELOG REGISTRY & ARCHIVE]
-- v3.9.1 DEVELOPER (FULL OPERATOR MANAGEMENT & ACTIVE NOTIFICATIONS):
-  * Gestione Operatori Completa (Crea, Modifica, Reset Password, Elimina).
-  * Notifiche pop-up (Toast) sempre attive di default.
+- v3.9.2 DEVELOPER (OPERATOR SELF-REGISTRATION & ADMIN MANAGEMENT):
+  * Registrazione autonoma per gli operatori nel Form di Login.
+  * Pannello Gestione Operatori Completo nelle Impostazioni (Admin).
   * Autenticazione Firebase con ruoli dinamici e protezione Admin.
 ====================================================================
 -->
@@ -16,7 +16,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Magari Dev">
-    <title>Magari v3.9.1 DEV</title>
+    <title>Magari v3.9.2 DEV</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -47,7 +47,7 @@
         <div class="drawer" id="drawer">
             <div class="drawer-header">
                 <div class="brand-title" style="font-size: 24px;">MAGARI</div>
-                <div class="brand-subtitle" style="font-size: 8px;">v3.9.1 DEVELOPER</div>
+                <div class="brand-subtitle" style="font-size: 8px;">v3.9.2 DEVELOPER</div>
             </div>
 
             <!-- USER ACCOUNT BANNER NELLO MENU -->
@@ -82,7 +82,7 @@
             <button class="menu-btn" onclick="toggleMenu()">☰</button>
             <div class="header-brand-text">
                 <div class="brand-title">MAGARI</div>
-                <div class="brand-subtitle">v3.9.1 DEVELOPER</div>
+                <div class="brand-subtitle">v3.9.2 DEVELOPER</div>
             </div>
             <div class="page-badge" id="page-title">Ordini</div>
         </div>
@@ -151,7 +151,7 @@
                         <option value="Salumi & Carni">🥩 Salumi & Carni</option>
                         <option value="Alcolici">🍷 Alcolici</option>
                         <option value="Bevande">🥤 Bevande</option>
-                        <option value="Surgelati">❄️ Surgelati</option>
+                        <option value="Surgelati">❄️️ Surgelati</option>
                         <option value="Ortofrutta">🥗 Ortofrutta</option>
                         <option value="Pulizia & Monouso">🧹 Pulizia & Monouso</option>
                         <option value="Altro">📦 Altro</option>
@@ -304,7 +304,7 @@
         </div>
     </div>
 
-    <!-- MODALE MODIFICA/CREAZIONE UTENTE -->
+    <!-- MODALE MODIFICA/CREAZIONE UTENTE DA ADMIN -->
     <div class="modal" id="user-edit-modal" style="max-width:380px;">
         <div class="modal-title" id="user-modal-title" style="color:var(--primary); font-size:18px;">👤 Operatore</div>
         <input type="hidden" id="edit-user-uid">
@@ -325,14 +325,27 @@
         </div>
     </div>
 
-    <!-- MODALE AUTHENTICATION (LOGIN) -->
+    <!-- MODALE AUTHENTICATION (LOGIN + REGISTRAZIONE AUTONOMA OPERATORI) -->
     <div class="modal" id="auth-modal" style="max-width:380px;">
         <div class="modal-title" id="auth-modal-title" style="color:var(--primary); font-size:18px; text-align:center;">🔑 Accedi a Magari App</div>
+        <div style="display:flex; justify-content:center; gap:10px; margin-bottom:12px;">
+            <button id="tab-btn-login" onclick="switchAuthTab('login')" style="flex:1; padding:6px; border-radius:6px; font-weight:bold; border:1px solid var(--primary); background:var(--primary); color:white;">Login</button>
+            <button id="tab-btn-register" onclick="switchAuthTab('register')" style="flex:1; padding:6px; border-radius:6px; font-weight:bold; border:1px solid #cbd5e1; background:#f1f5f9; color:#334155;">Nuovo Account Staff</button>
+        </div>
+
         <div id="auth-form-login">
             <div class="form-group"><label>Email</label><input type="email" id="login-email" class="form-control" placeholder="es. marco@magaripizza.com"></div>
             <div class="form-group"><label>Password</label><input type="password" id="login-password" class="form-control" placeholder="••••••••"></div>
             <button class="btn-save" onclick="handleLoginSubmit()" style="width:100%; padding:10px; margin-top:6px;">Entra</button>
         </div>
+
+        <div id="auth-form-register" style="display:none;">
+            <div class="form-group"><label>Nome e Cognome (Firma Operatore)</label><input type="text" id="reg-name" class="form-control" placeholder="es. Marco Rossi"></div>
+            <div class="form-group"><label>Email</label><input type="email" id="reg-email" class="form-control" placeholder="es. marco@magaripizza.com"></div>
+            <div class="form-group"><label>Password</label><input type="password" id="reg-password" class="form-control" placeholder="Min. 6 caratteri"></div>
+            <button class="btn-save" onclick="handleRegisterSubmit()" style="width:100%; padding:10px; background:#1b5e20; margin-top:6px;">Crea Account Staff</button>
+        </div>
+
         <div class="modal-actions" style="margin-top:12px;"><button class="btn-cancel" onclick="closeAuthModal()" style="width:100%;">Annulla</button></div>
     </div>
 
@@ -644,7 +657,7 @@
                 if (authBtn) { authBtn.innerText = '🔑 Accedi / Registrati'; authBtn.style.background = '#2563eb'; authBtn.onclick = window.openAuthModal; }
                 
                 if (opOrderInput) opOrderInput.value = '👁️ Nessun Operatore (Accedi)';
-                if (opStockInput) opStockInput.value = '👁️️ Nessun Operatore (Accedi)';
+                if (opStockInput) opStockInput.value = '👁️ Nessun Operatore (Accedi)';
                 if (opBugInput) opBugInput.value = '👁️ Nessun Operatore (Accedi)';
 
                 ['magazzino', 'fornitori', 'sprechi', 'impostazioni'].forEach(sec => {
@@ -669,9 +682,19 @@
             if (toast) { toast.innerText = msg; toast.classList.add('show'); setTimeout(() => { toast.classList.remove('show'); }, 3500); }
         };
 
-        // 2. LOGIN & MODALE AUTH
+        // 2. LOGIN E REGISTRAZIONE AUTONOMA OPERATORI
         window.openAuthModal = () => { document.getElementById('auth-modal').classList.add('active'); document.getElementById('overlay').classList.add('active'); };
         window.closeAuthModal = () => { document.getElementById('auth-modal').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); };
+
+        window.switchAuthTab = function(tab) {
+            const isLogin = tab === 'login';
+            document.getElementById('auth-form-login').style.display = isLogin ? 'block' : 'none';
+            document.getElementById('auth-form-register').style.display = isLogin ? 'none' : 'block';
+            document.getElementById('tab-btn-login').style.background = isLogin ? 'var(--primary)' : '#f1f5f9';
+            document.getElementById('tab-btn-login').style.color = isLogin ? 'white' : '#334155';
+            document.getElementById('tab-btn-register').style.background = isLogin ? '#f1f5f9' : 'var(--primary)';
+            document.getElementById('tab-btn-register').style.color = isLogin ? '#334155' : 'white';
+        };
 
         window.handleLoginSubmit = async function() {
             const email = document.getElementById('login-email').value.trim();
@@ -681,6 +704,20 @@
                 await signInWithEmailAndPassword(auth, email, pass);
                 closeAuthModal(); window.showAlert("🎉 Login effettuato con successo!");
             } catch(e) { window.showAlert(`❌ Errore Login: ${e.message}`); }
+        };
+
+        window.handleRegisterSubmit = async function() {
+            const name = document.getElementById('reg-name').value.trim();
+            const email = document.getElementById('reg-email').value.trim();
+            const pass = document.getElementById('reg-password').value.trim();
+            if (!name || !email || !pass) return window.showAlert("⚠️️ Compila tutti i campi.");
+            try {
+                const res = await createUserWithEmailAndPassword(auth, email, pass);
+                const isMasterAdmin = email.toLowerCase() === "nicolas@magaripizza.com";
+                const newUser = { uid: res.user.uid, email, name, role: isMasterAdmin ? 'admin' : 'operator' };
+                await setDoc(doc(db, "users", res.user.uid), newUser);
+                closeAuthModal(); window.showAlert("✅ Account Staff registrato con successo!");
+            } catch(e) { window.showAlert(`❌ Errore Registrazione: ${e.message}`); }
         };
 
         window.handleLogoutSubmit = async function() {
@@ -749,7 +786,7 @@
 
             if (uid) {
                 document.getElementById('user-modal-title').innerText = '✏️ Modifica Operatore';
-                passGroup.style.display = 'none'; // La password si gestisce tramite reset
+                passGroup.style.display = 'none';
                 const userDoc = await getDoc(doc(db, "users", uid));
                 if (userDoc.exists()) {
                     const data = userDoc.data();
@@ -783,11 +820,9 @@
             if (!name || !email) return window.showAlert("⚠️ Inserisci Nome ed Email.");
 
             if (uid) {
-                // MODIFICA UTENTE ESISTENTE
                 await updateDoc(doc(db, "users", uid), { name, email, role });
                 window.showAlert("✅ Operatore aggiornato!");
             } else {
-                // CREAZIONE NUOVO UTENTE
                 if (!pass || pass.length < 6) return window.showAlert("⚠️ Password di almeno 6 caratteri.");
                 try {
                     const res = await createUserWithEmailAndPassword(auth, email, pass);
