@@ -4,19 +4,27 @@
 <!--
 ====================================================================
 [MAGARI APP - HISTORICAL CHANGELOG REGISTRY & ARCHIVE]
-- v3.9.6 DEVELOPER (DRAWER Z-INDEX & OVERLAY LAYOUT FIX):
-  * Corretto z-index del drawer (z-index: 2000) rispetto all'overlay (z-index: 1000).
-  * Il menu laterale ora sfoglia correttamente sopra lo sfondo scuro in modalità mobile e desktop.
-  * Modale Auth e pop-up gestiti a livello z-index: 9999.
+- v3.9.9 DEVELOPER (OFFICIAL BRAND LOGO INTEGRATION):
+  * Collegato logo quadrato per PWA e Home Icon (logo-square.png).
+  * Inserito logo rettangolare brand-green nell'Header e Drawer Menu.
 ====================================================================
 -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#043927">
+    
+    <!-- PWA Meta Tags -->
     <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Magari Dev">
-    <title>Magari v3.9.6 DEV</title>
+    <meta name="apple-mobile-web-app-title" content="Magari App">
+    
+    <!-- Icone Schermata Home & Favicon -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="logo-square.png">
+    <link rel="icon" type="image/png" href="logo-square.png">
+
+    <title>Magari v3.9.9 DEV</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -45,9 +53,10 @@
 
         <!-- DRAWER MENU -->
         <div class="drawer" id="drawer">
-            <div class="drawer-header">
-                <div class="brand-title" style="font-size: 24px;">MAGARI</div>
-                <div class="brand-subtitle" style="font-size: 8px;">v3.9.6 DEVELOPER</div>
+            <div class="drawer-header" style="text-align: center;">
+                <img src="logo-header.png" alt="Magari Logo" style="max-width: 160px; height: auto; margin-bottom: 4px;" onerror="this.style.display='none'; document.getElementById('drawer-text-fallback').style.display='block';">
+                <div id="drawer-text-fallback" class="brand-title" style="display:none; font-size: 24px;">MAGARI</div>
+                <div class="brand-subtitle" style="font-size: 8px;">v3.9.9 DEVELOPER</div>
             </div>
 
             <!-- USER ACCOUNT BANNER NELLO MENU -->
@@ -66,7 +75,7 @@
                     <span>📜 Storico Ordini</span>
                     <span id="history-badge-drawer" class="badge-notification" style="display:none; background:#e53935;">0</span>
                 </li>
-                <li onclick="navigateTo('magazzino')">🛠️️ Magazzino <span id="lock-icon-magazzino">🔒</span></li>
+                <li onclick="navigateTo('magazzino')">🛠️ Magazzino <span id="lock-icon-magazzino">🔒</span></li>
                 <li onclick="navigateTo('fornitori')">🚚 Fornitori <span id="lock-icon-fornitori">🔒</span></li>
                 <li onclick="navigateTo('sprechi')">📊 Report Consumi <span id="lock-icon-sprechi">🔒</span></li>
                 <li onclick="navigateTo('faq')" style="color:#2563eb; font-weight:bold;">❓ Guida & FAQ</li>
@@ -81,8 +90,9 @@
         <div class="header">
             <button class="menu-btn" onclick="toggleMenu()">☰</button>
             <div class="header-brand-text">
-                <div class="brand-title">MAGARI</div>
-                <div class="brand-subtitle">v3.9.6 DEVELOPER</div>
+                <img src="logo-header.png" alt="Magari" style="height: 28px; width: auto;" onerror="this.style.display='none'; document.getElementById('header-text-fallback').style.display='block';">
+                <div id="header-text-fallback" class="brand-title" style="display:none;">MAGARI</div>
+                <div class="brand-subtitle">v3.9.9 DEVELOPER</div>
             </div>
             <div class="page-badge" id="page-title">Ordini</div>
         </div>
@@ -202,7 +212,7 @@
                         <option value="Salumi & Carni">🥩 Salumi & Carni</option>
                         <option value="Alcolici">🍷 Alcolici</option>
                         <option value="Bevande">🥤 Bevande</option>
-                        <option value="Surgelati">❄️️ Surgelati</option>
+                        <option value="Surgelati">❄️ Surgelati</option>
                         <option value="Ortofrutta">🥗 Ortofrutta</option>
                         <option value="Pulizia & Monouso">🧹 Pulizia & Monouso</option>
                         <option value="Altro">📦 Altro</option>
@@ -270,7 +280,7 @@
             </div>
         </div>
 
-        <!-- 9. IMPOSTAZIONI (PANNELLO COMPLETO GESTIONE OPERATORI) -->
+        <!-- 9. IMPOSTAZIONI (PANNELLO COMPLETO GESTIONE OPERATORI E BUG) -->
         <div id="view-impostazioni" class="view-section">
             <div class="page-lock-banner" id="lock-banner-impostazioni">
                 <div class="page-lock-box"><div style="font-size: 32px; margin-bottom: 8px;">🔒</div><h3 style="margin-bottom: 6px;">Sezione Riservata Admin</h3><p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Effettua il Login con account Admin per accedere.</p><button class="btn-save" onclick="openAuthModal()">Accedi come Admin</button></div>
@@ -295,7 +305,7 @@
                 <hr style="border:0; border-top:1px solid #eee; margin: 12px 0;">
                 
                 <h4 style="font-size:14px; color:#d97706;">🐛 Segnalazioni Staff Rilevate</h4>
-                <div id="admin-bug-reports-container" style="display:flex; flex-direction:column; gap:8px; max-height:200px; overflow-y:auto; margin-top:6px; background:#fafafa; padding:8px; border-radius:6px; border:1px solid #e2e8f0;"></div>
+                <div id="admin-bug-reports-container" style="display:flex; flex-direction:column; gap:8px; max-height:300px; overflow-y:auto; margin-top:6px; background:#fafafa; padding:8px; border-radius:6px; border:1px solid #e2e8f0;"></div>
                 
                 <hr style="border:0; border-top:1px solid #eee; margin: 12px 0;">
                 <button class="reset-btn" onclick="executeResetSuppliersGuard()">🔒 🔄 Ripristina Fornitori Default</button>
@@ -575,6 +585,13 @@
         const auth = getAuth(app);
         const db = initializeFirestore(app, { localCache: persistentLocalCache({tabManager: persistentMultipleTabManager()}) });
 
+        // SERVICE WORKER REGISTRATION (per PWA)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').catch(err => console.log('ServiceWorker note:', err));
+            });
+        }
+
         window.currentUserProfile = null;
         window.activeLocation = null;
         window.activeVerifyHistoryId = null;
@@ -661,7 +678,7 @@
                 
                 if (opOrderInput) opOrderInput.value = '👁 Nessun Operatore (Accedi)';
                 if (opStockInput) opStockInput.value = '👁 Nessun Operatore (Accedi)';
-                if (opBugInput) opBugInput.value = '👁️️ Nessun Operatore (Accedi)';
+                if (opBugInput) opBugInput.value = '👁 Nessun Operatore (Accedi)';
 
                 ['magazzino', 'fornitori', 'sprechi', 'impostazioni'].forEach(sec => {
                     const banner = document.getElementById(`lock-banner-${sec}`);
@@ -1014,33 +1031,58 @@
             if (badge) { badge.innerText = uncheckedCount; badge.style.display = uncheckedCount > 0 ? 'inline-block' : 'none'; }
         };
 
+        // CORRETTO RENDERING SEGNALAZIONI BUG & BADGES
         window.updateBugBadgesAndAdminList = function() {
-            const unresolvedCount = Array.isArray(window.bugReportsData) ? window.bugReportsData.filter(b => !b.resolved).length : 0;
+            const isResolvedCheck = (b) => (b.resolved === true || b.resolved === "true" || b.status === "resolved");
+            const unresolvedCount = Array.isArray(window.bugReportsData) ? window.bugReportsData.filter(b => !isResolvedCheck(b)).length : 0;
+            
             const settingsBadge = document.getElementById('bug-badge-settings');
-            if (settingsBadge) { settingsBadge.innerText = unresolvedCount; settingsBadge.style.display = unresolvedCount > 0 ? 'inline-block' : 'none'; }
+            if (settingsBadge) { 
+                settingsBadge.innerText = unresolvedCount; 
+                settingsBadge.style.display = unresolvedCount > 0 ? 'inline-block' : 'none'; 
+            }
 
             const container = document.getElementById('admin-bug-reports-container');
             if (container) {
                 if (!window.bugReportsData || window.bugReportsData.length === 0) {
-                    container.innerHTML = '<div style="font-size:12px; color:#666; text-align:center; padding:8px;">Nessuna segnalazione.</div>';
+                    container.innerHTML = '<div style="font-size:12px; color:#666; text-align:center; padding:8px;">Nessuna segnalazione presente nel database.</div>';
                 } else {
                     container.innerHTML = '';
-                    window.bugReportsData.forEach((b, idx) => {
-                        const isResolved = b.resolved === true;
-                        const bgStyle = isResolved ? 'background:#f1f5f9; opacity:0.85;' : 'background:white;';
-                        const statusLabel = isResolved ? '<span style="color:#2e7d32; font-weight:bold;">✅ Risolto</span>' : '<span style="color:#d97706; font-weight:bold;">⏳ Da Gestire</span>';
+                    
+                    const sortedBugs = [...window.bugReportsData].sort((a, b) => {
+                        const resA = isResolvedCheck(a) ? 1 : 0;
+                        const resB = isResolvedCheck(b) ? 1 : 0;
+                        if (resA !== resB) return resA - resB;
+                        return b.id - a.id;
+                    });
+
+                    sortedBugs.forEach((b) => {
+                        const isResolved = isResolvedCheck(b);
+                        const bgStyle = isResolved ? 'background:#f8fafc; opacity:0.85;' : 'background:#fff8f0; border-color:#f97316;';
+                        const statusLabel = isResolved 
+                            ? '<span style="color:#2e7d32; font-weight:bold; background:#e8f5e9; padding:2px 6px; border-radius:4px;">✅ Risolto</span>' 
+                            : '<span style="color:#c2410c; font-weight:bold; background:#ffedd5; padding:2px 6px; border-radius:4px;">⏳ Da Gestire</span>';
+
                         container.innerHTML += `
-                            <div style="${bgStyle} border:1px solid #e2e8f0; padding:8px; border-radius:6px; font-size:12px; display:flex; flex-direction:column; gap:4px;">
-                                <div style="display:flex; justify-content:space-between; font-weight:bold; color:var(--primary);">
-                                    <span>${b.type || '🐛 Bug'} - 👤 ${b.operator}</span><span>${statusLabel}</span>
+                            <div style="${bgStyle} border:1px solid #cbd5e1; padding:10px; border-radius:8px; font-size:12px; display:flex; flex-direction:column; gap:6px;">
+                                <div style="display:flex; justify-content:space-between; align-items:center; font-weight:bold; color:var(--primary);">
+                                    <span style="font-size:13px;">${b.type || '🐛 Bug'} - 👤 ${b.operator || 'Staff'}</span>
+                                    <span>${statusLabel}</span>
                                 </div>
-                                <div style="display:flex; justify-content:between; color:#666; font-size:11px;">
-                                    <span><b>Sede:</b> ${b.location || 'N/D'}</span><span>${b.timestamp || ''}</span>
+                                <div style="display:flex; justify-content:space-between; color:#666; font-size:11px;">
+                                    <span>📍 <b>Sede:</b> ${b.location || 'N/D'}</span>
+                                    <span>🕒 ${b.timestamp || ''}</span>
                                 </div>
-                                <div style="color:#1e293b; background:#fff; padding:4px 6px; border-radius:4px; border:1px solid #f1f5f9;">${b.description}</div>
-                                <div style="display:flex; justify-content:flex-end; gap:6px; margin-top:4px;">
-                                    <button class="btn-action-edit" onclick="toggleBugStatus(${idx})">${isResolved ? '🔄 Riapri' : '✅ Segna Risolto'}</button>
-                                    <button class="btn-action-del" onclick="deleteBugReport(${idx})">🗑 Elimina</button>
+                                <div style="color:#1e293b; background:#ffffff; padding:8px; border-radius:6px; border:1px solid #e2e8f0; font-size:12px; font-weight:500;">
+                                    ${b.description || 'Nessun dettaglio fornito.'}
+                                </div>
+                                <div style="display:flex; justify-content:flex-end; gap:6px; margin-top:2px;">
+                                    <button class="btn-action-edit" onclick="toggleBugStatus('${b.id}')" style="padding:4px 8px; font-size:11px;">
+                                        ${isResolved ? '🔄 Riapri' : '✅ Segna Risolto'}
+                                    </button>
+                                    <button class="btn-action-del" onclick="deleteBugReport('${b.id}')" style="padding:4px 8px; font-size:11px;">
+                                        🗑 Elimina
+                                    </button>
                                 </div>
                             </div>`;
                     });
@@ -1359,7 +1401,7 @@
                         <div style="font-weight:bold; font-size:14px; margin-bottom:4px;">🚚 ${h.supplierName} <span style="font-size:12px; font-weight:normal; color:#666;">(👤 ${h.operatorName})</span></div>
                         ${itemsHtml ? `<div style="font-size:12px; margin-top:6px; background:#f8fafc; padding:6px; border-radius:4px;">${itemsHtml}</div>` : ''}
                         ${checkStatusHtml}
-                        <div style="margin-top:8px; text-align:right;"><button class="btn-action-del" onclick="deleteHistoryItemGuard(${idx})">🗑️ Elimina</button></div>
+                        <div style="margin-top:8px; text-align:right;"><button class="btn-action-del" onclick="deleteHistoryItemGuard(${idx})">🗑 Elimina</button></div>
                     </div>`;
             });
         };
@@ -1467,7 +1509,7 @@
             const q = (document.getElementById('search-supplier-input')?.value || '').toLowerCase();
             const c = document.getElementById('suppliers-list'); c.innerHTML = '';
             window.suppliersData.filter(s => s.name.toLowerCase().includes(q)).forEach(s => {
-                c.innerHTML += `<div class="card-item"><div class="item-name-box" style="border-left-color:${s.color};"><div class="item-name" style="color:${s.color};">🚚 ${s.name}</div><div class="item-subtext">📞 ${s.phone || 'N/D'} | ✉️ ${s.email || 'N/D'}</div></div></div>`;
+                c.innerHTML += `<div class="card-item"><div class="item-name-box" style="border-left-color:${s.color};"><div class="item-name" style="color:${s.color};">🚚 ${s.name}</div><div class="item-subtext">📞 ${s.phone || 'N/D'} | ✉ ${s.email || 'N/D'}</div></div></div>`;
             });
         };
         window.openAddSupplierModal = () => { if(!window.checkAuthGuard()) return; window.closeAll(); document.getElementById('edit-supplier-id').value = ''; document.getElementById('supp-name').value = ''; document.getElementById('supp-phone').value = ''; document.getElementById('supp-email').value = ''; document.getElementById('add-supplier-modal').classList.add('active'); document.getElementById('overlay').classList.add('active'); };
@@ -1558,17 +1600,21 @@
             window.showAlert("🚀 Segnalazione inviata!"); window.navigateTo('ordini');
         };
 
-        window.toggleBugStatus = async function(idx) {
+        window.toggleBugStatus = async function(bugId) {
             if (!window.checkAuthGuard()) return;
-            const bug = window.bugReportsData[idx];
-            await updateDoc(doc(db, "bugReports", String(bug.id)), { resolved: !bug.resolved });
+            const bug = window.bugReportsData.find(b => String(b.id) === String(bugId));
+            if (bug) {
+                const currentStatus = (bug.resolved === true || bug.resolved === "true" || bug.status === "resolved");
+                await updateDoc(doc(db, "bugReports", String(bugId)), { resolved: !currentStatus });
+                window.showAlert(!currentStatus ? "✅ Segnalazione contrassegnata come Risolta!" : "🔄 Segnalazione riaperta!");
+            }
         };
 
-        window.deleteBugReport = async function(idx) {
+        window.deleteBugReport = async function(bugId) {
             if (!window.checkAuthGuard()) return;
-            if (confirm("Eliminare la segnalazione?")) {
-                const bug = window.bugReportsData[idx];
-                await deleteDoc(doc(db, "bugReports", String(bug.id)));
+            if (confirm("Eliminare definitivamente la segnalazione?")) {
+                await deleteDoc(doc(db, "bugReports", String(bugId)));
+                window.showAlert("🗑️ Segnalazione eliminata.");
             }
         };
 
