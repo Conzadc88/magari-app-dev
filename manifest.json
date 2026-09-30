@@ -1,0 +1,17 @@
+{
+  "name": "Magari App",
+  "short_name": "Magari",
+  "description": "Gestionale Ordini e Giacenze Magari",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#043927",
+  "theme_color": "#043927",
+  "icons": [
+    {
+      "src": "logo-square.png",
+      "sizes": "140x140",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
