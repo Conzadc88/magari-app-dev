@@ -4,10 +4,10 @@
 <!--
 ====================================================================
 [MAGARI APP - HISTORICAL CHANGELOG REGISTRY & ARCHIVE]
-- v3.9.4 DEVELOPER (Z-INDEX FIX & AUTO-REDIRECT ON LOCKED SECTIONS):
-  * Risolto conflitto z-index: Modale Auth ora sempre in primo piano (z-index: 2500).
-  * Reindirizzamento automatico alla vista Ordini quando si tenta l'accesso a sezioni riservate.
-  * Registrazione autonoma per gli operatori e gestione Admin avanzata.
+- v3.9.5 DEVELOPER (LOGIN MODAL DISPLAY & NAV FIX):
+  * Corretto ordine di chiamata in navigateTo (closeAll prima di openAuthModal).
+  * Risolto blocco con schermo offuscato senza pop-up.
+  * Modale Auth garantita sempre in primo piano (z-index: 9999).
 ====================================================================
 -->
     <meta charset="UTF-8">
@@ -16,7 +16,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Magari Dev">
-    <title>Magari v3.9.4 DEV</title>
+    <title>Magari v3.9.5 DEV</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -47,7 +47,7 @@
         <div class="drawer" id="drawer">
             <div class="drawer-header">
                 <div class="brand-title" style="font-size: 24px;">MAGARI</div>
-                <div class="brand-subtitle" style="font-size: 8px;">v3.9.4 DEVELOPER</div>
+                <div class="brand-subtitle" style="font-size: 8px;">v3.9.5 DEVELOPER</div>
             </div>
 
             <!-- USER ACCOUNT BANNER NELLO MENU -->
@@ -82,7 +82,7 @@
             <button class="menu-btn" onclick="toggleMenu()">☰</button>
             <div class="header-brand-text">
                 <div class="brand-title">MAGARI</div>
-                <div class="brand-subtitle">v3.9.4 DEVELOPER</div>
+                <div class="brand-subtitle">v3.9.5 DEVELOPER</div>
             </div>
             <div class="page-badge" id="page-title">Ordini</div>
         </div>
@@ -299,13 +299,13 @@
                 
                 <hr style="border:0; border-top:1px solid #eee; margin: 12px 0;">
                 <button class="reset-btn" onclick="executeResetSuppliersGuard()">🔒 🔄 Ripristina Fornitori Default</button>
-                <button class="btn-danger" onclick="executeResetAllGuard()" style="width:100%; margin-top: 6px;">🔒 ⚠️️ RESET TOTALE DATABASE</button>
+                <button class="btn-danger" onclick="executeResetAllGuard()" style="width:100%; margin-top: 6px;">🔒 ⚠️ RESET TOTALE DATABASE</button>
             </div>
         </div>
     </div>
 
     <!-- MODALE MODIFICA/CREAZIONE UTENTE DA ADMIN -->
-    <div class="modal" id="user-edit-modal" style="max-width:380px; z-index:2500;">
+    <div class="modal" id="user-edit-modal">
         <div class="modal-title" id="user-modal-title" style="color:var(--primary); font-size:18px;">👤 Operatore</div>
         <input type="hidden" id="edit-user-uid">
         
@@ -326,7 +326,7 @@
     </div>
 
     <!-- MODALE AUTHENTICATION (LOGIN + REGISTRAZIONE AUTONOMA OPERATORI) -->
-    <div class="modal" id="auth-modal" style="max-width:380px; z-index:2500;">
+    <div class="modal" id="auth-modal">
         <div class="modal-title" id="auth-modal-title" style="color:var(--primary); font-size:18px; text-align:center;">🔑 Accedi a Magari App</div>
         <div style="display:flex; justify-content:center; gap:10px; margin-bottom:12px;">
             <button id="tab-btn-login" onclick="switchAuthTab('login')" style="flex:1; padding:6px; border-radius:6px; font-weight:bold; border:1px solid var(--primary); background:var(--primary); color:white;">Login</button>
@@ -484,11 +484,11 @@
         .drawer-menu { list-style: none; }
         .drawer-menu li { padding: 12px 0; font-size: 14px; font-weight: 600; border-bottom: 1px solid #f0f0f0; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
 
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; z-index: 2400; backdrop-filter: blur(4px); }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; z-index: 8888; backdrop-filter: blur(4px); }
         .overlay.active { display: block; }
 
-        .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 12px; width: 92%; max-width: 480px; max-height: 88vh; overflow-y: auto; box-shadow: 0 8px 30px rgba(0,0,0,0.3); display: none; z-index: 2500; }
-        .modal.active { display: block; }
+        .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 12px; width: 92%; max-width: 480px; max-height: 88vh; overflow-y: auto; box-shadow: 0 8px 30px rgba(0,0,0,0.3); display: none; z-index: 9999; }
+        .modal.active { display: block !important; }
         
         .modal-title { font-size: 18px; font-weight: bold; margin-bottom: 12px; }
         .form-group { margin-bottom: 12px; }
@@ -656,8 +656,8 @@
                 if (statusTxt) statusTxt.innerHTML = '👁️ Modalità Lettura (Guest)';
                 if (authBtn) { authBtn.innerText = '🔑 Accedi / Registrati'; authBtn.style.background = '#2563eb'; authBtn.onclick = window.openAuthModal; }
                 
-                if (opOrderInput) opOrderInput.value = '👁️️ Nessun Operatore (Accedi)';
-                if (opStockInput) opStockInput.value = '👁️ Nessun Operatore (Accedi)';
+                if (opOrderInput) opOrderInput.value = '👁 Nessun Operatore (Accedi)';
+                if (opStockInput) opStockInput.value = '👁️️ Nessun Operatore (Accedi)';
                 if (opBugInput) opBugInput.value = '👁️ Nessun Operatore (Accedi)';
 
                 ['magazzino', 'fornitori', 'sprechi', 'impostazioni'].forEach(sec => {
@@ -676,7 +676,7 @@
             return true;
         };
 
-        // NOTIFICHE (SEMPRE ATTIVE DEFAULT)
+        // NOTIFICHE
         window.showAlert = function(msg) {
             const toast = document.getElementById('toast-notification');
             if (toast) { toast.innerText = msg; toast.classList.add('show'); setTimeout(() => { toast.classList.remove('show'); }, 3500); }
@@ -684,6 +684,7 @@
 
         // 2. LOGIN E REGISTRAZIONE AUTONOMA OPERATORI
         window.openAuthModal = () => { 
+            window.closeAll();
             document.getElementById('auth-modal').classList.add('active'); 
             document.getElementById('overlay').classList.add('active'); 
         };
@@ -782,6 +783,7 @@
 
         window.openUserModal = async function(uid = null) {
             if (!window.checkAuthGuard()) return;
+            window.closeAll();
             document.getElementById('edit-user-uid').value = '';
             document.getElementById('user-field-name').value = '';
             document.getElementById('user-field-email').value = '';
@@ -917,9 +919,13 @@
 
         window.promptChangeLocation = () => document.getElementById('location-guard-banner').style.display = 'flex';
         window.toggleMenu = () => { document.getElementById('drawer').classList.toggle('open'); document.getElementById('overlay').classList.toggle('active'); };
-        window.closeAll = () => { document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); document.getElementById('overlay').classList.remove('active'); document.getElementById('drawer').classList.remove('open'); };
+        window.closeAll = () => { 
+            document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); 
+            document.getElementById('overlay').classList.remove('active'); 
+            document.getElementById('drawer').classList.remove('open'); 
+        };
 
-        // NAVIGAZIONE CON REINDIRIZZAMENTO AUTOMATICO
+        // NAVIGAZIONE CORRETTA SENZA SCHERMO BLOCATO
         window.navigateTo = function(sec) {
             const adminProtectedSections = ['magazzino', 'fornitori', 'sprechi', 'impostazioni'];
             const isAdmin = window.currentUserProfile && window.currentUserProfile.role === 'admin';
@@ -927,13 +933,8 @@
             window.closeAll();
 
             if (adminProtectedSections.includes(sec) && !isAdmin) {
-                // Reindirizza a Ordini
-                document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
-                document.getElementById('view-ordini').classList.add('active');
-                document.getElementById('page-title').innerText = 'Ordini';
-
                 window.showAlert("🔒 Sezione Riservata Admin: Effettua il Login.");
-                window.openAuthModal();
+                setTimeout(() => { window.openAuthModal(); }, 150);
                 return;
             }
 
@@ -1344,7 +1345,7 @@
                             <span>⚠️ <b>Da Controllare</b></span><button class="btn-save" style="padding:6px 10px; font-size:11px; background:#c62828;" onclick="openVerifyDeliveryModal(${h.id})">✍️ Verifica & Storna</button>
                         </div>`;
                 } else if (h.verificationDetails && !h.verificationDetails.includes("100%")) {
-                    checkStatusHtml = `<div style="background:#fff8e1; border:1px solid #ffe0b2; padding:8px; border-radius:6px; font-size:12px; color:#b45309; margin-top:8px;">⚠️️ <b>Discrepanze:</b> ${h.verificationDetails}</div>`;
+                    checkStatusHtml = `<div style="background:#fff8e1; border:1px solid #ffe0b2; padding:8px; border-radius:6px; font-size:12px; color:#b45309; margin-top:8px;">⚠️ <b>Discrepanze:</b> ${h.verificationDetails}</div>`;
                 } else {
                     checkStatusHtml = `<div style="background:#e8f5e9; border:1px solid #c8e6c9; padding:8px; border-radius:6px; font-size:12px; color:#2e7d32; margin-top:8px;">✅ <b>Completo</b> (${h.checkedBy} - ${h.checkedAt})</div>`;
                 }
@@ -1402,6 +1403,7 @@
 
         window.openAddModal = function(id = null) {
             if (!window.checkAuthGuard()) return;
+            window.closeAll();
             window.populateAllSupplierFilters();
             document.getElementById('edit-item-id').value = ''; 
             document.getElementById('new-name').value = ''; 
@@ -1465,7 +1467,7 @@
                 c.innerHTML += `<div class="card-item"><div class="item-name-box" style="border-left-color:${s.color};"><div class="item-name" style="color:${s.color};">🚚 ${s.name}</div><div class="item-subtext">📞 ${s.phone || 'N/D'} | ✉️ ${s.email || 'N/D'}</div></div></div>`;
             });
         };
-        window.openAddSupplierModal = () => { if(!window.checkAuthGuard()) return; document.getElementById('edit-supplier-id').value = ''; document.getElementById('supp-name').value = ''; document.getElementById('supp-phone').value = ''; document.getElementById('supp-email').value = ''; document.getElementById('add-supplier-modal').classList.add('active'); document.getElementById('overlay').classList.add('active'); };
+        window.openAddSupplierModal = () => { if(!window.checkAuthGuard()) return; window.closeAll(); document.getElementById('edit-supplier-id').value = ''; document.getElementById('supp-name').value = ''; document.getElementById('supp-phone').value = ''; document.getElementById('supp-email').value = ''; document.getElementById('add-supplier-modal').classList.add('active'); document.getElementById('overlay').classList.add('active'); };
         window.closeAddSupplierModal = () => { document.getElementById('add-supplier-modal').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); };
         window.saveSupplier = async function() {
             if (!window.checkAuthGuard()) return;
@@ -1477,7 +1479,7 @@
         };
 
         // EXPORT EXCEL
-        window.promptExportExcelModal = () => { document.getElementById('export-excel-modal').classList.add('active'); document.getElementById('overlay').classList.add('active'); };
+        window.promptExportExcelModal = () => { window.closeAll(); document.getElementById('export-excel-modal').classList.add('active'); document.getElementById('overlay').classList.add('active'); };
         window.closeExportExcelModal = () => { document.getElementById('export-excel-modal').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); };
         
         window.generateAndExportExcel = function() {
