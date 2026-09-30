@@ -4,9 +4,9 @@
 <!--
 ====================================================================
 [MAGARI APP - HISTORICAL CHANGELOG REGISTRY & ARCHIVE]
-- v3.9.3 DEVELOPER (AUTO-REDIRECT AUTH & LOCKED SECTIONS GUARD):
-  * Redirect automatico alla modale Login quando si clicca su sezioni protette.
-  * Correzione binding onclick del banner di blocco "Accedi come Admin".
+- v3.9.4 DEVELOPER (Z-INDEX FIX & AUTO-REDIRECT ON LOCKED SECTIONS):
+  * Risolto conflitto z-index: Modale Auth ora sempre in primo piano (z-index: 2500).
+  * Reindirizzamento automatico alla vista Ordini quando si tenta l'accesso a sezioni riservate.
   * Registrazione autonoma per gli operatori e gestione Admin avanzata.
 ====================================================================
 -->
@@ -16,7 +16,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Magari Dev">
-    <title>Magari v3.9.3 DEV</title>
+    <title>Magari v3.9.4 DEV</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -47,7 +47,7 @@
         <div class="drawer" id="drawer">
             <div class="drawer-header">
                 <div class="brand-title" style="font-size: 24px;">MAGARI</div>
-                <div class="brand-subtitle" style="font-size: 8px;">v3.9.3 DEVELOPER</div>
+                <div class="brand-subtitle" style="font-size: 8px;">v3.9.4 DEVELOPER</div>
             </div>
 
             <!-- USER ACCOUNT BANNER NELLO MENU -->
@@ -82,7 +82,7 @@
             <button class="menu-btn" onclick="toggleMenu()">☰</button>
             <div class="header-brand-text">
                 <div class="brand-title">MAGARI</div>
-                <div class="brand-subtitle">v3.9.3 DEVELOPER</div>
+                <div class="brand-subtitle">v3.9.4 DEVELOPER</div>
             </div>
             <div class="page-badge" id="page-title">Ordini</div>
         </div>
@@ -299,13 +299,13 @@
                 
                 <hr style="border:0; border-top:1px solid #eee; margin: 12px 0;">
                 <button class="reset-btn" onclick="executeResetSuppliersGuard()">🔒 🔄 Ripristina Fornitori Default</button>
-                <button class="btn-danger" onclick="executeResetAllGuard()" style="width:100%; margin-top: 6px;">🔒 ⚠️ RESET TOTALE DATABASE</button>
+                <button class="btn-danger" onclick="executeResetAllGuard()" style="width:100%; margin-top: 6px;">🔒 ⚠️️ RESET TOTALE DATABASE</button>
             </div>
         </div>
     </div>
 
     <!-- MODALE MODIFICA/CREAZIONE UTENTE DA ADMIN -->
-    <div class="modal" id="user-edit-modal" style="max-width:380px;">
+    <div class="modal" id="user-edit-modal" style="max-width:380px; z-index:2500;">
         <div class="modal-title" id="user-modal-title" style="color:var(--primary); font-size:18px;">👤 Operatore</div>
         <input type="hidden" id="edit-user-uid">
         
@@ -326,7 +326,7 @@
     </div>
 
     <!-- MODALE AUTHENTICATION (LOGIN + REGISTRAZIONE AUTONOMA OPERATORI) -->
-    <div class="modal" id="auth-modal" style="max-width:380px;">
+    <div class="modal" id="auth-modal" style="max-width:380px; z-index:2500;">
         <div class="modal-title" id="auth-modal-title" style="color:var(--primary); font-size:18px; text-align:center;">🔑 Accedi a Magari App</div>
         <div style="display:flex; justify-content:center; gap:10px; margin-bottom:12px;">
             <button id="tab-btn-login" onclick="switchAuthTab('login')" style="flex:1; padding:6px; border-radius:6px; font-weight:bold; border:1px solid var(--primary); background:var(--primary); color:white;">Login</button>
@@ -478,16 +478,16 @@
         .faq-question { font-size: 14px; font-weight: 800; color: var(--primary); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
         .faq-answer { font-size: 13px; color: #334155; line-height: 1.4; }
 
-        .drawer { position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background-color: white; box-shadow: 2px 0 10px rgba(0,0,0,0.2); transition: left 0.3s ease; z-index: 200; padding: 20px; overflow-y: auto; }
+        .drawer { position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background-color: white; box-shadow: 2px 0 10px rgba(0,0,0,0.2); transition: left 0.3s ease; z-index: 2000; padding: 20px; overflow-y: auto; }
         .drawer.open { left: 0; }
         .drawer-header { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 20px; border-bottom: 1px solid var(--border); background-color: var(--primary); border-radius: 8px; padding: 16px 12px; }
         .drawer-menu { list-style: none; }
         .drawer-menu li { padding: 12px 0; font-size: 14px; font-weight: 600; border-bottom: 1px solid #f0f0f0; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
 
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; z-index: 2400; backdrop-filter: blur(4px); }
         .overlay.active { display: block; }
 
-        .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 12px; width: 92%; max-width: 480px; max-height: 88vh; overflow-y: auto; box-shadow: 0 4px 20px rgba(0,0,0,0.25); display: none; z-index: 210; }
+        .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 12px; width: 92%; max-width: 480px; max-height: 88vh; overflow-y: auto; box-shadow: 0 8px 30px rgba(0,0,0,0.3); display: none; z-index: 2500; }
         .modal.active { display: block; }
         
         .modal-title { font-size: 18px; font-weight: bold; margin-bottom: 12px; }
@@ -656,7 +656,7 @@
                 if (statusTxt) statusTxt.innerHTML = '👁️ Modalità Lettura (Guest)';
                 if (authBtn) { authBtn.innerText = '🔑 Accedi / Registrati'; authBtn.style.background = '#2563eb'; authBtn.onclick = window.openAuthModal; }
                 
-                if (opOrderInput) opOrderInput.value = '👁️ Nessun Operatore (Accedi)';
+                if (opOrderInput) opOrderInput.value = '👁️️ Nessun Operatore (Accedi)';
                 if (opStockInput) opStockInput.value = '👁️ Nessun Operatore (Accedi)';
                 if (opBugInput) opBugInput.value = '👁️ Nessun Operatore (Accedi)';
 
@@ -683,8 +683,14 @@
         };
 
         // 2. LOGIN E REGISTRAZIONE AUTONOMA OPERATORI
-        window.openAuthModal = () => { document.getElementById('auth-modal').classList.add('active'); document.getElementById('overlay').classList.add('active'); };
-        window.closeAuthModal = () => { document.getElementById('auth-modal').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); };
+        window.openAuthModal = () => { 
+            document.getElementById('auth-modal').classList.add('active'); 
+            document.getElementById('overlay').classList.add('active'); 
+        };
+        window.closeAuthModal = () => { 
+            document.getElementById('auth-modal').classList.remove('active'); 
+            document.getElementById('overlay').classList.remove('active'); 
+        };
 
         window.switchAuthTab = function(tab) {
             const isLogin = tab === 'login';
@@ -913,10 +919,23 @@
         window.toggleMenu = () => { document.getElementById('drawer').classList.toggle('open'); document.getElementById('overlay').classList.toggle('active'); };
         window.closeAll = () => { document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); document.getElementById('overlay').classList.remove('active'); document.getElementById('drawer').classList.remove('open'); };
 
-        // NAVIGATIONE & AUTO-REDIRECT
+        // NAVIGAZIONE CON REINDIRIZZAMENTO AUTOMATICO
         window.navigateTo = function(sec) {
             const adminProtectedSections = ['magazzino', 'fornitori', 'sprechi', 'impostazioni'];
             const isAdmin = window.currentUserProfile && window.currentUserProfile.role === 'admin';
+
+            window.closeAll();
+
+            if (adminProtectedSections.includes(sec) && !isAdmin) {
+                // Reindirizza a Ordini
+                document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+                document.getElementById('view-ordini').classList.add('active');
+                document.getElementById('page-title').innerText = 'Ordini';
+
+                window.showAlert("🔒 Sezione Riservata Admin: Effettua il Login.");
+                window.openAuthModal();
+                return;
+            }
 
             document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
             document.getElementById(`view-${sec}`).classList.add('active');
@@ -924,14 +943,7 @@
             const titles = { 'ordini': 'Ordini', 'scorte': 'Scorte', 'storico': 'Storico', 'magazzino': 'Magazzino', 'fornitori': 'Fornitori', 'sprechi': 'Report Consumi', 'faq': 'Guida & FAQ', 'bugreport': 'Segnala Bug', 'impostazioni': 'Impostazioni' };
             document.getElementById('page-title').innerText = titles[sec] || 'Magari';
             
-            window.closeAll();
             window.scrollTo({ top: 0, behavior: 'instant' });
-
-            if (adminProtectedSections.includes(sec) && !isAdmin) {
-                window.showAlert("🔒 Sezione Riservata: Effettua il Login come Admin.");
-                window.openAuthModal();
-                return;
-            }
 
             if (sec === 'impostazioni' && isAdmin) {
                 window.loadUsersListForAdmin();
@@ -1188,7 +1200,7 @@
                         <div style="font-weight:800; color:var(--primary); font-size:18px; margin-bottom:8px;">🚚 ${supName}</div>
                         <div style="margin:12px 0; background:#fff; padding:10px; border-radius:6px; border:1px solid #e2e8f0;">${itemsListHtml}</div>
                         <a href="${wa}" style="background:var(--whatsapp); color:white; padding:12px; display:block; text-align:center; border-radius:8px; text-decoration:none; font-weight:bold; margin-bottom:6px;">💬 Invia via WhatsApp</a>
-                        <a href="mailto:${sup?.email||''}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}" style="background:#2563eb; color:white; padding:12px; display:block; text-align:center; border-radius:8px; text-decoration:none; font-weight:bold; margin-bottom:6px;">✉️️ Invia via Email</a>
+                        <a href="mailto:${sup?.email||''}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}" style="background:#2563eb; color:white; padding:12px; display:block; text-align:center; border-radius:8px; text-decoration:none; font-weight:bold; margin-bottom:6px;">✉️ Invia via Email</a>
                         <button onclick="confirmSingleSupplierOrder('${sId}', '${op}', '${dateVal}')" class="btn-save" style="width:100%; background:#1b5e20;">✅ Conferma Ordine per ${supName}</button>
                     </div>`;
             }
@@ -1332,7 +1344,7 @@
                             <span>⚠️ <b>Da Controllare</b></span><button class="btn-save" style="padding:6px 10px; font-size:11px; background:#c62828;" onclick="openVerifyDeliveryModal(${h.id})">✍️ Verifica & Storna</button>
                         </div>`;
                 } else if (h.verificationDetails && !h.verificationDetails.includes("100%")) {
-                    checkStatusHtml = `<div style="background:#fff8e1; border:1px solid #ffe0b2; padding:8px; border-radius:6px; font-size:12px; color:#b45309; margin-top:8px;">⚠️ <b>Discrepanze:</b> ${h.verificationDetails}</div>`;
+                    checkStatusHtml = `<div style="background:#fff8e1; border:1px solid #ffe0b2; padding:8px; border-radius:6px; font-size:12px; color:#b45309; margin-top:8px;">⚠️️ <b>Discrepanze:</b> ${h.verificationDetails}</div>`;
                 } else {
                     checkStatusHtml = `<div style="background:#e8f5e9; border:1px solid #c8e6c9; padding:8px; border-radius:6px; font-size:12px; color:#2e7d32; margin-top:8px;">✅ <b>Completo</b> (${h.checkedBy} - ${h.checkedAt})</div>`;
                 }
@@ -1382,7 +1394,7 @@
                         </div>
                         <div class="action-row-btn">
                             <button class="btn-action-edit" onclick="openAddModal(${item.id})">✏️ Modifica</button>
-                            <button class="btn-action-del" onclick="deleteInventoryItem(${item.id})">🗑️️ Elimina</button>
+                            <button class="btn-action-del" onclick="deleteInventoryItem(${item.id})">🗑 Elimina</button>
                         </div>
                     </div>`;
             });
