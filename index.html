@@ -4,10 +4,10 @@
 <!--
 ====================================================================
 [MAGARI APP - HISTORICAL CHANGELOG REGISTRY & ARCHIVE]
-- v3.9.5 DEVELOPER (LOGIN MODAL DISPLAY & NAV FIX):
-  * Corretto ordine di chiamata in navigateTo (closeAll prima di openAuthModal).
-  * Risolto blocco con schermo offuscato senza pop-up.
-  * Modale Auth garantita sempre in primo piano (z-index: 9999).
+- v3.9.6 DEVELOPER (DRAWER Z-INDEX & OVERLAY LAYOUT FIX):
+  * Corretto z-index del drawer (z-index: 2000) rispetto all'overlay (z-index: 1000).
+  * Il menu laterale ora sfoglia correttamente sopra lo sfondo scuro in modalità mobile e desktop.
+  * Modale Auth e pop-up gestiti a livello z-index: 9999.
 ====================================================================
 -->
     <meta charset="UTF-8">
@@ -16,7 +16,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Magari Dev">
-    <title>Magari v3.9.5 DEV</title>
+    <title>Magari v3.9.6 DEV</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,7 +28,7 @@
     <div id="toast-notification" class="toast-notification"></div>
 
     <!-- SELEZIONE SEDE GUARD -->
-    <div class="page-lock-banner" id="location-guard-banner" style="display: flex; position: fixed; z-index: 1000; padding-top: 100px;">
+    <div class="page-lock-banner" id="location-guard-banner" style="display: flex; position: fixed; z-index: 3000; padding-top: 100px;">
         <div class="page-lock-box" style="max-width: 340px;">
             <div style="font-size: 32px; margin-bottom: 8px;">📍</div>
             <h3 style="margin-bottom: 6px; color: var(--primary);">Seleziona la Sede</h3>
@@ -47,7 +47,7 @@
         <div class="drawer" id="drawer">
             <div class="drawer-header">
                 <div class="brand-title" style="font-size: 24px;">MAGARI</div>
-                <div class="brand-subtitle" style="font-size: 8px;">v3.9.5 DEVELOPER</div>
+                <div class="brand-subtitle" style="font-size: 8px;">v3.9.6 DEVELOPER</div>
             </div>
 
             <!-- USER ACCOUNT BANNER NELLO MENU -->
@@ -66,7 +66,7 @@
                     <span>📜 Storico Ordini</span>
                     <span id="history-badge-drawer" class="badge-notification" style="display:none; background:#e53935;">0</span>
                 </li>
-                <li onclick="navigateTo('magazzino')">🛠️ Magazzino <span id="lock-icon-magazzino">🔒</span></li>
+                <li onclick="navigateTo('magazzino')">🛠️️ Magazzino <span id="lock-icon-magazzino">🔒</span></li>
                 <li onclick="navigateTo('fornitori')">🚚 Fornitori <span id="lock-icon-fornitori">🔒</span></li>
                 <li onclick="navigateTo('sprechi')">📊 Report Consumi <span id="lock-icon-sprechi">🔒</span></li>
                 <li onclick="navigateTo('faq')" style="color:#2563eb; font-weight:bold;">❓ Guida & FAQ</li>
@@ -82,7 +82,7 @@
             <button class="menu-btn" onclick="toggleMenu()">☰</button>
             <div class="header-brand-text">
                 <div class="brand-title">MAGARI</div>
-                <div class="brand-subtitle">v3.9.5 DEVELOPER</div>
+                <div class="brand-subtitle">v3.9.6 DEVELOPER</div>
             </div>
             <div class="page-badge" id="page-title">Ordini</div>
         </div>
@@ -202,7 +202,7 @@
                         <option value="Salumi & Carni">🥩 Salumi & Carni</option>
                         <option value="Alcolici">🍷 Alcolici</option>
                         <option value="Bevande">🥤 Bevande</option>
-                        <option value="Surgelati">❄️ Surgelati</option>
+                        <option value="Surgelati">❄️️ Surgelati</option>
                         <option value="Ortofrutta">🥗 Ortofrutta</option>
                         <option value="Pulizia & Monouso">🧹 Pulizia & Monouso</option>
                         <option value="Altro">📦 Altro</option>
@@ -478,15 +478,18 @@
         .faq-question { font-size: 14px; font-weight: 800; color: var(--primary); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
         .faq-answer { font-size: 13px; color: #334155; line-height: 1.4; }
 
-        .drawer { position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background-color: white; box-shadow: 2px 0 10px rgba(0,0,0,0.2); transition: left 0.3s ease; z-index: 2000; padding: 20px; overflow-y: auto; }
+        /* DRAWER CORRETTO SOPRA OVERLAY */
+        .drawer { position: absolute; top: 0; left: -280px; width: 280px; height: 100%; min-height: 100vh; background-color: white; box-shadow: 4px 0 15px rgba(0,0,0,0.25); transition: left 0.3s ease; z-index: 2000; padding: 20px; overflow-y: auto; }
         .drawer.open { left: 0; }
         .drawer-header { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 20px; border-bottom: 1px solid var(--border); background-color: var(--primary); border-radius: 8px; padding: 16px 12px; }
         .drawer-menu { list-style: none; }
         .drawer-menu li { padding: 12px 0; font-size: 14px; font-weight: 600; border-bottom: 1px solid #f0f0f0; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
 
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; z-index: 8888; backdrop-filter: blur(4px); }
+        /* OVERLAY SOTTO IL DRAWER */
+        .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; min-height: 100vh; background: rgba(0,0,0,0.6); display: none; z-index: 1000; backdrop-filter: blur(4px); }
         .overlay.active { display: block; }
 
+        /* MODALE POPUP */
         .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 12px; width: 92%; max-width: 480px; max-height: 88vh; overflow-y: auto; box-shadow: 0 8px 30px rgba(0,0,0,0.3); display: none; z-index: 9999; }
         .modal.active { display: block !important; }
         
@@ -657,8 +660,8 @@
                 if (authBtn) { authBtn.innerText = '🔑 Accedi / Registrati'; authBtn.style.background = '#2563eb'; authBtn.onclick = window.openAuthModal; }
                 
                 if (opOrderInput) opOrderInput.value = '👁 Nessun Operatore (Accedi)';
-                if (opStockInput) opStockInput.value = '👁️️ Nessun Operatore (Accedi)';
-                if (opBugInput) opBugInput.value = '👁️ Nessun Operatore (Accedi)';
+                if (opStockInput) opStockInput.value = '👁 Nessun Operatore (Accedi)';
+                if (opBugInput) opBugInput.value = '👁️️ Nessun Operatore (Accedi)';
 
                 ['magazzino', 'fornitori', 'sprechi', 'impostazioni'].forEach(sec => {
                     const banner = document.getElementById(`lock-banner-${sec}`);
@@ -925,7 +928,7 @@
             document.getElementById('drawer').classList.remove('open'); 
         };
 
-        // NAVIGAZIONE CORRETTA SENZA SCHERMO BLOCATO
+        // NAVIGAZIONE
         window.navigateTo = function(sec) {
             const adminProtectedSections = ['magazzino', 'fornitori', 'sprechi', 'impostazioni'];
             const isAdmin = window.currentUserProfile && window.currentUserProfile.role === 'admin';
