@@ -4,11 +4,11 @@
 <!--
 ====================================================================
 [MAGARI APP - HISTORICAL CHANGELOG REGISTRY & ARCHIVE]
-- v3.9.0 DEVELOPER (FIREBASE AUTH & USER ROLE SYSTEM):
-  * Registrazione operatori integrata con assegnazione automatica ruolo 'operator'.
-  * Riconoscimento automatico dell'Admin Master via email.
-  * Modalità Lettura (Guest) con protezione completa per le azioni di modifica.
-  * Autenticazione persistente e interfaccia adattiva.
+- v3.9.0 DEVELOPER (FIREBASE AUTH, TEAM MANAGEMENT & NOTIFICATIONS):
+  * Gestione Team Staff integrata nelle Impostazioni per gli Admin.
+  * Toggle notifiche pop-up (Toast) personalizzabile.
+  * Autenticazione Firebase con ruoli dinamici (Admin / Operatore).
+  * Modalità Lettura (Guest) con protezione completa sulle modifiche.
 ====================================================================
 -->
     <meta charset="UTF-8">
@@ -271,15 +271,42 @@
             </div>
         </div>
 
-        <!-- 9. IMPOSTAZIONI (SOLO ADMIN) -->
+        <!-- 9. IMPOSTAZIONI (SOLO ADMIN - CON GESTIONE TEAM STAFF & NOTIFICHE) -->
         <div id="view-impostazioni" class="view-section">
             <div class="page-lock-banner" id="lock-banner-impostazioni">
                 <div class="page-lock-box"><div style="font-size: 32px; margin-bottom: 8px;">🔒</div><h3 style="margin-bottom: 6px;">Sezione Riservata Admin</h3><p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Effettua il Login con account Admin per accedere.</p><button class="btn-save" onclick="openAuthModal()">Accedi come Admin</button></div>
             </div>
             <div class="settings-card">
-                <h3>⚙️ Gestione Avanzata Database</h3>
-                <h4 style="font-size:14px; color:#d97706; margin-top:8px;">🐛 Segnalazioni Staff Rilevate</h4>
-                <div id="admin-bug-reports-container" style="display:flex; flex-direction:column; gap:8px; max-height:260px; overflow-y:auto; margin-top:6px; background:#fafafa; padding:8px; border-radius:6px; border:1px solid #e2e8f0;"></div>
+                <h3>⚙️ Gestione Avanzata & Notifiche</h3>
+
+                <!-- 🔔 NOTIFICHE TOGGLE -->
+                <div style="background:#f8fafc; padding:12px; border-radius:8px; border:1px solid #cbd5e1; margin-top:8px;">
+                    <h4 style="font-size:14px; color:var(--primary); margin-bottom:8px;">🔔 Preferenze Notifiche App</h4>
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-size:13px; font-weight:600; color:#334155;">Mostra avvisi pop-up (Toast)</span>
+                        <label class="switch" style="position:relative; display:inline-block; width:44px; height:24px;">
+                            <input type="checkbox" id="toggle-notifications-input" checked onchange="toggleNotificationPreference(this.checked)" style="opacity:0; width:0; height:0;">
+                            <span class="slider" style="position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background-color:#ccc; transition:.3s; border-radius:24px;"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 👥 GESTIONE TEAM STAFF (SOLO ADMIN) -->
+                <div style="background:#f8fafc; padding:12px; border-radius:8px; border:1px solid #cbd5e1; margin-top:12px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                        <h4 style="font-size:14px; color:var(--primary);">👥 Team Staff & Permessi</h4>
+                        <button onclick="loadUsersListForAdmin()" style="background:none; border:none; color:#2563eb; font-size:12px; font-weight:bold; cursor:pointer;">🔄 Aggiorna Lista</button>
+                    </div>
+                    <div id="admin-users-list-container" style="display:flex; flex-direction:column; gap:8px; max-height:220px; overflow-y:auto; background:white; padding:8px; border-radius:6px; border:1px solid #e2e8f0;">
+                        <div style="font-size:12px; color:#666; text-align:center;">Caricamento utenti...</div>
+                    </div>
+                </div>
+
+                <hr style="border:0; border-top:1px solid #eee; margin: 12px 0;">
+                
+                <h4 style="font-size:14px; color:#d97706;">🐛 Segnalazioni Staff Rilevate</h4>
+                <div id="admin-bug-reports-container" style="display:flex; flex-direction:column; gap:8px; max-height:200px; overflow-y:auto; margin-top:6px; background:#fafafa; padding:8px; border-radius:6px; border:1px solid #e2e8f0;"></div>
+                
                 <hr style="border:0; border-top:1px solid #eee; margin: 12px 0;">
                 <button class="reset-btn" onclick="executeResetSuppliersGuard()">🔒 🔄 Ripristina Fornitori Default</button>
                 <button class="btn-danger" onclick="executeResetAllGuard()" style="width:100%; margin-top: 6px;">🔒 ⚠️ RESET TOTALE DATABASE</button>
@@ -317,7 +344,7 @@
 
     <!-- MODALI UTILITY -->
     <div class="modal" id="verify-delivery-modal" style="max-width: 520px;">
-        <div class="modal-title" style="color:var(--primary);">✍️️ Verifica Consegna & Storno Giacenze</div>
+        <div class="modal-title" style="color:var(--primary);">✍️ Verifica Consegna & Storno Giacenze</div>
         <div style="font-size: 13px; color: #555; margin-bottom: 10px;">Inserisci le quantità effettivamente ricevute per accreditarle in giacenza.</div>
         <div id="verify-items-checklist-container" style="display:flex; flex-direction:column; gap:8px; max-height:220px; overflow-y:auto; margin-bottom:12px; background:#f8fafc; padding:8px; border-radius:8px; border:1px solid #e2e8f0;"></div>
         <div class="form-group"><label style="font-weight:bold; color:var(--primary);">📝 Note / Messaggio (Opzionale):</label><input type="text" id="verify-note-input" class="form-control" placeholder="es. Arrivate tutte le unità..."></div>
@@ -498,6 +525,15 @@
         .report-table tfoot td { font-weight: bold; background-color: #f1f5f9; color: var(--primary); }
 
         .badge-notification { background: var(--danger); color: white; border-radius: 12px; font-size: 11px; font-weight: 800; padding: 2px 8px; display: inline-block; }
+
+        /* TOGGLE SWITCH NOTIFICHE */
+        .switch input:checked + .slider { background-color: var(--primary); }
+        .switch input:checked + .slider:before { transform: translateX(20px); }
+        .slider:before {
+            position: absolute; content: ""; height: 18px; width: 18px;
+            left: 3px; bottom: 3px; background-color: white;
+            transition: .3s; border-radius: 50%;
+        }
     </style>
 
     <script type="module">
@@ -516,6 +552,7 @@
             doc, 
             setDoc, 
             getDoc,
+            getDocs,
             onSnapshot, 
             collection, 
             updateDoc, 
@@ -539,6 +576,7 @@
         window.currentUserProfile = null; // { uid, email, name, role }
         window.activeLocation = null;
         window.activeVerifyHistoryId = null;
+        window.notificationsEnabled = true;
 
         window.defaultSuppliers = [
             { id: 1700000001, name: "Paolo's Tiramisu", phone: "0764211121", email: "paolo@tiramisusthlm.se", color: "#f57c00" },
@@ -562,7 +600,7 @@
         // 1. MONITORAGGIO STATO AUTENTICAZIONE UTENTE (PERSISTENTE)
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                const userDoc = await getDoc(doc(db, "users", user.uid));
+                const userDoc = await getDoc(doc(doc(db, "users", user.uid)));
                 if (userDoc.exists()) {
                     window.currentUserProfile = userDoc.data();
                 } else {
@@ -570,7 +608,6 @@
                 }
 
                 // 🔒 RICONOSCIMENTO AUTOMATICO ADMIN PER L'EMAIL MASTER
-                // Sostituisci l'email qui sotto con la tua email per diventare subito Admin
                 if (user.email.toLowerCase() === "nicolas@magaripizza.com") {
                     window.currentUserProfile.role = "admin";
                 }
@@ -656,7 +693,7 @@
             const name = document.getElementById('reg-name').value.trim();
             const email = document.getElementById('reg-email').value.trim();
             const pass = document.getElementById('reg-password').value.trim();
-            const role = document.getElementById('reg-role').value; // 'operator' di default
+            const role = document.getElementById('reg-role').value; // 'operator'
             if (!name || !email || !pass) return window.showAlert("⚠️ Compila tutti i campi.");
             try {
                 const res = await createUserWithEmailAndPassword(auth, email, pass);
@@ -669,6 +706,73 @@
         window.handleLogoutSubmit = async function() {
             await signOut(auth);
             window.showAlert("🚪 Logout effettuato.");
+        };
+
+        // 👥 GESTIONE STAFF E PERMESSI (ADMIN)
+        window.loadUsersListForAdmin = async function() {
+            const container = document.getElementById('admin-users-list-container');
+            if (!container) return;
+            
+            if (!window.currentUserProfile || window.currentUserProfile.role !== 'admin') {
+                container.innerHTML = '<div style="font-size:12px; color:#666; text-align:center;">Riservato agli Admin.</div>';
+                return;
+            }
+
+            try {
+                const querySnapshot = await getDocs(collection(db, "users"));
+                if (querySnapshot.empty) {
+                    container.innerHTML = '<div style="font-size:12px; color:#666; text-align:center;">Nessun operatore registrato.</div>';
+                    return;
+                }
+
+                container.innerHTML = '';
+                querySnapshot.forEach((docSnap) => {
+                    const uData = docSnap.data();
+                    const uUid = docSnap.id;
+                    const isAdmin = uData.role === 'admin';
+                    const isMaster = uData.email && uData.email.toLowerCase() === "nicolas@magaripizza.com";
+
+                    container.innerHTML += `
+                        <div style="display:flex; justify-content:space-between; align-items:center; padding:8px; border-bottom:1px solid #f1f5f9; font-size:12px;">
+                            <div>
+                                <div style="font-weight:bold; color:var(--primary);">${uData.name || 'Senza Nome'}</div>
+                                <div style="font-size:10px; color:#666;">${uData.email}</div>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:6px;">
+                                <span style="font-weight:bold; font-size:11px; color:${isAdmin ? '#2e7d32' : '#2563eb'};">${isAdmin ? '⭐ Admin' : '👤 Operatore'}</span>
+                                ${!isMaster ? `
+                                    <button onclick="toggleUserRole('${uUid}', '${uData.role}')" style="background:#e2e8f0; border:none; padding:4px 8px; border-radius:4px; font-size:10px; font-weight:bold; cursor:pointer;">
+                                        Cambia in ${isAdmin ? 'Operatore' : 'Admin'}
+                                    </button>
+                                ` : '<span style="font-size:10px; color:#999; font-style:italic;">Master</span>'}
+                            </div>
+                        </div>`;
+                });
+            } catch(e) {
+                container.innerHTML = `<div style="font-size:12px; color:red;">Errore caricamento: ${e.message}</div>`;
+            }
+        };
+
+        window.toggleUserRole = async function(uid, currentRole) {
+            if (!window.checkAuthGuard()) return;
+            const newRole = currentRole === 'admin' ? 'operator' : 'admin';
+            if (confirm(`Cambiare il ruolo di questo utente in ${newRole.toUpperCase()}?`)) {
+                await updateDoc(doc(db, "users", uid), { role: newRole });
+                window.showAlert("✅ Ruolo aggiornato con successo!");
+                window.loadUsersListForAdmin();
+            }
+        };
+
+        // 🔔 NOTIFICHE PREFERENZE
+        window.toggleNotificationPreference = function(isEnabled) {
+            window.notificationsEnabled = isEnabled;
+            if (isEnabled) window.showAlert("🔔 Notifiche pop-up abilitate.");
+        };
+
+        window.showAlert = function(msg) {
+            if (!window.notificationsEnabled) return;
+            const toast = document.getElementById('toast-notification');
+            if (toast) { toast.innerText = msg; toast.classList.add('show'); setTimeout(() => { toast.classList.remove('show'); }, 3500); }
         };
 
         // 3. LISTENERS FIRESTORE IN TEMPO REALE
@@ -709,13 +813,8 @@
             return { qty_vasastan: newQty, lastUpdateBy_vasastan: opName, lastUpdateDate_vasastan: displayStr, lastUpdateRaw_vasastan: nowStr };
         };
 
-        // UI UTILS
-        window.showAlert = function(msg) {
-            const toast = document.getElementById('toast-notification');
-            if (toast) { toast.innerText = msg; toast.classList.add('show'); setTimeout(() => { toast.classList.remove('show'); }, 3500); }
-        };
         window.translateUnitToSwedish = (unit) => ({ "Bottiglie": "flaskor", "Unità": "st", "Kg": "kg", "Litri": "liter", "Cartoni": "kartonger", "Sacchi": "säckar" }[unit] || unit || "st");
-        window.getCategoryEmoji = (cat) => ({ "Latticini": "🧀", "Farine & Secco": "🌾", "Conserve & Pomodoro": "🍅", "Salumi & Carni": "🥩", "Alcolici": "🍷", "Bevande": "🥤", "Surgelati": "❄️", "Ortofrutta": "🥗", "Pulizia & Monouso": "🧹", "Altro": "📦" }[cat] || "📦");
+        window.getCategoryEmoji = (cat) => ({ "Latticini": "🧀", "Farine & Secco": "🌾", "Conserve & Pomodoro": "🍅", "Salumi & Carni": "🥩", "Alcolici": "🍷", "Bevande": "🥤", "Surgelati": "❄️️", "Ortofrutta": "🥗", "Pulizia & Monouso": "🧹", "Altro": "📦" }[cat] || "📦");
 
         window.setActiveLocation = function(loc) {
             window.activeLocation = loc;
@@ -738,6 +837,10 @@
             document.getElementById('page-title').innerText = titles[sec] || 'Magari';
             window.closeAll();
             window.scrollTo({ top: 0, behavior: 'instant' });
+
+            if (sec === 'impostazioni') {
+                window.loadUsersListForAdmin();
+            }
         };
 
         // ORDINAMENTO
@@ -826,7 +929,7 @@
                                 <div style="color:#1e293b; background:#fff; padding:4px 6px; border-radius:4px; border:1px solid #f1f5f9;">${b.description}</div>
                                 <div style="display:flex; justify-content:flex-end; gap:6px; margin-top:4px;">
                                     <button class="btn-action-edit" onclick="toggleBugStatus(${idx})">${isResolved ? '🔄 Riapri' : '✅ Segna Risolto'}</button>
-                                    <button class="btn-action-del" onclick="deleteBugReport(${idx})">🗑️ Elimina</button>
+                                    <button class="btn-action-del" onclick="deleteBugReport(${idx})">🗑️️ Elimina</button>
                                 </div>
                             </div>`;
                     });
@@ -1131,7 +1234,7 @@
                 if (!isChecked) {
                     checkStatusHtml = `
                         <div style="background:#fff3f0; border:1px solid #ffcdd2; padding:8px; border-radius:6px; font-size:12px; color:#c62828; margin-top:8px; display:flex; justify-content:space-between; align-items:center;">
-                            <span>⚠️️ <b>Da Controllare</b></span><button class="btn-save" style="padding:6px 10px; font-size:11px; background:#c62828;" onclick="openVerifyDeliveryModal(${h.id})">✍️ Verifica & Storna</button>
+                            <span>⚠️ <b>Da Controllare</b></span><button class="btn-save" style="padding:6px 10px; font-size:11px; background:#c62828;" onclick="openVerifyDeliveryModal(${h.id})">✍️ Verifica & Storna</button>
                         </div>`;
                 } else if (h.verificationDetails && !h.verificationDetails.includes("100%")) {
                     checkStatusHtml = `<div style="background:#fff8e1; border:1px solid #ffe0b2; padding:8px; border-radius:6px; font-size:12px; color:#b45309; margin-top:8px;">⚠️ <b>Discrepanze:</b> ${h.verificationDetails}</div>`;
@@ -1221,7 +1324,7 @@
             if (!window.checkAuthGuard()) return;
             const idVal = document.getElementById('edit-item-id').value;
             const name = document.getElementById('new-name').value.trim();
-            if (!name) return window.showAlert("⚠️️ Inserisci il nome.");
+            if (!name) return window.showAlert("⚠️ Inserisci il nome.");
             
             const cat = document.getElementById('new-category-select').value;
             const supId = parseInt(document.getElementById('new-supplier-select').value);
