@@ -4,10 +4,10 @@
 <!--
 ====================================================================
 [MAGARI APP - HISTORICAL CHANGELOG REGISTRY & ARCHIVE]
-- v3.9.2 DEVELOPER (OPERATOR SELF-REGISTRATION & ADMIN MANAGEMENT):
-  * Registrazione autonoma per gli operatori nel Form di Login.
-  * Pannello Gestione Operatori Completo nelle Impostazioni (Admin).
-  * Autenticazione Firebase con ruoli dinamici e protezione Admin.
+- v3.9.3 DEVELOPER (AUTO-REDIRECT AUTH & LOCKED SECTIONS GUARD):
+  * Redirect automatico alla modale Login quando si clicca su sezioni protette.
+  * Correzione binding onclick del banner di blocco "Accedi come Admin".
+  * Registrazione autonoma per gli operatori e gestione Admin avanzata.
 ====================================================================
 -->
     <meta charset="UTF-8">
@@ -16,7 +16,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Magari Dev">
-    <title>Magari v3.9.2 DEV</title>
+    <title>Magari v3.9.3 DEV</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -47,7 +47,7 @@
         <div class="drawer" id="drawer">
             <div class="drawer-header">
                 <div class="brand-title" style="font-size: 24px;">MAGARI</div>
-                <div class="brand-subtitle" style="font-size: 8px;">v3.9.2 DEVELOPER</div>
+                <div class="brand-subtitle" style="font-size: 8px;">v3.9.3 DEVELOPER</div>
             </div>
 
             <!-- USER ACCOUNT BANNER NELLO MENU -->
@@ -82,7 +82,7 @@
             <button class="menu-btn" onclick="toggleMenu()">☰</button>
             <div class="header-brand-text">
                 <div class="brand-title">MAGARI</div>
-                <div class="brand-subtitle">v3.9.2 DEVELOPER</div>
+                <div class="brand-subtitle">v3.9.3 DEVELOPER</div>
             </div>
             <div class="page-badge" id="page-title">Ordini</div>
         </div>
@@ -151,7 +151,7 @@
                         <option value="Salumi & Carni">🥩 Salumi & Carni</option>
                         <option value="Alcolici">🍷 Alcolici</option>
                         <option value="Bevande">🥤 Bevande</option>
-                        <option value="Surgelati">❄️️ Surgelati</option>
+                        <option value="Surgelati">❄️ Surgelati</option>
                         <option value="Ortofrutta">🥗 Ortofrutta</option>
                         <option value="Pulizia & Monouso">🧹 Pulizia & Monouso</option>
                         <option value="Altro">📦 Altro</option>
@@ -676,7 +676,7 @@
             return true;
         };
 
-        // NOTIFICHE (SEMPRE ATTIVE DE DEFAULT)
+        // NOTIFICHE (SEMPRE ATTIVE DEFAULT)
         window.showAlert = function(msg) {
             const toast = document.getElementById('toast-notification');
             if (toast) { toast.innerText = msg; toast.classList.add('show'); setTimeout(() => { toast.classList.remove('show'); }, 3500); }
@@ -710,7 +710,7 @@
             const name = document.getElementById('reg-name').value.trim();
             const email = document.getElementById('reg-email').value.trim();
             const pass = document.getElementById('reg-password').value.trim();
-            if (!name || !email || !pass) return window.showAlert("⚠️️ Compila tutti i campi.");
+            if (!name || !email || !pass) return window.showAlert("⚠️ Compila tutti i campi.");
             try {
                 const res = await createUserWithEmailAndPassword(auth, email, pass);
                 const isMasterAdmin = email.toLowerCase() === "nicolas@magaripizza.com";
@@ -913,15 +913,27 @@
         window.toggleMenu = () => { document.getElementById('drawer').classList.toggle('open'); document.getElementById('overlay').classList.toggle('active'); };
         window.closeAll = () => { document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); document.getElementById('overlay').classList.remove('active'); document.getElementById('drawer').classList.remove('open'); };
 
+        // NAVIGATIONE & AUTO-REDIRECT
         window.navigateTo = function(sec) {
+            const adminProtectedSections = ['magazzino', 'fornitori', 'sprechi', 'impostazioni'];
+            const isAdmin = window.currentUserProfile && window.currentUserProfile.role === 'admin';
+
             document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
             document.getElementById(`view-${sec}`).classList.add('active');
+            
             const titles = { 'ordini': 'Ordini', 'scorte': 'Scorte', 'storico': 'Storico', 'magazzino': 'Magazzino', 'fornitori': 'Fornitori', 'sprechi': 'Report Consumi', 'faq': 'Guida & FAQ', 'bugreport': 'Segnala Bug', 'impostazioni': 'Impostazioni' };
             document.getElementById('page-title').innerText = titles[sec] || 'Magari';
+            
             window.closeAll();
             window.scrollTo({ top: 0, behavior: 'instant' });
 
-            if (sec === 'impostazioni') {
+            if (adminProtectedSections.includes(sec) && !isAdmin) {
+                window.showAlert("🔒 Sezione Riservata: Effettua il Login come Admin.");
+                window.openAuthModal();
+                return;
+            }
+
+            if (sec === 'impostazioni' && isAdmin) {
                 window.loadUsersListForAdmin();
             }
         };
@@ -1176,7 +1188,7 @@
                         <div style="font-weight:800; color:var(--primary); font-size:18px; margin-bottom:8px;">🚚 ${supName}</div>
                         <div style="margin:12px 0; background:#fff; padding:10px; border-radius:6px; border:1px solid #e2e8f0;">${itemsListHtml}</div>
                         <a href="${wa}" style="background:var(--whatsapp); color:white; padding:12px; display:block; text-align:center; border-radius:8px; text-decoration:none; font-weight:bold; margin-bottom:6px;">💬 Invia via WhatsApp</a>
-                        <a href="mailto:${sup?.email||''}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}" style="background:#2563eb; color:white; padding:12px; display:block; text-align:center; border-radius:8px; text-decoration:none; font-weight:bold; margin-bottom:6px;">✉️ Invia via Email</a>
+                        <a href="mailto:${sup?.email||''}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}" style="background:#2563eb; color:white; padding:12px; display:block; text-align:center; border-radius:8px; text-decoration:none; font-weight:bold; margin-bottom:6px;">✉️️ Invia via Email</a>
                         <button onclick="confirmSingleSupplierOrder('${sId}', '${op}', '${dateVal}')" class="btn-save" style="width:100%; background:#1b5e20;">✅ Conferma Ordine per ${supName}</button>
                     </div>`;
             }
@@ -1370,7 +1382,7 @@
                         </div>
                         <div class="action-row-btn">
                             <button class="btn-action-edit" onclick="openAddModal(${item.id})">✏️ Modifica</button>
-                            <button class="btn-action-del" onclick="deleteInventoryItem(${item.id})">🗑️ Elimina</button>
+                            <button class="btn-action-del" onclick="deleteInventoryItem(${item.id})">🗑️️ Elimina</button>
                         </div>
                     </div>`;
             });
