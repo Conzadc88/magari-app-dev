@@ -4,11 +4,10 @@
 <!--
 ====================================================================
 [MAGARI APP - HISTORICAL CHANGELOG REGISTRY & ARCHIVE]
-- v3.9.0 DEVELOPER (FIREBASE AUTH, TEAM MANAGEMENT & NOTIFICATIONS):
-  * Gestione Team Staff integrata nelle Impostazioni per gli Admin.
-  * Toggle notifiche pop-up (Toast) personalizzabile.
-  * Autenticazione Firebase con ruoli dinamici (Admin / Operatore).
-  * Modalità Lettura (Guest) con protezione completa sulle modifiche.
+- v3.9.1 DEVELOPER (FULL OPERATOR MANAGEMENT & ACTIVE NOTIFICATIONS):
+  * Gestione Operatori Completa (Crea, Modifica, Reset Password, Elimina).
+  * Notifiche pop-up (Toast) sempre attive di default.
+  * Autenticazione Firebase con ruoli dinamici e protezione Admin.
 ====================================================================
 -->
     <meta charset="UTF-8">
@@ -17,7 +16,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Magari Dev">
-    <title>Magari v3.9.0 DEV</title>
+    <title>Magari v3.9.1 DEV</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -48,7 +47,7 @@
         <div class="drawer" id="drawer">
             <div class="drawer-header">
                 <div class="brand-title" style="font-size: 24px;">MAGARI</div>
-                <div class="brand-subtitle" style="font-size: 8px;">v3.9.0 DEVELOPER</div>
+                <div class="brand-subtitle" style="font-size: 8px;">v3.9.1 DEVELOPER</div>
             </div>
 
             <!-- USER ACCOUNT BANNER NELLO MENU -->
@@ -83,7 +82,7 @@
             <button class="menu-btn" onclick="toggleMenu()">☰</button>
             <div class="header-brand-text">
                 <div class="brand-title">MAGARI</div>
-                <div class="brand-subtitle">v3.9.0 DEVELOPER</div>
+                <div class="brand-subtitle">v3.9.1 DEVELOPER</div>
             </div>
             <div class="page-badge" id="page-title">Ordini</div>
         </div>
@@ -271,33 +270,24 @@
             </div>
         </div>
 
-        <!-- 9. IMPOSTAZIONI (SOLO ADMIN - CON GESTIONE TEAM STAFF & NOTIFICHE) -->
+        <!-- 9. IMPOSTAZIONI (PANNELLO COMPLETO GESTIONE OPERATORI) -->
         <div id="view-impostazioni" class="view-section">
             <div class="page-lock-banner" id="lock-banner-impostazioni">
                 <div class="page-lock-box"><div style="font-size: 32px; margin-bottom: 8px;">🔒</div><h3 style="margin-bottom: 6px;">Sezione Riservata Admin</h3><p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Effettua il Login con account Admin per accedere.</p><button class="btn-save" onclick="openAuthModal()">Accedi come Admin</button></div>
             </div>
             <div class="settings-card">
-                <h3>⚙️ Gestione Avanzata & Notifiche</h3>
+                <h3>⚙️ Gestione Avanzata Impostazioni</h3>
 
-                <!-- 🔔 NOTIFICHE TOGGLE -->
+                <!-- 👥 PANNELLO GESTIONE STAFF -->
                 <div style="background:#f8fafc; padding:12px; border-radius:8px; border:1px solid #cbd5e1; margin-top:8px;">
-                    <h4 style="font-size:14px; color:var(--primary); margin-bottom:8px;">🔔 Preferenze Notifiche App</h4>
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <span style="font-size:13px; font-weight:600; color:#334155;">Mostra avvisi pop-up (Toast)</span>
-                        <label class="switch" style="position:relative; display:inline-block; width:44px; height:24px;">
-                            <input type="checkbox" id="toggle-notifications-input" checked onchange="toggleNotificationPreference(this.checked)" style="opacity:0; width:0; height:0;">
-                            <span class="slider" style="position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background-color:#ccc; transition:.3s; border-radius:24px;"></span>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- 👥 GESTIONE TEAM STAFF (SOLO ADMIN) -->
-                <div style="background:#f8fafc; padding:12px; border-radius:8px; border:1px solid #cbd5e1; margin-top:12px;">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                        <h4 style="font-size:14px; color:var(--primary);">👥 Team Staff & Permessi</h4>
-                        <button onclick="loadUsersListForAdmin()" style="background:none; border:none; color:#2563eb; font-size:12px; font-weight:bold; cursor:pointer;">🔄 Aggiorna Lista</button>
+                        <h4 style="font-size:14px; color:var(--primary);">👥 Gestione Operatori & Team</h4>
+                        <div style="display:flex; gap:6px;">
+                            <button onclick="openUserModal()" class="add-btn" style="padding:4px 8px; font-size:11px;">+ Nuovo Utente</button>
+                            <button onclick="loadUsersListForAdmin()" style="background:none; border:none; color:#2563eb; font-size:12px; font-weight:bold; cursor:pointer;">🔄</button>
+                        </div>
                     </div>
-                    <div id="admin-users-list-container" style="display:flex; flex-direction:column; gap:8px; max-height:220px; overflow-y:auto; background:white; padding:8px; border-radius:6px; border:1px solid #e2e8f0;">
+                    <div id="admin-users-list-container" style="display:flex; flex-direction:column; gap:8px; max-height:280px; overflow-y:auto; background:white; padding:8px; border-radius:6px; border:1px solid #e2e8f0;">
                         <div style="font-size:12px; color:#666; text-align:center;">Caricamento utenti...</div>
                     </div>
                 </div>
@@ -314,28 +304,35 @@
         </div>
     </div>
 
-    <!-- MODALE AUTHENTICATION (LOGIN / REGISTRAZIONE STAFF) -->
-    <div class="modal" id="auth-modal" style="max-width:380px;">
-        <div class="modal-title" id="auth-modal-title" style="color:var(--primary); font-size:18px; text-align:center;">🔑 Accedi a Magari App</div>
-        <div style="display:flex; justify-content:center; gap:10px; margin-bottom:12px;">
-            <button id="tab-btn-login" onclick="switchAuthTab('login')" style="flex:1; padding:6px; border-radius:6px; font-weight:bold; border:1px solid var(--primary); background:var(--primary); color:white;">Login</button>
-            <button id="tab-btn-register" onclick="switchAuthTab('register')" style="flex:1; padding:6px; border-radius:6px; font-weight:bold; border:1px solid #cbd5e1; background:#f1f5f9; color:#334155;">Nuovo Account Staff</button>
+    <!-- MODALE MODIFICA/CREAZIONE UTENTE -->
+    <div class="modal" id="user-edit-modal" style="max-width:380px;">
+        <div class="modal-title" id="user-modal-title" style="color:var(--primary); font-size:18px;">👤 Operatore</div>
+        <input type="hidden" id="edit-user-uid">
+        
+        <div class="form-group"><label>Nome e Cognome</label><input type="text" id="user-field-name" class="form-control" placeholder="es. Marco Rossi"></div>
+        <div class="form-group"><label>Email</label><input type="email" id="user-field-email" class="form-control" placeholder="es. marco@magaripizza.com"></div>
+        <div class="form-group" id="user-field-pass-group"><label>Password (Min. 6 caratteri)</label><input type="password" id="user-field-pass" class="form-control" placeholder="••••••••"></div>
+        <div class="form-group"><label>Ruolo</label>
+            <select id="user-field-role" class="form-control">
+                <option value="operator">👤 Operatore</option>
+                <option value="admin">⭐ Admin</option>
+            </select>
         </div>
 
+        <div class="modal-actions" style="margin-top:16px;">
+            <button class="btn-cancel" onclick="closeUserModal()">Annulla</button>
+            <button class="btn-save" onclick="saveUserFromAdmin()">Salva Utente</button>
+        </div>
+    </div>
+
+    <!-- MODALE AUTHENTICATION (LOGIN) -->
+    <div class="modal" id="auth-modal" style="max-width:380px;">
+        <div class="modal-title" id="auth-modal-title" style="color:var(--primary); font-size:18px; text-align:center;">🔑 Accedi a Magari App</div>
         <div id="auth-form-login">
             <div class="form-group"><label>Email</label><input type="email" id="login-email" class="form-control" placeholder="es. marco@magaripizza.com"></div>
             <div class="form-group"><label>Password</label><input type="password" id="login-password" class="form-control" placeholder="••••••••"></div>
             <button class="btn-save" onclick="handleLoginSubmit()" style="width:100%; padding:10px; margin-top:6px;">Entra</button>
         </div>
-
-        <div id="auth-form-register" style="display:none;">
-            <div class="form-group"><label>Nome e Cognome (Firma Operatore)</label><input type="text" id="reg-name" class="form-control" placeholder="es. Marco Rossi"></div>
-            <div class="form-group"><label>Email</label><input type="email" id="reg-email" class="form-control" placeholder="es. marco@magaripizza.com"></div>
-            <div class="form-group"><label>Password</label><input type="password" id="reg-password" class="form-control" placeholder="Min. 6 caratteri"></div>
-            <input type="hidden" id="reg-role" value="operator">
-            <button class="btn-save" onclick="handleRegisterSubmit()" style="width:100%; padding:10px; background:#1b5e20; margin-top:6px;">Crea Account Staff</button>
-        </div>
-
         <div class="modal-actions" style="margin-top:12px;"><button class="btn-cancel" onclick="closeAuthModal()" style="width:100%;">Annulla</button></div>
     </div>
 
@@ -522,15 +519,6 @@
         .report-table tfoot td { font-weight: bold; background-color: #f1f5f9; color: var(--primary); }
 
         .badge-notification { background: var(--danger); color: white; border-radius: 12px; font-size: 11px; font-weight: 800; padding: 2px 8px; display: inline-block; }
-
-        /* TOGGLE SWITCH NOTIFICHE */
-        .switch input:checked + .slider { background-color: var(--primary); }
-        .switch input:checked + .slider:before { transform: translateX(20px); }
-        .slider:before {
-            position: absolute; content: ""; height: 18px; width: 18px;
-            left: 3px; bottom: 3px; background-color: white;
-            transition: .3s; border-radius: 50%;
-        }
     </style>
 
     <script type="module">
@@ -539,6 +527,7 @@
             getAuth, 
             signInWithEmailAndPassword, 
             createUserWithEmailAndPassword, 
+            sendPasswordResetEmail,
             signOut, 
             onAuthStateChanged 
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -573,7 +562,6 @@
         window.currentUserProfile = null;
         window.activeLocation = null;
         window.activeVerifyHistoryId = null;
-        window.notificationsEnabled = true;
 
         window.defaultSuppliers = [
             { id: 1700000001, name: "Paolo's Tiramisu", phone: "0764211121", email: "paolo@tiramisusthlm.se", color: "#f57c00" },
@@ -594,7 +582,7 @@
         window.orderHistoryData = [];
         window.bugReportsData = [];
 
-        // 1. MONITORAGGIO STATO AUTENTICAZIONE UTENTE (CORRETTO E BLINDATO)
+        // 1. MONITORAGGIO STATO AUTENTICAZIONE
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 const isMasterAdmin = user.email && user.email.toLowerCase() === "nicolas@magaripizza.com";
@@ -618,11 +606,10 @@
                         }
                         window.currentUserProfile.name = data.name || userName;
                     } else {
-                        // Se il profilo su Firestore non esiste ancora, lo crea
                         await setDoc(userDocRef, window.currentUserProfile);
                     }
                 } catch (e) {
-                    console.log("Firestore auth read backup mode:", e);
+                    console.log("Firestore auth backup mode:", e);
                 }
             } else {
                 window.currentUserProfile = null;
@@ -648,7 +635,6 @@
                 if (opStockInput) opStockInput.value = window.currentUserProfile.name;
                 if (opBugInput) opBugInput.value = window.currentUserProfile.name;
 
-                // Sblocco Sezioni Riservate se Admin
                 ['magazzino', 'fornitori', 'sprechi', 'impostazioni'].forEach(sec => {
                     const banner = document.getElementById(`lock-banner-${sec}`);
                     if (banner) banner.style.display = isAdmin ? 'none' : 'flex';
@@ -658,10 +644,9 @@
                 if (authBtn) { authBtn.innerText = '🔑 Accedi / Registrati'; authBtn.style.background = '#2563eb'; authBtn.onclick = window.openAuthModal; }
                 
                 if (opOrderInput) opOrderInput.value = '👁️ Nessun Operatore (Accedi)';
-                if (opStockInput) opStockInput.value = '👁️ Nessun Operatore (Accedi)';
+                if (opStockInput) opStockInput.value = '👁️️ Nessun Operatore (Accedi)';
                 if (opBugInput) opBugInput.value = '👁️ Nessun Operatore (Accedi)';
 
-                // Blocca Sezioni Riservate se Guest
                 ['magazzino', 'fornitori', 'sprechi', 'impostazioni'].forEach(sec => {
                     const banner = document.getElementById(`lock-banner-${sec}`);
                     if (banner) banner.style.display = 'flex';
@@ -678,19 +663,15 @@
             return true;
         };
 
-        // 2. LOGICA LOGIN / REGISTRAZIONE STAFF
+        // NOTIFICHE (SEMPRE ATTIVE DE DEFAULT)
+        window.showAlert = function(msg) {
+            const toast = document.getElementById('toast-notification');
+            if (toast) { toast.innerText = msg; toast.classList.add('show'); setTimeout(() => { toast.classList.remove('show'); }, 3500); }
+        };
+
+        // 2. LOGIN & MODALE AUTH
         window.openAuthModal = () => { document.getElementById('auth-modal').classList.add('active'); document.getElementById('overlay').classList.add('active'); };
         window.closeAuthModal = () => { document.getElementById('auth-modal').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); };
-
-        window.switchAuthTab = function(tab) {
-            const isLogin = tab === 'login';
-            document.getElementById('auth-form-login').style.display = isLogin ? 'block' : 'none';
-            document.getElementById('auth-form-register').style.display = isLogin ? 'none' : 'block';
-            document.getElementById('tab-btn-login').style.background = isLogin ? 'var(--primary)' : '#f1f5f9';
-            document.getElementById('tab-btn-login').style.color = isLogin ? 'white' : '#334155';
-            document.getElementById('tab-btn-register').style.background = isLogin ? '#f1f5f9' : 'var(--primary)';
-            document.getElementById('tab-btn-register').style.color = isLogin ? '#334155' : 'white';
-        };
 
         window.handleLoginSubmit = async function() {
             const email = document.getElementById('login-email').value.trim();
@@ -702,27 +683,12 @@
             } catch(e) { window.showAlert(`❌ Errore Login: ${e.message}`); }
         };
 
-        window.handleRegisterSubmit = async function() {
-            const name = document.getElementById('reg-name').value.trim();
-            const email = document.getElementById('reg-email').value.trim();
-            const pass = document.getElementById('reg-password').value.trim();
-            const role = document.getElementById('reg-role').value;
-            if (!name || !email || !pass) return window.showAlert("⚠️ Compila tutti i campi.");
-            try {
-                const res = await createUserWithEmailAndPassword(auth, email, pass);
-                const isMasterAdmin = email.toLowerCase() === "nicolas@magaripizza.com";
-                const newUser = { uid: res.user.uid, email, name, role: isMasterAdmin ? 'admin' : role };
-                await setDoc(doc(db, "users", res.user.uid), newUser);
-                closeAuthModal(); window.showAlert("✅ Account Staff registrato con successo!");
-            } catch(e) { window.showAlert(`❌ Errore Registrazione: ${e.message}`); }
-        };
-
         window.handleLogoutSubmit = async function() {
             await signOut(auth);
             window.showAlert("🚪 Logout effettuato.");
         };
 
-        // 👥 GESTIONE STAFF E PERMESSI (ADMIN)
+        // 👥 PANNELLO GESTIONE COMPLETA OPERATORI (SOLO ADMIN)
         window.loadUsersListForAdmin = async function() {
             const container = document.getElementById('admin-users-list-container');
             if (!container) return;
@@ -747,18 +713,22 @@
                     const isMaster = uData.email && uData.email.toLowerCase() === "nicolas@magaripizza.com";
 
                     container.innerHTML += `
-                        <div style="display:flex; justify-content:space-between; align-items:center; padding:8px; border-bottom:1px solid #f1f5f9; font-size:12px;">
-                            <div>
-                                <div style="font-weight:bold; color:var(--primary);">${uData.name || 'Senza Nome'}</div>
-                                <div style="font-size:10px; color:#666;">${uData.email}</div>
+                        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; padding:8px; display:flex; flex-direction:column; gap:6px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <div>
+                                    <div style="font-weight:bold; color:var(--primary); font-size:13px;">${uData.name || 'Senza Nome'}</div>
+                                    <div style="font-size:11px; color:#666;">${uData.email}</div>
+                                </div>
+                                <span style="font-weight:bold; font-size:11px; padding:2px 6px; border-radius:4px; background:${isAdmin ? '#e8f5e9' : '#e0f2fe'}; color:${isAdmin ? '#2e7d32' : '#0288d1'};">
+                                    ${isAdmin ? '⭐ Admin' : '👤 Operatore'}
+                                </span>
                             </div>
-                            <div style="display:flex; align-items:center; gap:6px;">
-                                <span style="font-weight:bold; font-size:11px; color:${isAdmin ? '#2e7d32' : '#2563eb'};">${isAdmin ? '⭐ Admin' : '👤 Operatore'}</span>
+                            <div style="display:flex; justify-content:flex-end; gap:6px; margin-top:2px; border-top:1px dashed #e2e8f0; padding-top:6px;">
+                                <button onclick="sendUserPasswordReset('${uData.email}')" style="background:#fff3cd; color:#856404; border:1px solid #ffeeba; padding:3px 6px; border-radius:4px; font-size:10px; font-weight:bold; cursor:pointer;">🔑 Reset Pass</button>
                                 ${!isMaster ? `
-                                    <button onclick="toggleUserRole('${uUid}', '${uData.role}')" style="background:#e2e8f0; border:none; padding:4px 8px; border-radius:4px; font-size:10px; font-weight:bold; cursor:pointer;">
-                                        Cambia in ${isAdmin ? 'Operatore' : 'Admin'}
-                                    </button>
-                                ` : '<span style="font-size:10px; color:#999; font-style:italic;">Master</span>'}
+                                    <button onclick="openUserModal('${uUid}')" style="background:#e3f2fd; color:#0d47a1; border:1px solid #bbdefb; padding:3px 6px; border-radius:4px; font-size:10px; font-weight:bold; cursor:pointer;">✏️ Modifica</button>
+                                    <button onclick="deleteUserFromAdmin('${uUid}', '${uData.name}')" style="background:#ffebee; color:#c62828; border:1px solid #ffcdd2; padding:3px 6px; border-radius:4px; font-size:10px; font-weight:bold; cursor:pointer;">🗑 Elimina</button>
+                                ` : '<span style="font-size:10px; color:#999; font-style:italic; padding-top:2px;">Account Master</span>'}
                             </div>
                         </div>`;
                 });
@@ -767,26 +737,90 @@
             }
         };
 
-        window.toggleUserRole = async function(uid, currentRole) {
+        window.openUserModal = async function(uid = null) {
             if (!window.checkAuthGuard()) return;
-            const newRole = currentRole === 'admin' ? 'operator' : 'admin';
-            if (confirm(`Cambiare il ruolo di questo utente in ${newRole.toUpperCase()}?`)) {
-                await updateDoc(doc(db, "users", uid), { role: newRole });
-                window.showAlert("✅ Ruolo aggiornato con successo!");
-                window.loadUsersListForAdmin();
+            document.getElementById('edit-user-uid').value = '';
+            document.getElementById('user-field-name').value = '';
+            document.getElementById('user-field-email').value = '';
+            document.getElementById('user-field-pass').value = '';
+            document.getElementById('user-field-role').value = 'operator';
+
+            const passGroup = document.getElementById('user-field-pass-group');
+
+            if (uid) {
+                document.getElementById('user-modal-title').innerText = '✏️ Modifica Operatore';
+                passGroup.style.display = 'none'; // La password si gestisce tramite reset
+                const userDoc = await getDoc(doc(db, "users", uid));
+                if (userDoc.exists()) {
+                    const data = userDoc.data();
+                    document.getElementById('edit-user-uid').value = uid;
+                    document.getElementById('user-field-name').value = data.name || '';
+                    document.getElementById('user-field-email').value = data.email || '';
+                    document.getElementById('user-field-role').value = data.role || 'operator';
+                }
+            } else {
+                document.getElementById('user-modal-title').innerText = '➕ Nuovo Operatore';
+                passGroup.style.display = 'block';
+            }
+
+            document.getElementById('user-edit-modal').classList.add('active');
+            document.getElementById('overlay').classList.add('active');
+        };
+
+        window.closeUserModal = () => {
+            document.getElementById('user-edit-modal').classList.remove('active');
+            document.getElementById('overlay').classList.remove('active');
+        };
+
+        window.saveUserFromAdmin = async function() {
+            if (!window.checkAuthGuard()) return;
+            const uid = document.getElementById('edit-user-uid').value;
+            const name = document.getElementById('user-field-name').value.trim();
+            const email = document.getElementById('user-field-email').value.trim();
+            const role = document.getElementById('user-field-role').value;
+            const pass = document.getElementById('user-field-pass').value.trim();
+
+            if (!name || !email) return window.showAlert("⚠️ Inserisci Nome ed Email.");
+
+            if (uid) {
+                // MODIFICA UTENTE ESISTENTE
+                await updateDoc(doc(db, "users", uid), { name, email, role });
+                window.showAlert("✅ Operatore aggiornato!");
+            } else {
+                // CREAZIONE NUOVO UTENTE
+                if (!pass || pass.length < 6) return window.showAlert("⚠️ Password di almeno 6 caratteri.");
+                try {
+                    const res = await createUserWithEmailAndPassword(auth, email, pass);
+                    await setDoc(doc(db, "users", res.user.uid), { uid: res.user.uid, name, email, role });
+                    window.showAlert("🎉 Nuovo operatore creato con successo!");
+                } catch(e) {
+                    return window.showAlert(`❌ Errore Creazione: ${e.message}`);
+                }
+            }
+
+            closeUserModal();
+            window.loadUsersListForAdmin();
+        };
+
+        window.sendUserPasswordReset = async function(email) {
+            if (!window.checkAuthGuard()) return;
+            if (confirm(`Inviare l'email di ripristino password a ${email}?`)) {
+                try {
+                    await sendPasswordResetEmail(auth, email);
+                    window.showAlert("📧 Email di reset inviata all'operatore!");
+                } catch(e) {
+                    window.showAlert(`❌ Errore invio reset: ${e.message}`);
+                }
             }
         };
 
-        // 🔔 NOTIFICHE PREFERENZE
-        window.toggleNotificationPreference = function(isEnabled) {
-            window.notificationsEnabled = isEnabled;
-            if (isEnabled) window.showAlert("🔔 Notifiche pop-up abilitate.");
-        };
-
-        window.showAlert = function(msg) {
-            if (!window.notificationsEnabled) return;
-            const toast = document.getElementById('toast-notification');
-            if (toast) { toast.innerText = msg; toast.classList.add('show'); setTimeout(() => { toast.classList.remove('show'); }, 3500); }
+        window.deleteUserFromAdmin = async function(uid, name) {
+            if (!window.checkAuthGuard()) return;
+            if (confirm(`Sei sicuro di voler eliminare l'operatore ${name}?`)) {
+                await deleteDoc(doc(db, "users", uid));
+                window.showAlert("🗑️ Operatore eliminato dal database.");
+                window.loadUsersListForAdmin();
+            }
         };
 
         // 3. LISTENERS FIRESTORE IN TEMPO REALE
@@ -951,7 +985,7 @@
             }
         };
 
-        // 1. SCORTE
+        // SCORTE
         window.updateStock = async function(id, d) { 
             if (!window.checkAuthGuard()) return;
             const opName = window.currentUserProfile.name;
@@ -1009,7 +1043,7 @@
             });
         };
 
-        // 2. ORDINI
+        // ORDINI
         window.filterOrderItems = function() {
             const q = (document.getElementById('search-order-input')?.value || '').toLowerCase();
             const cat = document.getElementById('filter-order-category')?.value || '';
@@ -1163,7 +1197,7 @@
 
         window.closeSummaryModal = () => { document.getElementById('summary-modal').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); };
 
-        // 3. STORICO E VERIFICA
+        // STORICO E VERIFICA
         window.openVerifyDeliveryModal = function(historyId) {
             if (!window.checkAuthGuard()) return;
             window.activeVerifyHistoryId = historyId;
@@ -1251,7 +1285,7 @@
                             <span>⚠️ <b>Da Controllare</b></span><button class="btn-save" style="padding:6px 10px; font-size:11px; background:#c62828;" onclick="openVerifyDeliveryModal(${h.id})">✍️ Verifica & Storna</button>
                         </div>`;
                 } else if (h.verificationDetails && !h.verificationDetails.includes("100%")) {
-                    checkStatusHtml = `<div style="background:#fff8e1; border:1px solid #ffe0b2; padding:8px; border-radius:6px; font-size:12px; color:#b45309; margin-top:8px;">⚠️️ <b>Discrepanze:</b> ${h.verificationDetails}</div>`;
+                    checkStatusHtml = `<div style="background:#fff8e1; border:1px solid #ffe0b2; padding:8px; border-radius:6px; font-size:12px; color:#b45309; margin-top:8px;">⚠️ <b>Discrepanze:</b> ${h.verificationDetails}</div>`;
                 } else {
                     checkStatusHtml = `<div style="background:#e8f5e9; border:1px solid #c8e6c9; padding:8px; border-radius:6px; font-size:12px; color:#2e7d32; margin-top:8px;">✅ <b>Completo</b> (${h.checkedBy} - ${h.checkedAt})</div>`;
                 }
@@ -1267,7 +1301,7 @@
             });
         };
 
-        // 4. MAGAZZINO ED EDITOR
+        // MAGAZZINO ED EDITOR
         window.toggleFavorite = async function(itemId) {
             if (!window.checkAuthGuard()) return;
             const item = window.inventoryData.find(x => x.id === itemId);
@@ -1364,7 +1398,7 @@
         };
         window.deleteInventoryItem = async function(id) { if (window.checkAuthGuard() && confirm("Eliminare prodotto?")) await deleteDoc(doc(db, "inventory", String(id))); };
 
-        // 5. FORNITORI
+        // FORNITORI
         window.filterSuppliers = function() {
             const q = (document.getElementById('search-supplier-input')?.value || '').toLowerCase();
             const c = document.getElementById('suppliers-list'); c.innerHTML = '';
@@ -1383,7 +1417,7 @@
             closeAddSupplierModal(); window.showAlert("✅ Fornitore salvato!");
         };
 
-        // 6. EXPORT EXCEL
+        // EXPORT EXCEL
         window.promptExportExcelModal = () => { document.getElementById('export-excel-modal').classList.add('active'); document.getElementById('overlay').classList.add('active'); };
         window.closeExportExcelModal = () => { document.getElementById('export-excel-modal').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); };
         
@@ -1442,7 +1476,7 @@
             closeExportExcelModal(); window.showAlert("📊 File Excel scaricato con successo!");
         };
 
-        // 7. BUG REPORT & AZIONI RESET
+        // BUG REPORT & AZIONI RESET
         window.submitBugReport = async function() {
             if (!window.checkAuthGuard()) return;
             const op = window.currentUserProfile.name;
