@@ -4,14 +4,15 @@
 <!--
 ====================================================================
 [MAGARI APP - HISTORICAL CHANGELOG REGISTRY & ARCHIVE]
-- v3.9.9 DEVELOPER (OFFICIAL BRAND LOGO INTEGRATION):
-  * Collegato logo quadrato per PWA e Home Icon (logo-square.png).
-  * Inserito logo rettangolare brand-green nell'Header e Drawer Menu.
+- v3.9.9 DEVELOPER (OFFICIAL BRAND LOGO & ENLARGED HEADER INTEGRATION):
+  * Header ingrandito a 88px con logo principale prominente (height: 65px).
+  * Colore primario allineato perfettamente allo sfondo del logo (#003322).
+  * Supporto PWA completato (manifest.json e logo-square.png per schermata Home).
 ====================================================================
 -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#043927">
+    <meta name="theme-color" content="#003322">
     
     <!-- PWA Meta Tags -->
     <meta name="mobile-web-app-capable" content="yes">
@@ -42,7 +43,7 @@
             <h3 style="margin-bottom: 6px; color: var(--primary);">Seleziona la Sede</h3>
             <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 14px;">Seleziona il locale in cui ti trovi per caricare le giacenze e il carrello corretti.</p>
             <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;">
-                <button class="btn-save" style="padding: 12px; font-size: 14px; background-color: #043927;" onclick="setActiveLocation('Vasastan (Sankt Eriksgatan 110)')">📍 Vasastan<br><span style="font-size:10px; opacity:0.8;">Sankt Eriksgatan 110</span></button>
+                <button class="btn-save" style="padding: 12px; font-size: 14px; background-color: #003322;" onclick="setActiveLocation('Vasastan (Sankt Eriksgatan 110)')">📍 Vasastan<br><span style="font-size:10px; opacity:0.8;">Sankt Eriksgatan 110</span></button>
                 <button class="btn-save" style="padding: 12px; font-size: 14px; background-color: #1b5e20;" onclick="setActiveLocation('Östermalm (Styrmansgatan 52)')">📍 Östermalm<br><span style="font-size:10px; opacity:0.8;">Styrmansgatan 52</span></button>
             </div>
         </div>
@@ -54,9 +55,8 @@
         <!-- DRAWER MENU -->
         <div class="drawer" id="drawer">
             <div class="drawer-header" style="text-align: center;">
-                <img src="logo-header.png" alt="Magari Logo" style="max-width: 160px; height: auto; margin-bottom: 4px;" onerror="this.style.display='none'; document.getElementById('drawer-text-fallback').style.display='block';">
+                <img src="logo-header.png" alt="Magari Logo" style="max-width: 170px; height: auto; margin-bottom: 4px;" onerror="this.style.display='none'; document.getElementById('drawer-text-fallback').style.display='block';">
                 <div id="drawer-text-fallback" class="brand-title" style="display:none; font-size: 24px;">MAGARI</div>
-                <div class="brand-subtitle" style="font-size: 8px;">v3.9.9 DEVELOPER</div>
             </div>
 
             <!-- USER ACCOUNT BANNER NELLO MENU -->
@@ -90,9 +90,8 @@
         <div class="header">
             <button class="menu-btn" onclick="toggleMenu()">☰</button>
             <div class="header-brand-text">
-                <img src="logo-header.png" alt="Magari" style="height: 28px; width: auto;" onerror="this.style.display='none'; document.getElementById('header-text-fallback').style.display='block';">
+                <img src="logo-header.png" alt="Magari" onerror="this.style.display='none'; document.getElementById('header-text-fallback').style.display='block';">
                 <div id="header-text-fallback" class="brand-title" style="display:none;">MAGARI</div>
-                <div class="brand-subtitle">v3.9.9 DEVELOPER</div>
             </div>
             <div class="page-badge" id="page-title">Ordini</div>
         </div>
@@ -409,7 +408,7 @@
 
     <style>
         :root {
-            --primary: #043927; --bg: #f4f6f8; --card-bg: #ffffff; --text: #222222;
+            --primary: #003322; --bg: #f4f6f8; --card-bg: #ffffff; --text: #222222;
             --text-secondary: #555555; --border: #e0e0e0; --warning: #ff9800; --danger: #e53935; --whatsapp: #25d366;
             --excel-green: #107c41; --star-gold: #ffb300;
         }
@@ -420,22 +419,36 @@
 
         .app-container { width: 100%; max-width: 430px; min-height: 100vh; background-color: var(--bg); position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.1); display: flex; flex-direction: column; transition: max-width 0.3s ease; overflow-x: hidden; }
         
-       .header { 
-    background-color: var(--primary); 
-    color: white; 
-    padding: 14px 16px; /* Aumentato il padding verticale per dare più respiro */
-    display: flex; 
-    align-items: center; 
-    justify-content: space-between; 
-    position: sticky; 
-    top: 0; 
-    z-index: 100; 
-    box-shadow: 0 2px 4px rgba(0,0,0,0.15); 
-}
+        .header { 
+            background-color: var(--primary); 
+            color: white; 
+            padding: 10px 16px; 
+            min-height: 88px;
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            position: sticky; 
+            top: 0; 
+            z-index: 100; 
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2); 
+        }
         .menu-btn { background: none; border: none; color: white; font-size: 24px; cursor: pointer; }
-        .header-brand-text { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        
+        .header-brand-text { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            text-align: center; 
+        }
+        .header-brand-text img {
+            height: 65px !important;
+            width: auto;
+            object-fit: contain;
+            display: block;
+        }
+
         .brand-title { font-family: 'Cinzel', 'Times New Roman', serif; font-size: 20px; font-weight: 700; color: #ffffff; letter-spacing: 2px; line-height: 1; text-transform: uppercase; }
-        .brand-subtitle { font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 8px; font-weight: 700; color: #c8e6c9; letter-spacing: 1px; margin-top: 3px; text-transform: uppercase; background: rgba(0,0,0,0.2); padding: 2px 6px; border-radius: 4px; }
         .page-badge { font-size: 11px; background: rgba(0, 0, 0, 0.25); color: #fff; padding: 4px 8px; border-radius: 6px; font-weight: 600; }
 
         .top-bar-container { padding: 12px 16px; background-color: rgba(255, 255, 255, 0.92); backdrop-filter: blur(5px); border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; width: 100%; }
@@ -1261,7 +1274,7 @@
                         <button onclick="confirmSingleSupplierOrder('${sId}', '${op}', '${dateVal}')" class="btn-save" style="width:100%; background:#1b5e20;">✅ Conferma Ordine per ${supName}</button>
                     </div>`;
             }
-            c.innerHTML += `<button onclick="confirmAndSaveOrderToHistory('${op}')" class="btn-save" style="width:100%; padding:14px; background:#043927;">✅ Conferma TUTTI gli Ordini</button>`;
+            c.innerHTML += `<button onclick="confirmAndSaveOrderToHistory('${op}')" class="btn-save" style="width:100%; padding:14px; background:#003322;">✅ Conferma TUTTI gli Ordini</button>`;
         };
 
         window.confirmSingleSupplierOrder = async function(sId, operator, dateVal) {
