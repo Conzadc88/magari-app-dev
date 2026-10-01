@@ -4,10 +4,10 @@
 <!--
 ====================================================================
 [MAGARI APP - HISTORICAL CHANGELOG REGISTRY & ARCHIVE]
-- v3.9.10 DEVELOPER (EXPORT EXCEL FOR OPERATORS & EXPANDED BRAND HEADER):
-  * Abilitato Export Excel per tutti gli utenti autenticati (Admin + Operatori). Bloccato solo in Guest Mode.
-  * Ingrandito e ridimensionato l'Header visivo (padding 14px, logo 34px) per la versione v3.9.10.
-  * Integrato manifest.json e apple-touch-icon per l'installazione PWA con logo ufficiale.
+- v3.9.10 DEV (DEDICATED FIREBASE DEV ENVIRONMENT):
+  * Collegato progetto Firebase isolato (magari-app-dev).
+  * Ambiente di test completamente separato dal database di produzione.
+  * Mantenute tutte le funzionalita PWA, branding logo ed Export Excel.
 ====================================================================
 -->
     <meta charset="UTF-8">
@@ -18,7 +18,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Magari App">
+    <meta name="apple-mobile-web-app-title" content="Magari App DEV">
     
     <!-- Icone Schermata Home & Favicon -->
     <link rel="manifest" href="manifest.json">
@@ -40,8 +40,8 @@
     <div class="page-lock-banner" id="location-guard-banner" style="display: flex; position: fixed; z-index: 3000; padding-top: 100px;">
         <div class="page-lock-box" style="max-width: 340px;">
             <div style="font-size: 32px; margin-bottom: 8px;">📍</div>
-            <h3 style="margin-bottom: 6px; color: var(--primary);">Seleziona la Sede</h3>
-            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 14px;">Seleziona il locale in cui ti trovi per caricare le giacenze e il carrello corretti.</p>
+            <h3 style="margin-bottom: 6px; color: var(--primary);">Seleziona la Sede (DEV)</h3>
+            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 14px;">Seleziona il locale per caricare le giacenze e il carrello corretti nell'ambiente di test.</p>
             <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;">
                 <button class="btn-save" style="padding: 12px; font-size: 14px; background-color: #043927;" onclick="setActiveLocation('Vasastan (Sankt Eriksgatan 110)')">📍 Vasastan<br><span style="font-size:10px; opacity:0.8;">Sankt Eriksgatan 110</span></button>
                 <button class="btn-save" style="padding: 12px; font-size: 14px; background-color: #1b5e20;" onclick="setActiveLocation('Östermalm (Styrmansgatan 52)')">📍 Östermalm<br><span style="font-size:10px; opacity:0.8;">Styrmansgatan 52</span></button>
@@ -287,7 +287,7 @@
                 <div class="page-lock-box"><div style="font-size: 32px; margin-bottom: 8px;">🔒</div><h3 style="margin-bottom: 6px;">Sezione Riservata Admin</h3><p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Effettua il Login con account Admin per accedere.</p><button class="btn-save" onclick="openAuthModal()">Accedi come Admin</button></div>
             </div>
             <div class="settings-card">
-                <h3>⚙️ Gestione Avanzata Impostazioni</h3>
+                <h3>⚙️ Gestione Avanzata Impostazioni (DEV)</h3>
 
                 <!-- 👥 PANNELLO GESTIONE STAFF -->
                 <div style="background:#f8fafc; padding:12px; border-radius:8px; border:1px solid #cbd5e1; margin-top:8px;">
@@ -310,7 +310,7 @@
                 
                 <hr style="border:0; border-top:1px solid #eee; margin: 12px 0;">
                 <button class="reset-btn" onclick="executeResetSuppliersGuard()">🔒 🔄 Ripristina Fornitori Default</button>
-                <button class="btn-danger" onclick="executeResetAllGuard()" style="width:100%; margin-top: 6px;">🔒 ⚠️ RESET TOTALE DATABASE</button>
+                <button class="btn-danger" onclick="executeResetAllGuard()" style="width:100%; margin-top: 6px;">🔒 ⚠️ RESET TOTALE DATABASE TEST</button>
             </div>
         </div>
     </div>
@@ -338,21 +338,21 @@
 
     <!-- MODALE AUTHENTICATION (LOGIN + REGISTRAZIONE AUTONOMA OPERATORI) -->
     <div class="modal" id="auth-modal">
-        <div class="modal-title" id="auth-modal-title" style="color:var(--primary); font-size:18px; text-align:center;">🔑 Accedi a Magari App</div>
+        <div class="modal-title" id="auth-modal-title" style="color:var(--primary); font-size:18px; text-align:center;">🔑 Accedi a Magari App DEV</div>
         <div style="display:flex; justify-content:center; gap:10px; margin-bottom:12px;">
             <button id="tab-btn-login" onclick="switchAuthTab('login')" style="flex:1; padding:6px; border-radius:6px; font-weight:bold; border:1px solid var(--primary); background:var(--primary); color:white;">Login</button>
             <button id="tab-btn-register" onclick="switchAuthTab('register')" style="flex:1; padding:6px; border-radius:6px; font-weight:bold; border:1px solid #cbd5e1; background:#f1f5f9; color:#334155;">Nuovo Account Staff</button>
         </div>
 
         <div id="auth-form-login">
-            <div class="form-group"><label>Email</label><input type="email" id="login-email" class="form-control" placeholder="es. marco@magaripizza.com"></div>
+            <div class="form-group"><label>Email</label><input type="email" id="login-email" class="form-control" placeholder="es. dev@magaripizza.com"></div>
             <div class="form-group"><label>Password</label><input type="password" id="login-password" class="form-control" placeholder="••••••••"></div>
             <button class="btn-save" onclick="handleLoginSubmit()" style="width:100%; padding:10px; margin-top:6px;">Entra</button>
         </div>
 
         <div id="auth-form-register" style="display:none;">
             <div class="form-group"><label>Nome e Cognome (Firma Operatore)</label><input type="text" id="reg-name" class="form-control" placeholder="es. Marco Rossi"></div>
-            <div class="form-group"><label>Email</label><input type="email" id="reg-email" class="form-control" placeholder="es. marco@magaripizza.com"></div>
+            <div class="form-group"><label>Email</label><input type="email" id="reg-email" class="form-control" placeholder="es. dev@magaripizza.com"></div>
             <div class="form-group"><label>Password</label><input type="password" id="reg-password" class="form-control" placeholder="Min. 6 caratteri"></div>
             <button class="btn-save" onclick="handleRegisterSubmit()" style="width:100%; padding:10px; background:#1b5e20; margin-top:6px;">Crea Account Staff</button>
         </div>
@@ -573,13 +573,14 @@
             writeBatch 
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+        // CREDENZIALI FIREBASE AMBIENTE DEV (ISOLATO)
         const firebaseConfig = {
-            apiKey: "AIzaSyAYoG8kDRoEE6AGhAStCvfwCwPZSHSl8j4",
-            authDomain: "magari-b7f93.firebaseapp.com",
-            projectId: "magari-b7f93",
-            storageBucket: "magari-b7f93.firebasestorage.app",
-            messagingSenderId: "135472598053",
-            appId: "1:135472598053:web:a3fd59a851fe99f51a03cc"
+            apiKey: "AIzaSyBs_icyYdlt3RRd0VIUTAoCqXuNiOARuvI",
+            authDomain: "magari-app-dev.firebaseapp.com",
+            projectId: "magari-app-dev",
+            storageBucket: "magari-app-dev.firebasestorage.app",
+            messagingSenderId: "653540923043",
+            appId: "1:653540923043:web:387815ffd7b79385ff1116"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -846,13 +847,13 @@
             const role = document.getElementById('user-field-role').value;
             const pass = document.getElementById('user-field-pass').value.trim();
 
-            if (!name || !email) return window.showAlert("⚠️ Inserisci Nome ed Email.");
+            if (!name || !email) return window.showAlert("⚠️️ Inserisci Nome ed Email.");
 
             if (uid) {
                 await updateDoc(doc(db, "users", uid), { name, email, role });
                 window.showAlert("✅ Operatore aggiornato!");
             } else {
-                if (!pass || pass.length < 6) return window.showAlert("⚠️ Password di almeno 6 caratteri.");
+                if (!pass || pass.length < 6) return window.showAlert("⚠️️ Password di almeno 6 caratteri.");
                 try {
                     const res = await createUserWithEmailAndPassword(auth, email, pass);
                     await setDoc(doc(db, "users", res.user.uid), { uid: res.user.uid, name, email, role });
@@ -882,7 +883,7 @@
             if (!window.checkAuthGuard()) return;
             if (confirm(`Sei sicuro di voler eliminare l'operatore ${name}?`)) {
                 await deleteDoc(doc(db, "users", uid));
-                window.showAlert("🗑️️ Operatore eliminato dal database.");
+                window.showAlert("🗑 Operatore eliminato dal database.");
                 window.loadUsersListForAdmin();
             }
         };
@@ -1032,7 +1033,7 @@
             if (badge) { badge.innerText = uncheckedCount; badge.style.display = uncheckedCount > 0 ? 'inline-block' : 'none'; }
         };
 
-        // CORRETTO RENDERING SEGNALAZIONI BUG & BADGES
+        // RENDERING SEGNALAZIONI BUG & BADGES
         window.updateBugBadgesAndAdminList = function() {
             const isResolvedCheck = (b) => (b.resolved === true || b.resolved === "true" || b.status === "resolved");
             const unresolvedCount = Array.isArray(window.bugReportsData) ? window.bugReportsData.filter(b => !isResolvedCheck(b)).length : 0;
@@ -1391,7 +1392,7 @@
                             <span>⚠️ <b>Da Controllare</b></span><button class="btn-save" style="padding:6px 10px; font-size:11px; background:#c62828;" onclick="openVerifyDeliveryModal(${h.id})">✍️ Verifica & Storna</button>
                         </div>`;
                 } else if (h.verificationDetails && !h.verificationDetails.includes("100%")) {
-                    checkStatusHtml = `<div style="background:#fff8e1; border:1px solid #ffe0b2; padding:8px; border-radius:6px; font-size:12px; color:#b45309; margin-top:8px;">⚠️️ <b>Discrepanze:</b> ${h.verificationDetails}</div>`;
+                    checkStatusHtml = `<div style="background:#fff8e1; border:1px solid #ffe0b2; padding:8px; border-radius:6px; font-size:12px; color:#b45309; margin-top:8px;">⚠️ <b>Discrepanze:</b> ${h.verificationDetails}</div>`;
                 } else {
                     checkStatusHtml = `<div style="background:#e8f5e9; border:1px solid #c8e6c9; padding:8px; border-radius:6px; font-size:12px; color:#2e7d32; margin-top:8px;">✅ <b>Completo</b> (${h.checkedBy} - ${h.checkedAt})</div>`;
                 }
@@ -1524,7 +1525,7 @@
             closeAddSupplierModal(); window.showAlert("✅ Fornitore salvato!");
         };
 
-        // EXPORT EXCEL (ACCESSIBILE A TUTTI GLI UTENTI LOGGATI)
+        // EXPORT EXCEL
         window.promptExportExcelModal = () => { 
             if (!window.checkAuthGuard()) return; 
             window.closeAll(); 
@@ -1584,7 +1585,7 @@
             const cleanLoc = locName.split(' ')[0];
             const dateStr = new Date().toISOString().split('T')[0];
             
-            XLSX.writeFile(wb, `Inventory_Magari_${cleanLoc}_${type}_${dateStr}.xlsx`);
+            XLSX.writeFile(wb, `Inventory_Magari_DEV_${cleanLoc}_${type}_${dateStr}.xlsx`);
             closeExportExcelModal(); window.showAlert("📊 File Excel scaricato con successo!");
         };
 
@@ -1635,7 +1636,7 @@
         window.executeResetStockGuard = async function() {
             if (!window.checkAuthGuard()) return;
             const key = window.getLocationKey();
-            if (confirm(`Azzerare giacenze per la sede attiva (${key})?`)) {
+            if (confirm(`Azzerare giacenze per la sede attiva (${key}) nel database DEV?`)) {
                 const batch = writeBatch(db);
                 window.inventoryData.forEach(i => {
                     const ref = doc(db, "inventory", String(i.id));
@@ -1648,7 +1649,7 @@
 
         window.executeClearHistoryGuard = async function() {
             if (!window.checkAuthGuard()) return;
-            if (confirm("Svuotare lo storico ordini?")) {
+            if (confirm("Svuotare lo storico ordini nel database DEV?")) {
                 const batch = writeBatch(db);
                 window.orderHistoryData.forEach(h => batch.delete(doc(db, "history", String(h.id))));
                 await batch.commit(); window.showAlert("🗑️ Storico svuotato!");
@@ -1657,7 +1658,7 @@
 
         window.executeResetSuppliersGuard = async function() {
             if (!window.checkAuthGuard()) return;
-            if (confirm("Ripristinare i fornitori di default?")) {
+            if (confirm("Ripristinare i fornitori di default nel database DEV?")) {
                 const batch = writeBatch(db);
                 window.suppliersData.forEach(s => batch.delete(doc(db, "suppliers", String(s.id))));
                 window.defaultSuppliers.forEach(s => batch.set(doc(db, "suppliers", String(s.id)), s));
@@ -1667,7 +1668,7 @@
 
         window.executeResetAllGuard = async function() {
             if (!window.checkAuthGuard()) return;
-            if (confirm("RESET TOTALE DATABASE PRODUZIONE? Questa azione elimina tutti i dati.")) {
+            if (confirm("RESET TOTALE DATABASE DEV? Questa azione elimina tutti i dati di test.")) {
                 const batch = writeBatch(db);
                 window.inventoryData.forEach(i => batch.delete(doc(db, "inventory", String(i.id))));
                 window.orderHistoryData.forEach(h => batch.delete(doc(db, "history", String(h.id))));
