@@ -4,10 +4,10 @@
 <!--
 ====================================================================
 [MAGARI APP - HISTORICAL CHANGELOG REGISTRY & ARCHIVE]
-- v3.9.11 DEV:
-  * Aggiunta firma sviluppatore (Nicolas Cappiello) in Drawer e Impostazioni.
-  * Aggiunta visualizzazione timestamp e operatore ultimo aggiornamento giacenza nelle schede della sezione Ordini.
-  * Mantenuto ambiente isolato Firebase (magari-app-dev).
+- v3.9.11 DEV (FIXED):
+  * Risolto blocco sulla schermata di selezione della sede.
+  * Firma sviluppatore (Nicolas Cappiello) in Drawer e Impostazioni.
+  * Visualizzazione data/ora e operatore dell'ultimo aggiornamento giacenza nella scheda Ordini.
 ====================================================================
 -->
     <meta charset="UTF-8">
@@ -219,7 +219,7 @@
                         <option value="Salumi & Carni">🥩 Salumi & Carni</option>
                         <option value="Alcolici">🍷 Alcolici</option>
                         <option value="Bevande">🥤 Bevande</option>
-                        <option value="Surgelati">❄️ Surgelati</option>
+                        <option value="Surgelati">❄️️ Surgelati</option>
                         <option value="Ortofrutta">🥗 Ortofrutta</option>
                         <option value="Pulizia & Monouso">🧹 Pulizia & Monouso</option>
                         <option value="Altro">📦 Altro</option>
@@ -397,7 +397,7 @@
         <div class="modal-title" id="item-modal-title">Prodotto</div>
         <input type="hidden" id="edit-item-id">
         <div class="form-group"><label>Nome</label><input type="text" id="new-name" class="form-control"></div>
-        <div class="form-group"><label>Categoria</label><select id="new-category-select" class="form-control"><option value="Latticini">🧀 Latticini</option><option value="Farine & Secco">🌾 Farine & Secco</option><option value="Conserve & Pomodoro">🍅 Conserve & Pomodoro</option><option value="Salumi & Carni">🥩 Salumi & Carni</option><option value="Alcolici">🍷 Alcolici</option><option value="Bevande">🥤 Bevande</option><option value="Surgelati">❄️ Surgelati</option><option value="Ortofrutta">🥗 Ortofrutta</option><option value="Pulizia & Monouso">🧹 Pulizia & Monouso</option><option value="Altro">📦 Altro</option></select></div>
+        <div class="form-group"><label>Categoria</label><select id="new-category-select" class="form-control"><option value="Latticini">🧀 Latticini</option><option value="Farine & Secco">🌾 Farine & Secco</option><option value="Conserve & Pomodoro">🍅 Conserve & Pomodoro</option><option value="Salumi & Carni">🥩 Salumi & Carni</option><option value="Alcolici">🍷 Alcolici</option><option value="Bevande">🥤 Bevande</option><option value="Surgelati">❄️️ Surgelati</option><option value="Ortofrutta">🥗 Ortofrutta</option><option value="Pulizia & Monouso">🧹 Pulizia & Monouso</option><option value="Altro">📦 Altro</option></select></div>
         <div class="form-group"><label>Fornitore</label><select id="new-supplier-select" class="form-control"></select></div>
         <div style="display:flex; gap:8px;">
             <div class="form-group" style="flex:1;"><label>Min Vasastan</label><input type="number" id="new-min-vasastan" class="form-control" value="2" min="0"></div>
@@ -824,7 +824,7 @@
             const passGroup = document.getElementById('user-field-pass-group');
 
             if (uid) {
-                document.getElementById('user-modal-title').innerText = '✏️️ Modifica Operatore';
+                document.getElementById('user-modal-title').innerText = '✏ Modifica Operatore';
                 passGroup.style.display = 'none';
                 const userDoc = await getDoc(doc(db, "users", uid));
                 if (userDoc.exists()) {
@@ -1159,7 +1159,7 @@
             });
         };
 
-        // ORDINI (MODIFICATO CON TIMESTAMP E OPERATORE ULTIMO AGGIORNAMENTO GIACENZA)
+        // ORDINI
         window.filterOrderItems = function() {
             const q = (document.getElementById('search-order-input')?.value || '').toLowerCase();
             const cat = document.getElementById('filter-order-category')?.value || '';
@@ -1663,7 +1663,7 @@
         window.executeClearHistoryGuard = async function() {
             if (!window.checkAuthGuard()) return;
             if (confirm("Svuotare lo storico ordini nel database DEV?")) {
-                const batch.writeBatch(db);
+                const batch = writeBatch(db);
                 window.orderHistoryData.forEach(h => batch.delete(doc(db, "history", String(h.id))));
                 await batch.commit(); window.showAlert("🗑️ Storico svuotato!");
             }
