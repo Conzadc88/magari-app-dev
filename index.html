@@ -4,10 +4,10 @@
 <!--
 ====================================================================
 [MAGARI APP - HISTORICAL CHANGELOG REGISTRY & ARCHIVE]
-- v3.9.10 DEV (DEDICATED FIREBASE DEV ENVIRONMENT):
-  * Collegato progetto Firebase isolato (magari-app-dev).
-  * Ambiente di test completamente separato dal database di produzione.
-  * Mantenute tutte le funzionalita PWA, branding logo ed Export Excel.
+- v3.9.11 DEV:
+  * Aggiunta firma sviluppatore (Nicolas Cappiello) in Drawer e Impostazioni.
+  * Aggiunta visualizzazione timestamp e operatore ultimo aggiornamento giacenza nelle schede della sezione Ordini.
+  * Mantenuto ambiente isolato Firebase (magari-app-dev).
 ====================================================================
 -->
     <meta charset="UTF-8">
@@ -25,7 +25,7 @@
     <link rel="apple-touch-icon" href="logo-square.png">
     <link rel="icon" type="image/png" href="logo-square.png">
 
-    <title>Magari v3.9.10 DEV</title>
+    <title>Magari v3.9.11 DEV</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -57,7 +57,7 @@
             <div class="drawer-header" style="text-align: center;">
                 <img src="logo-header.png" alt="Magari Logo" style="max-width: 170px; height: auto; margin-bottom: 4px;" onerror="this.style.display='none'; document.getElementById('drawer-text-fallback').style.display='block';">
                 <div id="drawer-text-fallback" class="brand-title" style="display:none; font-size: 24px;">MAGARI</div>
-                <div class="brand-subtitle" style="font-size: 9px;">v3.9.10 DEVELOPER</div>
+                <div class="brand-subtitle" style="font-size: 9px;">v3.9.11 DEVELOPER</div>
             </div>
 
             <!-- USER ACCOUNT BANNER NELLO MENU -->
@@ -86,6 +86,12 @@
                     <span id="bug-badge-settings" class="badge-notification" style="display:none; background:#d97706;">0</span>
                 </li>
             </ul>
+
+            <!-- FIRMA SVILUPPATORE NEL DRAWER -->
+            <div style="margin-top:24px; padding-top:12px; border-top:1px solid #e2e8f0; text-align:center; font-size:11px; color:#64748b; font-weight:600;">
+                💻 App sviluppata da<br>
+                <span style="color:var(--primary); font-weight:800; font-size:12px;">Nicolas Cappiello</span>
+            </div>
         </div>
 
         <div class="header">
@@ -93,7 +99,7 @@
             <div class="header-brand-text">
                 <img src="logo-header.png" alt="Magari" style="height: 34px; width: auto;" onerror="this.style.display='none'; document.getElementById('header-text-fallback').style.display='block';">
                 <div id="header-text-fallback" class="brand-title" style="display:none;">MAGARI</div>
-                <div class="brand-subtitle">v3.9.10 DEVELOPER</div>
+                <div class="brand-subtitle">v3.9.11 DEVELOPER</div>
             </div>
             <div class="page-badge" id="page-title">Ordini</div>
         </div>
@@ -281,7 +287,7 @@
             </div>
         </div>
 
-        <!-- 9. IMPOSTAZIONI (PANNELLO COMPLETO GESTIONE OPERATORI E BUG) -->
+        <!-- 9. IMPOSTAZIONI -->
         <div id="view-impostazioni" class="view-section">
             <div class="page-lock-banner" id="lock-banner-impostazioni">
                 <div class="page-lock-box"><div style="font-size: 32px; margin-bottom: 8px;">🔒</div><h3 style="margin-bottom: 6px;">Sezione Riservata Admin</h3><p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Effettua il Login con account Admin per accedere.</p><button class="btn-save" onclick="openAuthModal()">Accedi come Admin</button></div>
@@ -311,6 +317,12 @@
                 <hr style="border:0; border-top:1px solid #eee; margin: 12px 0;">
                 <button class="reset-btn" onclick="executeResetSuppliersGuard()">🔒 🔄 Ripristina Fornitori Default</button>
                 <button class="btn-danger" onclick="executeResetAllGuard()" style="width:100%; margin-top: 6px;">🔒 ⚠️ RESET TOTALE DATABASE TEST</button>
+
+                <!-- FIRMA SVILUPPATORE NELLE IMPOSTAZIONI -->
+                <div style="margin-top:20px; padding:12px; background:#f0f7f4; border-radius:8px; border:1px solid #c8e6c9; text-align:center; font-size:12px; color:#2e7d32;">
+                    💻 <b>Magari App Management System</b><br>
+                    Progettata e sviluppata da <b>Nicolas Cappiello</b>
+                </div>
             </div>
         </div>
     </div>
@@ -336,7 +348,7 @@
         </div>
     </div>
 
-    <!-- MODALE AUTHENTICATION (LOGIN + REGISTRAZIONE AUTONOMA OPERATORI) -->
+    <!-- MODALE AUTHENTICATION -->
     <div class="modal" id="auth-modal">
         <div class="modal-title" id="auth-modal-title" style="color:var(--primary); font-size:18px; text-align:center;">🔑 Accedi a Magari App DEV</div>
         <div style="display:flex; justify-content:center; gap:10px; margin-bottom:12px;">
@@ -489,18 +501,15 @@
         .faq-question { font-size: 14px; font-weight: 800; color: var(--primary); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
         .faq-answer { font-size: 13px; color: #334155; line-height: 1.4; }
 
-        /* DRAWER CORRETTO SOPRA OVERLAY */
-        .drawer { position: absolute; top: 0; left: -280px; width: 280px; height: 100%; min-height: 100vh; background-color: white; box-shadow: 4px 0 15px rgba(0,0,0,0.25); transition: left 0.3s ease; z-index: 2000; padding: 20px; overflow-y: auto; }
+        .drawer { position: absolute; top: 0; left: -280px; width: 280px; height: 100%; min-height: 100vh; background-color: white; box-shadow: 4px 0 15px rgba(0,0,0,0.25); transition: left 0.3s ease; z-index: 2000; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; }
         .drawer.open { left: 0; }
         .drawer-header { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 20px; border-bottom: 1px solid var(--border); background-color: var(--primary); border-radius: 8px; padding: 16px 12px; }
         .drawer-menu { list-style: none; }
         .drawer-menu li { padding: 12px 0; font-size: 14px; font-weight: 600; border-bottom: 1px solid #f0f0f0; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
 
-        /* OVERLAY SOTTO IL DRAWER */
         .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; min-height: 100vh; background: rgba(0,0,0,0.6); display: none; z-index: 1000; backdrop-filter: blur(4px); }
         .overlay.active { display: block; }
 
-        /* MODALE POPUP */
         .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 12px; width: 92%; max-width: 480px; max-height: 88vh; overflow-y: auto; box-shadow: 0 8px 30px rgba(0,0,0,0.3); display: none; z-index: 9999; }
         .modal.active { display: block !important; }
         
@@ -815,7 +824,7 @@
             const passGroup = document.getElementById('user-field-pass-group');
 
             if (uid) {
-                document.getElementById('user-modal-title').innerText = '✏️ Modifica Operatore';
+                document.getElementById('user-modal-title').innerText = '✏️️ Modifica Operatore';
                 passGroup.style.display = 'none';
                 const userDoc = await getDoc(doc(db, "users", uid));
                 if (userDoc.exists()) {
@@ -847,13 +856,13 @@
             const role = document.getElementById('user-field-role').value;
             const pass = document.getElementById('user-field-pass').value.trim();
 
-            if (!name || !email) return window.showAlert("⚠️️ Inserisci Nome ed Email.");
+            if (!name || !email) return window.showAlert("⚠ Inserisci Nome ed Email.");
 
             if (uid) {
                 await updateDoc(doc(db, "users", uid), { name, email, role });
                 window.showAlert("✅ Operatore aggiornato!");
             } else {
-                if (!pass || pass.length < 6) return window.showAlert("⚠️️ Password di almeno 6 caratteri.");
+                if (!pass || pass.length < 6) return window.showAlert("⚠ Password di almeno 6 caratteri.");
                 try {
                     const res = await createUserWithEmailAndPassword(auth, email, pass);
                     await setDoc(doc(db, "users", res.user.uid), { uid: res.user.uid, name, email, role });
@@ -1150,7 +1159,7 @@
             });
         };
 
-        // ORDINI
+        // ORDINI (MODIFICATO CON TIMESTAMP E OPERATORE ULTIMO AGGIORNAMENTO GIACENZA)
         window.filterOrderItems = function() {
             const q = (document.getElementById('search-order-input')?.value || '').toLowerCase();
             const cat = document.getElementById('filter-order-category')?.value || '';
@@ -1167,11 +1176,15 @@
             filtered.forEach(item => {
                 const sup = window.suppliersData.find(s => String(s.id) === String(item.supplierId));
                 const qty = window.getQty(item), min = window.getMin(item), isLow = qty < min;
+                const lastBy = window.getLastUpdateBy(item), lastDate = window.getLastUpdateDate(item);
+                const lastUpdateTxt = lastDate ? `🕒 Aggiornato: ${lastDate} (${lastBy || 'N/D'})` : '🕒 Giacenza non ancora aggiornata';
+
                 c.innerHTML += `
                     <div class="card-item ${isLow ? 'low-stock-alert' : ''}">
                         <div class="item-name-box" style="border-left-color:${sup?.color || '#334155'};">
                             <div class="item-name"><span>${item.isFavorite ? '⭐ ' : ''}${item.name}</span></div>
                             <div class="stock-warning-badge ${isLow?'alert':'normal'}">Scorta: ${qty} ${item.unit} (Min: ${min})</div>
+                            <div style="font-size:11px; color:#64748b; font-weight:600; margin-top:2px;">${lastUpdateTxt}</div>
                             <div class="badges-row"><span class="category-label-tag">${window.getCategoryEmoji(item.category)} ${item.category}</span><span class="supplier-badge" style="background:${sup?.color || '#334155'}">${sup?.name || 'N/D'}</span></div>
                         </div>
                         <div class="item-controls">
@@ -1650,7 +1663,7 @@
         window.executeClearHistoryGuard = async function() {
             if (!window.checkAuthGuard()) return;
             if (confirm("Svuotare lo storico ordini nel database DEV?")) {
-                const batch = writeBatch(db);
+                const batch.writeBatch(db);
                 window.orderHistoryData.forEach(h => batch.delete(doc(db, "history", String(h.id))));
                 await batch.commit(); window.showAlert("🗑️ Storico svuotato!");
             }
