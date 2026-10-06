@@ -3,12 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Magari App DEV - Gestione Inventario</title>
+    <title>Magari App DEV v3.9.11</title>
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- SheetJS per Export Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
     <style>
         .item-blocked {
@@ -20,21 +22,21 @@
 <body class="bg-slate-100 font-sans text-slate-800 min-h-screen flex flex-col">
 
     <!-- HEADER / NAVBAR -->
-    <header class="bg-emerald-800 text-white shadow-md sticky top-0 z-50">
+    <header class="bg-emerald-900 text-white shadow-md sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center space-x-3">
                 <i data-lucide="pizza" class="w-8 h-8 text-amber-400"></i>
                 <div>
                     <h1 class="font-bold text-xl tracking-wide flex items-center gap-2">
-                        Magari App 
-                        <span class="bg-amber-400 text-emerald-950 text-xs px-2 py-0.5 rounded font-black tracking-wider uppercase">DEV</span>
+                        MAGARI 
+                        <span class="bg-amber-400 text-emerald-950 text-xs px-2 py-0.5 rounded font-black tracking-wider uppercase">DEV v3.9.11</span>
                     </h1>
                     <p class="text-xs text-emerald-200">Ambiente Sviluppo Isolato</p>
                 </div>
             </div>
             
             <div class="flex items-center space-x-3">
-                <span id="userBadge" class="hidden text-sm bg-emerald-900/60 border border-emerald-700/50 px-3 py-1 rounded-full flex items-center gap-2">
+                <span id="userBadge" class="hidden text-sm bg-emerald-950/70 border border-emerald-700/50 px-3 py-1 rounded-full flex items-center gap-2">
                     <i data-lucide="user" class="w-4 h-4 text-emerald-300"></i>
                     <span id="userNameDisplay" class="font-medium">Caricamento...</span>
                 </span>
@@ -65,35 +67,72 @@
     <!-- CONTENUTO PRINCIPALE -->
     <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full space-y-6">
 
-        <!-- SCHEDE TAB SEZIONI -->
-        <div class="flex border-b border-slate-200 bg-white rounded-t-xl px-2 pt-2 shadow-sm overflow-x-auto">
-            <button onclick="switchTab('inventory')" id="tab-inventory" class="tab-btn px-5 py-3 font-semibold text-sm border-b-2 border-emerald-600 text-emerald-700 flex items-center gap-2">
-                <i data-lucide="boxes" class="w-4 h-4"></i> Scorte & Giacenze
-            </button>
-            <button onclick="switchTab('orders')" id="tab-orders" class="tab-btn px-5 py-3 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center gap-2">
+        <!-- SCHEDE TAB SEZIONI COMPLETI (9 SEZIONI) -->
+        <div class="flex border-b border-slate-200 bg-white rounded-t-xl px-2 pt-2 shadow-sm overflow-x-auto gap-1">
+            <button onclick="switchTab('orders')" id="tab-orders" class="tab-btn px-4 py-2.5 font-semibold text-xs sm:text-sm border-b-2 border-emerald-600 text-emerald-700 flex items-center gap-1.5 whitespace-nowrap">
                 <i data-lucide="shopping-cart" class="w-4 h-4"></i> Ordini
             </button>
-            <button onclick="switchTab('faq')" id="tab-faq" class="tab-btn px-5 py-3 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center gap-2">
+            <button onclick="switchTab('inventory')" id="tab-inventory" class="tab-btn px-4 py-2.5 font-semibold text-xs sm:text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center gap-1.5 whitespace-nowrap">
+                <i data-lucide="boxes" class="w-4 h-4"></i> Scorte
+            </button>
+            <button onclick="switchTab('history')" id="tab-history" class="tab-btn px-4 py-2.5 font-semibold text-xs sm:text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center gap-1.5 whitespace-nowrap">
+                <i data-lucide="history" class="w-4 h-4"></i> Storico Ordini
+            </button>
+            <button onclick="switchTab('magazzino')" id="tab-magazzino" class="tab-btn px-4 py-2.5 font-semibold text-xs sm:text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center gap-1.5 whitespace-nowrap">
+                <i data-lucide="wrench" class="w-4 h-4"></i> Magazzino <i data-lucide="lock" class="w-3 h-3 text-slate-400"></i>
+            </button>
+            <button onclick="switchTab('fornitori')" id="tab-fornitori" class="tab-btn px-4 py-2.5 font-semibold text-xs sm:text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center gap-1.5 whitespace-nowrap">
+                <i data-lucide="truck" class="w-4 h-4"></i> Fornitori <i data-lucide="lock" class="w-3 h-3 text-slate-400"></i>
+            </button>
+            <button onclick="switchTab('report')" id="tab-report" class="tab-btn px-4 py-2.5 font-semibold text-xs sm:text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center gap-1.5 whitespace-nowrap">
+                <i data-lucide="bar-chart-2" class="w-4 h-4"></i> Report Consumi <i data-lucide="lock" class="w-3 h-3 text-slate-400"></i>
+            </button>
+            <button onclick="switchTab('faq')" id="tab-faq" class="tab-btn px-4 py-2.5 font-semibold text-xs sm:text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center gap-1.5 whitespace-nowrap">
                 <i data-lucide="help-circle" class="w-4 h-4"></i> Guida & FAQ
             </button>
-            <button id="adminNoticeTabBtn" onclick="switchTab('admin-notice')" class="hidden tab-btn px-5 py-3 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center gap-2 ml-auto text-amber-700">
-                <i data-lucide="bell-plus" class="w-4 h-4"></i> Pubblica Avviso
+            <button onclick="switchTab('bug')" id="tab-bug" class="tab-btn px-4 py-2.5 font-semibold text-xs sm:text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center gap-1.5 whitespace-nowrap text-amber-700">
+                <i data-lucide="bug" class="w-4 h-4"></i> Segnala Bug
+            </button>
+            <button onclick="switchTab('impostazioni')" id="tab-impostazioni" class="tab-btn px-4 py-2.5 font-semibold text-xs sm:text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center gap-1.5 whitespace-nowrap">
+                <i data-lucide="settings" class="w-4 h-4"></i> Impostazioni <i data-lucide="lock" class="w-3 h-3 text-slate-400"></i>
             </button>
         </div>
 
-        <!-- SEZIONE 1: SCORTE & GIACENZE -->
-        <section id="sec-inventory" class="tab-content space-y-4">
+        <!-- 1. ORDINI -->
+        <section id="sec-orders" class="tab-content space-y-4">
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
+                <div>
+                    <h3 class="font-bold text-lg text-slate-800">Pianificazione Ordini Fornitori</h3>
+                    <p class="text-xs text-slate-500">I dati mostrano l'ultimo operatore e la data dell'ultimo aggiornamento scorte.</p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="filterOrdersLocation('vasastan')" id="btn-ord-vasastan" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-800 text-white shadow-sm">Vasastan</button>
+                    <button onclick="filterOrdersLocation('ostermalm')" id="btn-ord-ostermalm" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200">Östermalm</button>
+                </div>
+            </div>
+            
+            <div id="ordersList" class="space-y-3">
+                <div class="bg-white p-6 rounded-xl border border-slate-200 text-center text-slate-400">
+                    Caricamento riepilogo ordini...
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. SCORTE & GIACENZE -->
+        <section id="sec-inventory" class="tab-content hidden space-y-4">
             <div class="flex flex-col sm:flex-row justify-between gap-3 bg-white p-4 rounded-xl shadow-sm border border-slate-200">
                 <div class="flex gap-2">
                     <button onclick="filterLocation('vasastan')" id="btn-vasastan" class="px-4 py-2 rounded-lg text-sm font-bold bg-emerald-800 text-white shadow-sm">Vasastan</button>
                     <button onclick="filterLocation('ostermalm')" id="btn-ostermalm" class="px-4 py-2 rounded-lg text-sm font-bold bg-slate-100 text-slate-600 hover:bg-slate-200">Östermalm</button>
                 </div>
                 <div class="flex items-center gap-2">
+                    <button onclick="exportToExcel()" class="bg-emerald-700 hover:bg-emerald-600 text-white font-bold px-3 py-1.5 rounded-lg text-xs transition flex items-center gap-1 shadow-sm">
+                        <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Export Excel
+                    </button>
                     <input type="text" id="searchInventory" oninput="renderInventory()" placeholder="Cerca ingrediente..." class="w-full sm:w-64 px-3 py-1.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
                 </div>
             </div>
 
-            <!-- TABELLA INVENTARIO -->
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-sm">
@@ -116,27 +155,78 @@
             </div>
         </section>
 
-        <!-- SEZIONE 2: ORDINI -->
-        <section id="sec-orders" class="tab-content hidden space-y-4">
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
-                <div>
-                    <h3 class="font-bold text-lg text-slate-800">Pianificazione Ordini Fornitori</h3>
-                    <p class="text-xs text-slate-500">Mostra l'ultimo operatore e la data dell'ultimo aggiornamento scorte.</p>
-                </div>
-                <div class="flex gap-2">
-                    <button onclick="filterOrdersLocation('vasastan')" id="btn-ord-vasastan" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-800 text-white shadow-sm">Vasastan</button>
-                    <button onclick="filterOrdersLocation('ostermalm')" id="btn-ord-ostermalm" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200">Östermalm</button>
-                </div>
+        <!-- 3. STORICO ORDINI -->
+        <section id="sec-history" class="tab-content hidden space-y-4">
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                <h3 class="font-bold text-lg text-slate-800">Storico Ordini Registrati</h3>
+                <p class="text-xs text-slate-500">Consulta e controlla le consegne effettuate dai fornitori.</p>
             </div>
-            
-            <div id="ordersList" class="space-y-3">
+            <div id="historyList" class="space-y-3">
                 <div class="bg-white p-6 rounded-xl border border-slate-200 text-center text-slate-400">
-                    Caricamento riepilogo ordini...
+                    Caricamento storico...
                 </div>
             </div>
         </section>
 
-        <!-- SEZIONE 3: GUIDA & FAQ -->
+        <!-- 4. MAGAZZINO (ADMIN ONLY) -->
+        <section id="sec-magazzino" class="tab-content hidden space-y-4">
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
+                <div>
+                    <h3 class="font-bold text-lg text-slate-800">Anagrafica Prodotti Magazzino</h3>
+                    <p class="text-xs text-slate-500">Gestisci i prezzi, le minime per sede e lo stato di disponibilità.</p>
+                </div>
+                <button onclick="openAddItemModal()" class="bg-emerald-800 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-lg text-xs transition flex items-center gap-1 shadow-sm">
+                    <i data-lucide="plus-circle" class="w-4 h-4"></i> Nuovo Prodotto
+                </button>
+            </div>
+            <div id="magazzinoContent" class="space-y-3">
+                <div class="bg-white p-6 rounded-xl border border-slate-200 text-center text-slate-400">
+                    Caricamento anagrafica magazzino...
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. FORNITORI (ADMIN ONLY) -->
+        <section id="sec-fornitori" class="tab-content hidden space-y-4">
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
+                <div>
+                    <h3 class="font-bold text-lg text-slate-800">Anagrafica Fornitori</h3>
+                    <p class="text-xs text-slate-500">Elenco dei contatti e dei fornitori convenzionati.</p>
+                </div>
+                <button onclick="openAddSupplierModal()" class="bg-emerald-800 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-lg text-xs transition flex items-center gap-1 shadow-sm">
+                    <i data-lucide="plus-circle" class="w-4 h-4"></i> Nuovo Fornitore
+                </button>
+            </div>
+            <div id="fornitoriContent" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div class="bg-white p-6 rounded-xl border border-slate-200 text-center text-slate-400 col-span-2">
+                    Caricamento elenco fornitori...
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. REPORT CONSUMI (ADMIN ONLY) -->
+        <section id="sec-report" class="tab-content hidden space-y-4">
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                <h3 class="font-bold text-lg text-slate-800">Report Consumi & Valore Inventario</h3>
+                <p class="text-xs text-slate-500">Analisi dettagliata per categoria e costo globale per sede.</p>
+            </div>
+            <div id="reportContent" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-white p-4 rounded-xl border border-slate-200 space-y-3">
+                    <h4 class="font-bold text-slate-800 text-sm border-b pb-2 flex items-center gap-2">
+                        <i data-lucide="utensils" class="w-4 h-4 text-emerald-600"></i> Cibo & Consumabili
+                    </h4>
+                    <div id="foodReportList" class="text-xs space-y-1 text-slate-600">Caricamento...</div>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-slate-200 space-y-3">
+                    <h4 class="font-bold text-slate-800 text-sm border-b pb-2 flex items-center gap-2">
+                        <i data-lucide="wine" class="w-4 h-4 text-amber-600"></i> Alcolici & Bevande
+                    </h4>
+                    <div id="alcoholReportList" class="text-xs space-y-1 text-slate-600">Caricamento...</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. GUIDA & FAQ -->
         <section id="sec-faq" class="tab-content hidden space-y-4">
             <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 space-y-6">
                 <div>
@@ -182,35 +272,53 @@
                             Il conteggio fisico va eseguito a fine turno o prima dei nuovi ordini. Ricordati di selezionare la sede corretta (<strong>Vasastan</strong> o <strong>Östermalm</strong>). Ogni variazione registrerà il tuo nome e l'ora esatta dell'aggiornamento.
                         </p>
                     </div>
-
-                    <div class="border border-slate-200 rounded-lg p-4 bg-slate-50/50">
-                        <h3 class="font-bold text-slate-800 flex items-center gap-2 text-sm">
-                            <i data-lucide="bug" class="w-4 h-4 text-emerald-600"></i> Come segnalare un problema o un ingrediente mancante?
-                        </h3>
-                        <p class="text-sm text-slate-600 mt-2 leading-relaxed">
-                            Se noti un disallineamento o un bug, contatta l'Amministratore fornendo un dettaglio dell'operazione eseguita.
-                        </p>
-                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- SEZIONE 4: PUBBLICA AVVISO (ADMIN ONLY) -->
-        <section id="sec-admin-notice" class="tab-content hidden space-y-4">
+        <!-- 8. SEGNALA BUG -->
+        <section id="sec-bug" class="tab-content hidden space-y-4">
             <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 max-w-xl mx-auto space-y-4">
                 <h3 class="font-bold text-lg text-slate-800 flex items-center gap-2">
-                    <i data-lucide="megaphone" class="w-5 h-5 text-amber-600"></i> Pubblica Avviso per lo Staff
+                    <i data-lucide="bug" class="w-5 h-5 text-amber-600"></i> Segnala Bug & Feedback
                 </h3>
-                <p class="text-xs text-slate-500">Il messaggio apparirà nel banner superiore per tutti gli operatori.</p>
-                
+                <p class="text-xs text-slate-500">Invia una segnalazione tecnica direttamente al team sviluppatore.</p>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Testo dell'Avviso</label>
-                    <textarea id="noticeInputText" rows="3" placeholder="Es. Verificare la scadenza del fiordilatte..." class="w-full p-3 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"></textarea>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Descrizione Problema</label>
+                    <textarea id="bugText" rows="3" placeholder="Descrivi l'errore o la richiesta..." class="w-full p-3 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"></textarea>
+                </div>
+                <button onclick="submitBug()" class="w-full bg-amber-500 hover:bg-amber-400 text-emerald-950 font-bold py-2.5 rounded-lg text-sm transition shadow-sm">
+                    Invia Segnalazione
+                </button>
+            </div>
+        </section>
+
+        <!-- 9. IMPOSTAZIONI (ADMIN ONLY) -->
+        <section id="sec-impostazioni" class="tab-content hidden space-y-4">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 max-w-2xl mx-auto space-y-6">
+                <div>
+                    <h3 class="font-bold text-lg text-slate-800 flex items-center gap-2">
+                        <i data-lucide="settings" class="w-5 h-5 text-emerald-700"></i> Impostazioni & Gestione Utenti Staff
+                    </h3>
+                    <p class="text-xs text-slate-500">Gestisci la bacheca avvisi e gli accreditamenti degli operatori.</p>
                 </div>
 
-                <button onclick="publishNotice()" class="w-full bg-amber-500 hover:bg-amber-400 text-emerald-950 font-bold py-2.5 rounded-lg text-sm transition shadow-sm">
-                    Pubblica Banner Ora
-                </button>
+                <div class="bg-amber-50/60 p-4 rounded-xl border border-amber-200/80 space-y-3">
+                    <h4 class="font-bold text-sm text-amber-950 flex items-center gap-2">
+                        <i data-lucide="megaphone" class="w-4 h-4 text-amber-600"></i> Pubblica Banner Avviso Staff
+                    </h4>
+                    <textarea id="noticeInputText" rows="2" placeholder="Es. Verificare la scadenza del fiordilatte..." class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white"></textarea>
+                    <button onclick="publishNotice()" class="bg-amber-500 hover:bg-amber-400 text-emerald-950 font-bold px-4 py-2 rounded-lg text-xs transition shadow-sm">
+                        Pubblica Avviso
+                    </button>
+                </div>
+
+                <div class="space-y-3 border-t pt-4">
+                    <h4 class="font-bold text-sm text-slate-800 flex items-center gap-2">
+                        <i data-lucide="users" class="w-4 h-4 text-emerald-700"></i> Utenti Registrati nel Sistema
+                    </h4>
+                    <div id="usersList" class="space-y-2 text-xs">Caricamento utenti...</div>
+                </div>
             </div>
         </section>
 
@@ -219,7 +327,7 @@
     <!-- MODALE AUTENTICAZIONE -->
     <div id="authModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-2xl shadow-xl max-w-md w-full overflow-hidden">
-            <div class="bg-emerald-800 text-white p-4 flex justify-between items-center">
+            <div class="bg-emerald-900 text-white p-4 flex justify-between items-center">
                 <h3 class="font-bold text-base flex items-center gap-2">
                     <i data-lucide="key-round" class="w-5 h-5 text-amber-400"></i> Accesso Magari App DEV
                 </h3>
@@ -243,7 +351,7 @@
                         <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Password</label>
                         <input type="password" id="loginPassword" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
                     </div>
-                    <button type="submit" class="w-full bg-emerald-700 hover:bg-emerald-600 text-white font-bold py-2 rounded-lg text-sm shadow-sm transition">
+                    <button type="submit" class="w-full bg-emerald-800 hover:bg-emerald-700 text-white font-bold py-2 rounded-lg text-sm shadow-sm transition">
                         Entra
                     </button>
                 </form>
@@ -251,7 +359,7 @@
                 <form id="formRegister" onsubmit="handleRegister(event)" class="space-y-3 hidden">
                     <div>
                         <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Nome e Cognome (Firma Operatore)</label>
-                        <input type="text" id="regName" required placeholder="Es. Nicolas" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                        <input type="text" id="regName" required placeholder="Es. Nicolas Cappiello" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Email Staff</label>
@@ -282,7 +390,7 @@
         </div>
     </footer>
 
-    <!-- FIREBASE SDKs -->
+    <!-- FIREBASE SDKs COMPAT -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
@@ -302,22 +410,23 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // STATO APPLICAZIONE
         let currentUser = null;
         let currentUserRole = 'operator';
         let currentLoc = 'vasastan';
         let currentOrdersLoc = 'vasastan';
         let inventoryData = [];
+        let suppliersData = [];
 
-        // INIZIALIZZAZIONE
         document.addEventListener("DOMContentLoaded", () => {
             lucide.createIcons();
             listenAuth();
             listenNotice();
             loadInventory();
+            loadSuppliers();
+            loadHistory();
+            loadUsers();
         });
 
-        // AUTENTICAZIONE
         function listenAuth() {
             auth.onAuthStateChanged(async (user) => {
                 if (user) {
@@ -335,7 +444,6 @@
                     document.getElementById("authBtn").onclick = () => auth.signOut();
 
                     if (currentUserRole === 'admin' || currentUserRole === 'master') {
-                        document.getElementById("adminNoticeTabBtn").classList.remove("hidden");
                         document.getElementById("clearNoticeBtn").classList.remove("hidden");
                         document.getElementById("adminActionsCol").classList.remove("hidden");
                     }
@@ -345,17 +453,17 @@
                     document.getElementById("userBadge").classList.add("hidden");
                     document.getElementById("authBtn").innerHTML = `<i data-lucide="log-in" class="w-4 h-4"></i> Accedi`;
                     document.getElementById("authBtn").onclick = () => openAuthModal();
-                    document.getElementById("adminNoticeTabBtn").classList.add("hidden");
                     document.getElementById("clearNoticeBtn").classList.add("hidden");
                     document.getElementById("adminActionsCol").classList.add("hidden");
                 }
                 renderInventory();
                 renderOrders();
+                renderMagazzino();
+                renderReport();
                 lucide.createIcons();
             });
         }
 
-        // CARICAMENTO INVENTARIO
         function loadInventory() {
             db.collection("inventory").onSnapshot((snapshot) => {
                 inventoryData = [];
@@ -364,6 +472,65 @@
                 });
                 renderInventory();
                 renderOrders();
+                renderMagazzino();
+                renderReport();
+            });
+        }
+
+        function loadSuppliers() {
+            db.collection("suppliers").onSnapshot((snapshot) => {
+                suppliersData = [];
+                snapshot.forEach((doc) => {
+                    suppliersData.push({ id: doc.id, ...doc.data() });
+                });
+                renderFornitori();
+            });
+        }
+
+        function loadHistory() {
+            db.collection("history").orderBy("date", "desc").onSnapshot((snapshot) => {
+                const list = document.getElementById("historyList");
+                list.innerHTML = "";
+                if (snapshot.empty) {
+                    list.innerHTML = `<div class="bg-white p-6 rounded-xl border text-center text-slate-400">Nessun ordine nello storico.</div>`;
+                    return;
+                }
+                snapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const div = document.createElement("div");
+                    div.className = "bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row justify-between gap-2";
+                    div.innerHTML = `
+                        <div>
+                            <span class="text-xs font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">${data.supplier || 'Fornitore'}</span>
+                            <h4 class="font-bold text-slate-800 text-sm mt-1">${data.details || 'Ordine Sede'}</h4>
+                            <p class="text-xs text-slate-500">Inviato da: <strong>${data.author || 'N/D'}</strong></p>
+                        </div>
+                        <div class="text-xs text-slate-400 text-right">
+                            ${data.date ? new Date(data.date.toDate()).toLocaleString('it-IT') : ''}
+                        </div>
+                    `;
+                    list.appendChild(div);
+                });
+            });
+        }
+
+        function loadUsers() {
+            db.collection("users").onSnapshot((snapshot) => {
+                const list = document.getElementById("usersList");
+                list.innerHTML = "";
+                snapshot.forEach((doc) => {
+                    const d = doc.data();
+                    const div = document.createElement("div");
+                    div.className = "p-2 bg-slate-50 rounded border flex justify-between items-center";
+                    div.innerHTML = `
+                        <div>
+                            <strong class="text-slate-800">${d.name || d.displayName || 'Utente'}</strong>
+                            <span class="text-slate-400">(${d.email})</span>
+                        </div>
+                        <span class="px-2 py-0.5 rounded font-bold uppercase text-[10px] ${d.role === 'admin' || d.role === 'master' ? 'bg-amber-100 text-amber-800' : 'bg-slate-200 text-slate-700'}">${d.role || 'operator'}</span>
+                    `;
+                    list.appendChild(div);
+                });
             });
         }
 
@@ -507,7 +674,73 @@
             }
         }
 
-        // NOTIFICHE / BANNER STAFF
+        function renderMagazzino() {
+            const container = document.getElementById("magazzinoContent");
+            container.innerHTML = "";
+            inventoryData.forEach(item => {
+                const div = document.createElement("div");
+                div.className = "bg-white p-3 rounded-lg border border-slate-200 flex justify-between items-center text-xs";
+                div.innerHTML = `
+                    <div>
+                        <strong class="text-slate-800 text-sm">${item.name}</strong>
+                        <div class="text-slate-400">Prezzo: ${item.price || 0} SEK | Unità: ${item.unit || 'Kg'}</div>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-slate-500 block">Min Vas: ${item.minQty?.vasastan || 5}</span>
+                        <span class="text-slate-500 block">Min Öst: ${item.minQty?.ostermalm || 5}</span>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function renderFornitori() {
+            const container = document.getElementById("fornitoriContent");
+            container.innerHTML = "";
+            suppliersData.forEach(sup => {
+                const div = document.createElement("div");
+                div.className = "bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-1";
+                div.innerHTML = `
+                    <h4 class="font-bold text-slate-800 text-sm">${sup.name}</h4>
+                    <p class="text-xs text-slate-500">📞 ${sup.phone || 'N/D'}</p>
+                    <p class="text-xs text-slate-500">✉️ ${sup.email || 'N/D'}</p>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function renderReport() {
+            const foodList = document.getElementById("foodReportList");
+            const alcList = document.getElementById("alcoholReportList");
+            foodList.innerHTML = "";
+            alcList.innerHTML = "";
+
+            inventoryData.forEach(item => {
+                const qty = (item.qty?.vasastan || 0) + (item.qty?.ostermalm || 0);
+                const val = qty * (item.price || 0);
+                const row = `<div class="flex justify-between py-1 border-b"><span>${item.name} (${qty} ${item.unit || 'st'})</span><strong class="text-slate-700">${val.toFixed(2)} SEK</strong></div>`;
+                if (item.category === 'Alcolici' || item.category === 'Bevande') {
+                    alcList.innerHTML += row;
+                } else {
+                    foodList.innerHTML += row;
+                }
+            });
+        }
+
+        function exportToExcel() {
+            const data = inventoryData.map(i => ({
+                Nome: i.name,
+                "Giacenza Vasastan": i.qty?.vasastan || 0,
+                "Giacenza Östermalm": i.qty?.ostermalm || 0,
+                Prezzo: i.price || 0,
+                Unita: i.unit || 'st'
+            }));
+            const ws = XLSX.utils.json_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Inventario");
+            XLSX.writeFile(wb, "Inventario_Magari_DEV.xlsx");
+        }
+
         function listenNotice() {
             db.collection("settings").doc("staffNotice").onSnapshot(doc => {
                 if (doc.exists && doc.data().text) {
@@ -541,7 +774,43 @@
             await db.collection("settings").doc("staffNotice").delete();
         }
 
-        // NAVIGAZIONE TAB
+        async function submitBug() {
+            const text = document.getElementById("bugText").value.trim();
+            if (!text) return;
+
+            const name = currentUser ? document.getElementById("userNameDisplay").textContent : "Guest";
+            await db.collection("bugReports").add({
+                text: text,
+                author: name,
+                date: firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+            document.getElementById("bugText").value = "";
+            alert("Segnalazione inviata con successo!");
+        }
+
+        function openAddItemModal() {
+            const name = prompt("Nome nuovo prodotto:");
+            if (!name) return;
+            db.collection("inventory").add({
+                name: name,
+                qty: { vasastan: 0, ostermalm: 0 },
+                minQty: { vasastan: 5, ostermalm: 5 },
+                price: 0,
+                unit: 'Kg'
+            });
+        }
+
+        function openAddSupplierModal() {
+            const name = prompt("Nome nuovo fornitore:");
+            if (!name) return;
+            db.collection("suppliers").add({
+                name: name,
+                phone: '',
+                email: ''
+            });
+        }
+
         function switchTab(tabId) {
             document.querySelectorAll(".tab-content").forEach(el => el.classList.add("hidden"));
             document.querySelectorAll(".tab-btn").forEach(el => {
@@ -550,8 +819,10 @@
             });
 
             document.getElementById(`sec-${tabId}`).classList.remove("hidden");
-            const activeBtn = document.getElementById(`tab-${tabId}`) || document.getElementById("adminNoticeTabBtn");
-            activeBtn.classList.add("border-emerald-600", "text-emerald-700");
+            const activeBtn = document.getElementById(`tab-${tabId}`);
+            if (activeBtn) {
+                activeBtn.classList.add("border-emerald-600", "text-emerald-700");
+            }
         }
 
         function openAuthModal() { document.getElementById("authModal").classList.remove("hidden"); }
