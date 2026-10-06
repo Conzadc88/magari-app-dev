@@ -441,8 +441,8 @@
 
     <style>
         :root {
-            --primary: #043927; --bg: #f4f6f8; --card-bg: #ffffff; --text: #222222;
-            --text-secondary: #555555; --border: #e0e0e0; --warning: #ff9800; --danger: #e53935; --whatsapp: #25d366;
+            --primary: #043927; --bg: #e6e3dc; --card-bg: #f5f3ed; --text: #1c1c1a;
+            --text-secondary: #5a5854; --border: #d4d0c7; --warning: #ff9800; --danger: #e53935; --whatsapp: #25d366;
             --excel-green: #107c41; --star-gold: #ffb300;
         }
 
@@ -1584,19 +1584,80 @@
         window.filterSuppliers = function() {
             const q = (document.getElementById('search-supplier-input')?.value || '').toLowerCase();
             const c = document.getElementById('suppliers-list'); c.innerHTML = '';
-            window.suppliersData.filter(s => s.name.toLowerCase().includes(q)).forEach(s => {
-                c.innerHTML += `<div class="card-item"><div class="item-name-box" style="border-left-color:${s.color};"><div class="item-name" style="color:${s.color};">🚚 ${s.name}</div><div class="item-subtext">📞 ${s.phone || 'N/D'} | ✉ ${s.email || 'N/D'}</div></div></div>`;
+            window.suppliersData.filter(s => s.name.toLowerCase().includes(q)).sort((a, b) => a.name.localeCompare(b.name)).forEach(s => {
+                c.innerHTML += `
+                    <div class="card-item">
+                        <div class="item-name-box" style="border-left-color:${s.color};">
+                            <div class="item-name" style="color:${s.color};">🚚 ${s.name}</div>
+                            <div class="item-subtext">📞 ${s.phone || 'N/D'} | ✉ ${s.email || 'N/D'}</div>
+                        </div>
+                        <div class="action-row-btn">
+                            <button class="btn-action-edit" onclick="openAddSupplierModal('${s.id}')">✏️ Modifica</button>
+                            <button class="btn-action-del" onclick="deleteSupplier('${s.id}')">🗑 Elimina</button>
+                        </div>
+                    </div>`;
             });
         };
-        window.openAddSupplierModal = () => { if(!window.checkAuthGuard()) return; window.closeAll(); document.getElementById('edit-supplier-id').value = ''; document.getElementById('supp-name').value = ''; document.getElementById('supp-phone').value = ''; document.getElementById('supp-email').value = ''; document.getElementById('add-supplier-modal').classList.add('active'); document.getElementById('overlay').classList.add('active'); };
-        window.closeAddSupplierModal = () => { document.getElementById('add-supplier-modal').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); };
+        window.openAddSupplierModal = function(id = null) {
+            if (!window.checkAuthGuard()) return;
+            window.closeAll();
+            document.getElementById('edit-supplier-id').value = '';
+            document.getElementById('supp-name').value = '';
+            document.getElementById('supp-phone').value = '';
+            document.getElementById('supp-email').value = '';
+            document.getElementById('supp-color-input').value = '#1976d2';
+
+            if (id) {
+                const s = window.suppliersData.find(x => String(x.id) === String(id));
+                if (s) {
+                    document.getElementById('supplier-modal-title').innerText = '✏️ Modifica Fornitore';
+                    document.getElementById('edit-supplier-id').value = s.id;
+                    document.getElementById('supp-name').value = s.name || '';
+                    document.getElementById('supp-phone').value = s.phone || '';
+                    document.getElementById('supp-email').value = s.email || '';
+                    document.getElementById('supp-color-input').value = s.color || '#1976d2';
+                }
+            } else {
+                document.getElementById('supplier-modal-title').innerText = '➕ Nuovo Fornitore';
+            }
+
+            document.getElementById('add-supplier-modal').classList.add('active');
+            document.getElementById('overlay').classList.add('active');
+        };
+
+        window.closeAddSupplierModal = () => { 
+            document.getElementById('add-supplier-modal').classList.remove('active'); 
+            document.getElementById('overlay').classList.remove('active'); 
+        };
+
         window.saveSupplier = async function() {
             if (!window.checkAuthGuard()) return;
+            const idVal = document.getElementById('edit-supplier-id').value;
             const name = document.getElementById('supp-name').value.trim();
-            if(!name) return window.showAlert("Inserisci il nome fornitore.");
-            const newId = Date.now();
-            await setDoc(doc(db, "suppliers", String(newId)), { id: newId, name, phone: document.getElementById('supp-phone').value, email: document.getElementById('supp-email').value, color: document.getElementById('supp-color-input').value });
-            closeAddSupplierModal(); window.showAlert("✅ Fornitore salvato!");
+            const phone = document.getElementById('supp-phone').value.trim();
+            const email = document.getElementById('supp-email').value.trim();
+            const color = document.getElementById('supp-color-input').value;
+
+            if (!name) return window.showAlert("⚠️ Inserisci il nome del fornitore.");
+
+            if (idVal) {
+                await updateDoc(doc(db, "suppliers", String(idVal)), { name, phone, email, color });
+                window.showAlert("✅ Fornitore aggiornato!");
+            } else {
+                const newId = Date.now();
+                await setDoc(doc(db, "suppliers", String(newId)), { id: newId, name, phone, email, color });
+                window.showAlert("✅ Nuovo fornitore salvato!");
+            }
+
+            closeAddSupplierModal();
+        };
+
+        window.deleteSupplier = async function(id) {
+            if (!window.checkAuthGuard()) return;
+            if (confirm("Sei sicuro di voler eliminare questo fornitore?")) {
+                await deleteDoc(doc(db, "suppliers", String(id)));
+                window.showAlert("🗑️ Fornitore eliminato.");
+            }
         };
 
         // EXPORT EXCEL (ACCESSIBILE A TUTTI GLI UTENTI LOGGATI)
@@ -1615,7 +1676,8 @@
             const todayStr = new Date().toLocaleDateString('it-IT');
             const isAlcoholCategory = (cat) => (cat === 'Alcolici' || cat === 'Bevande');
 
-            const buildSheetData = (itemsList, titleHeader) => {
+            // Foglio Standard (Food & Supplies)
+            const buildStandardSheetData = (itemsList, titleHeader) => {
                 const rows = [
                     [`MAGARI INVENTORY REPORT - ${titleHeader.toUpperCase()}`],
                     [`Location: ${locName}`, `Date: ${todayStr}`, `Operator: ${opName}`],
@@ -1633,7 +1695,7 @@
                 });
 
                 rows.push([""]);
-                rows.push(["TOTAL", "", "", "", totalStockSum, parseFloat(totalValueSum.toFixed(2)), ""]);
+                rows.push(["TOTAL FOOD & SUPPLIES", "", "", "", totalStockSum, parseFloat(totalValueSum.toFixed(2)), ""]);
                 const ws = XLSX.utils.aoa_to_sheet(rows);
 
                 const colWidths = rows[3].map((_, colIdx) => {
@@ -1645,24 +1707,54 @@
                 return ws;
             };
 
-            const wb = XLSX.utils.book_new();
-            const foodItems = window.inventoryData.filter(i => !isAlcoholCategory(i.category)).sort((a, b) => a.name.localeCompare(b.name));
-            const alcoholItems = window.inventoryData.filter(i => isAlcoholCategory(i.category)).sort((a, b) => a.name.localeCompare(b.name));
+            // Foglio Alcolici & Bevande con Sezioni Separate, 2 Subtotali e Gran Totale
+            const buildAlcoholSheetData = () => {
+                const rows = [
+                    [`MAGARI INVENTORY REPORT - ALCOHOL & BEVERAGES`],
+                    [`Location: ${locName}`, `Date: ${todayStr}`, `Operator: ${opName}`],
+                    [""],
+                    ["ITEM NAME", "CATEGORY", "SUPPLIER", "PRICE (SEK)", "STOCK QTY", "TOTAL VALUE (SEK)", "UNIT"]
+                ];
 
-            if (type === 'food') { XLSX.utils.book_append_sheet(wb, buildSheetData(foodItems, "Food & Supplies"), "Food & Supplies"); } 
-            else if (type === 'alcohol') { XLSX.utils.book_append_sheet(wb, buildSheetData(alcoholItems, "Alcohol & Beverages"), "Alcohol & Beverages"); } 
-            else {
-                XLSX.utils.book_append_sheet(wb, buildSheetData(foodItems, "Food & Supplies"), "Food & Supplies");
-                XLSX.utils.book_append_sheet(wb, buildSheetData(alcoholItems, "Alcohol & Beverages"), "Alcohol & Beverages");
-            }
+                const alcoholItems = window.inventoryData.filter(i => i.category === 'Alcolici').sort((a, b) => a.name.localeCompare(b.name));
+                const beverageItems = window.inventoryData.filter(i => i.category === 'Bevande').sort((a, b) => a.name.localeCompare(b.name));
 
-            const cleanLoc = locName.split(' ')[0];
-            const dateStr = new Date().toISOString().split('T')[0];
-            
-            XLSX.writeFile(wb, `Inventory_Magari_${cleanLoc}_${type}_${dateStr}.xlsx`);
-            closeExportExcelModal(); window.showAlert("📊 File Excel scaricato con successo!");
-        };
+                let alcStockSum = 0, alcValueSum = 0;
+                let bevStockSum = 0, bevValueSum = 0;
 
+                // 1. ALCOLICI
+                rows.push(["--- ALCOHOLIC BEVERAGES ---", "", "", "", "", "", ""]);
+                alcoholItems.forEach(i => {
+                    const sup = window.suppliersData.find(s => String(s.id) === String(i.supplierId))?.name || 'N/D';
+                    const stock = window.getQty(i); const price = i.price || 0;
+                    const val = parseFloat((stock * price).toFixed(2));
+                    alcStockSum += stock; alcValueSum += val;
+                    rows.push([i.name, i.category, sup, price, stock, val, i.unit]);
+                });
+                rows.push(["SUBTOTAL ALCOHOL", "", "", "", alcStockSum, parseFloat(alcValueSum.toFixed(2)), ""]);
+                rows.push([""]);
+
+                // 2. BEVANDE
+                rows.push(["--- NON-ALCOHOLIC BEVERAGES & SOFT DRINKS ---", "", "", "", "", "", ""]);
+                beverageItems.forEach(i => {
+                    const sup = window.suppliersData.find(s => String(s.id) === String(i.supplierId))?.name || 'N/D';
+                    const stock = window.getQty(i); const price = i.price || 0;
+                    const val = parseFloat((stock * price).toFixed(2));
+                    bevStockSum += stock; bevValueSum += val;
+                    rows.push([i.name, i.category, sup, price, stock, val, i.unit]);
+                });
+                rows.push(["SUBTOTAL BEVERAGES", "", "", "", bevStockSum, parseFloat(bevValueSum.toFixed(2)), ""]);
+                rows.push([""]);
+
+                // 3. GRAN TOTALE
+                const grandStock = alcStockSum + bevStockSum;
+                const grandValue = parseFloat((alcValueSum + bevValueSum).toFixed(2));
+                rows.push(["GRAND TOTAL (ALCOHOL + BEVERAGES)", "", "", "", grandStock, grandValue, ""]);
+
+                const ws = XLSX.utils.aoa_to_sheet(rows);
+                const colWidths = rows[3].map((_, colIdx) => {
+                    let maxLen = 12;
+                    rows.fo
         // BUG REPORT & AZIONI RESET
         window.submitBugReport = async function() {
             if (!window.checkAuthGuard()) return;
