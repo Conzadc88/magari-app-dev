@@ -9,6 +9,9 @@
   * Inserimento Firma Developer "Nicolas Cappiello" nel footer.
   * Mostrato l'ultimo aggiornamento scorta (operatore + data/ora) nella scheda Ordini.
   * Integrato Banner Avvisi Staff in tempo reale.
+  * Tema cromatico Sabbia/Beige riposante per la vista.
+  * Export Excel Alcolici & Bevande con subtotali separati e gran totale.
+  * Corretta anagrafica fornitori con opzioni di modifica ed eliminazione.
 ====================================================================
 -->
     <meta charset="UTF-8">
@@ -482,7 +485,7 @@
         .page-lock-box { background: white; padding: 24px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); width: 100%; max-width: 320px; border: 1px solid var(--border); }
 
         .content-list { padding: 12px 16px; display: flex; flex-direction: column; gap: 12px; flex: 1; width: 100%; }
-        .card-item { background-color: rgba(255, 255, 255, 0.95); border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid var(--border); overflow: hidden; width: 100%; }
+        .card-item { background-color: var(--card-bg); border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); border: 1px solid var(--border); overflow: hidden; width: 100%; }
         
         @keyframes pulseBorder {
             0% { border-color: var(--danger); box-shadow: 0 0 0 0 rgba(229, 57, 53, 0.4); }
@@ -1515,7 +1518,7 @@
                             </div>
                         </div>
                         <div class="action-row-btn">
-                            <button class="btn-action-edit" onclick="openAddModal(${item.id})">✏️️ Modifica</button>
+                            <button class="btn-action-edit" onclick="openAddModal(${item.id})">✏ Modifica</button>
                             <button class="btn-action-del" onclick="deleteInventoryItem(${item.id})">🗑 Elimina</button>
                         </div>
                     </div>`;
@@ -1554,7 +1557,7 @@
             if (!window.checkAuthGuard()) return;
             const idVal = document.getElementById('edit-item-id').value;
             const name = document.getElementById('new-name').value.trim();
-            if (!name) return window.showAlert("⚠️️ Inserisci il nome.");
+            if (!name) return window.showAlert("⚠️ Inserisci il nome.");
             
             const cat = document.getElementById('new-category-select').value;
             const supId = parseInt(document.getElementById('new-supplier-select').value);
@@ -1598,6 +1601,7 @@
                     </div>`;
             });
         };
+
         window.openAddSupplierModal = function(id = null) {
             if (!window.checkAuthGuard()) return;
             window.closeAll();
@@ -1754,7 +1758,33 @@
                 const ws = XLSX.utils.aoa_to_sheet(rows);
                 const colWidths = rows[3].map((_, colIdx) => {
                     let maxLen = 12;
-                    rows.fo
+                    rows.forEach(r => { if (r[colIdx] !== undefined && r[colIdx] !== null) { const strLen = String(r[colIdx]).length; if (strLen > maxLen) maxLen = strLen; } });
+                    return { wch: maxLen + 3 };
+                });
+                ws['!cols'] = colWidths;
+                return ws;
+            };
+
+            const wb = XLSX.utils.book_new();
+            const foodItems = window.inventoryData.filter(i => !isAlcoholCategory(i.category)).sort((a, b) => a.name.localeCompare(b.name));
+
+            if (type === 'food') { 
+                XLSX.utils.book_append_sheet(wb, buildStandardSheetData(foodItems, "Food & Supplies"), "Food & Supplies"); 
+            } else if (type === 'alcohol') { 
+                XLSX.utils.book_append_sheet(wb, buildAlcoholSheetData(), "Alcohol & Beverages"); 
+            } else {
+                XLSX.utils.book_append_sheet(wb, buildStandardSheetData(foodItems, "Food & Supplies"), "Food & Supplies");
+                XLSX.utils.book_append_sheet(wb, buildAlcoholSheetData(), "Alcohol & Beverages");
+            }
+
+            const cleanLoc = locName.split(' ')[0];
+            const dateStr = new Date().toISOString().split('T')[0];
+            
+            XLSX.writeFile(wb, `Inventory_Magari_${cleanLoc}_${type}_${dateStr}.xlsx`);
+            closeExportExcelModal(); 
+            window.showAlert("📊 File Excel scaricato con la distinzione Alcolici/Bevande!");
+        };
+
         // BUG REPORT & AZIONI RESET
         window.submitBugReport = async function() {
             if (!window.checkAuthGuard()) return;
