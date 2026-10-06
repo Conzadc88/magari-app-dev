@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Magari App DEV v3.9.11</title>
+    <title>Magari App DEV v3.9.12</title>
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -17,30 +17,37 @@
             opacity: 0.55;
             filter: grayscale(40%);
         }
+        select {
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1em;
+        }
     </style>
 </head>
-<body class="bg-slate-100 font-sans text-slate-800 min-h-screen flex flex-col">
+<body class="bg-slate-900 text-slate-100 font-sans min-h-screen flex flex-col">
 
     <!-- HEADER / NAVBAR -->
-    <header class="bg-emerald-900 text-white shadow-md sticky top-0 z-50">
+    <header class="bg-emerald-950 border-b border-emerald-800 text-white shadow-md sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center space-x-3">
                 <i data-lucide="pizza" class="w-8 h-8 text-amber-400"></i>
                 <div>
                     <h1 class="font-bold text-xl tracking-wide flex items-center gap-2">
                         MAGARI 
-                        <span class="bg-amber-400 text-emerald-950 text-xs px-2 py-0.5 rounded font-black tracking-wider uppercase">DEV v3.9.11</span>
+                        <span class="bg-amber-500 text-slate-950 text-xs px-2 py-0.5 rounded font-black tracking-wider uppercase">DEV V3.9.12</span>
                     </h1>
-                    <p class="text-xs text-emerald-200">Ambiente Sviluppo Isolato</p>
+                    <p class="text-xs text-emerald-300">Ambiente Sviluppo Isolato</p>
                 </div>
             </div>
             
             <div class="flex items-center space-x-3">
-                <span id="userBadge" class="hidden text-sm bg-emerald-950/70 border border-emerald-700/50 px-3 py-1 rounded-full flex items-center gap-2">
-                    <i data-lucide="user" class="w-4 h-4 text-emerald-300"></i>
+                <span id="userBadge" class="hidden text-sm bg-slate-800 border border-slate-700 px-3 py-1 rounded-full flex items-center gap-2">
+                    <i data-lucide="user" class="w-4 h-4 text-emerald-400"></i>
                     <span id="userNameDisplay" class="font-medium">Caricamento...</span>
+                    <span id="userRoleBadge" class="text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-1.5 py-0.2 rounded font-bold uppercase">OP</span>
                 </span>
-                <button id="authBtn" onclick="openAuthModal()" class="bg-amber-400 hover:bg-amber-300 text-emerald-950 font-semibold px-4 py-1.5 rounded-lg text-sm transition flex items-center gap-1.5 shadow-sm">
+                <button id="authBtn" onclick="openAuthModal()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-semibold px-4 py-1.5 rounded-lg text-sm transition flex items-center gap-1.5 shadow-sm">
                     <i data-lucide="log-in" class="w-4 h-4"></i> Accedi
                 </button>
             </div>
@@ -48,17 +55,17 @@
     </header>
 
     <!-- BANNER AVVISI STAFF -->
-    <div id="staffNoticeBanner" class="bg-amber-50 border-b border-amber-200 text-amber-900 px-4 py-3 hidden">
+    <div id="staffNoticeBanner" class="bg-amber-950/80 border-b border-amber-700/60 text-amber-100 px-4 py-3 hidden">
         <div class="max-w-7xl mx-auto flex items-start justify-between gap-3">
             <div class="flex items-start gap-2.5">
-                <i data-lucide="megaphone" class="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5"></i>
+                <i data-lucide="megaphone" class="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5"></i>
                 <div>
-                    <h4 class="font-bold text-sm text-amber-950">Avviso per lo Staff</h4>
-                    <p id="staffNoticeText" class="text-sm mt-0.5 text-amber-800">Nessun avviso presente.</p>
-                    <span id="staffNoticeMeta" class="text-xs text-amber-600 block mt-1 font-medium"></span>
+                    <h4 class="font-bold text-sm text-amber-300">Avviso per lo Staff</h4>
+                    <p id="staffNoticeText" class="text-sm mt-0.5 text-amber-100">Nessun avviso presente.</p>
+                    <span id="staffNoticeMeta" class="text-xs text-amber-400/80 block mt-1 font-medium"></span>
                 </div>
             </div>
-            <button id="clearNoticeBtn" onclick="deleteNotice()" class="hidden text-amber-700 hover:text-amber-950 text-xs font-semibold underline">
+            <button id="clearNoticeBtn" onclick="deleteNotice()" class="hidden text-amber-400 hover:text-amber-200 text-xs font-semibold underline">
                 Rimuovi
             </button>
         </div>
@@ -67,76 +74,126 @@
     <!-- CONTENUTO PRINCIPALE -->
     <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full space-y-6">
 
-        <!-- SCHEDE TAB SEZIONI COMPLETI (9 SEZIONI) -->
-        <div class="flex border-b border-slate-200 bg-white rounded-t-xl px-2 pt-2 shadow-sm overflow-x-auto gap-1">
-            <button onclick="switchTab('orders')" id="tab-orders" class="tab-btn px-4 py-2.5 font-semibold text-xs sm:text-sm border-b-2 border-emerald-600 text-emerald-700 flex items-center gap-1.5 whitespace-nowrap">
+        <!-- NAVIGAZIONE TAB (9 SEZIONI) -->
+        <div class="flex border-b border-slate-800 bg-slate-950/60 rounded-t-xl px-2 pt-2 shadow-sm overflow-x-auto gap-1">
+            <button onclick="switchTab('orders')" id="tab-orders" class="tab-btn px-4 py-2.5 font-semibold text-xs sm:text-sm border-b-2 border-emerald-500 text-emerald-400 flex items-center gap-1.5 whitespace-nowrap">
                 <i data-lucide="shopping-cart" class="w-4 h-4"></i> Ordini
             </button>
-            <button onclick="switchTab('inventory')" id="tab-inventory" class="tab-btn px-4 py-2.5 font-semibold text-xs sm:text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center gap-1.5 whitespace-nowrap">
+            <button onclick="switchTab('inventory')" id="tab-inventory" class="tab-btn px-4 py-2.5 font-semibold text-xs sm:text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-1.5 whitespace-nowrap">
                 <i data-lucide="boxes" class="w-4 h-4"></i> Scorte
             </button>
-            <button onclick="switchTab('history')" id="tab-history" class="tab-btn px-4 py-2.5 font-semibold text-xs sm:text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center gap-1.5 whitespace-nowrap">
+            <button onclick="switchTab('history')" id="tab-history" class="tab-btn px-4 py-2.5 font-semibold text-xs sm:text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-1.5 whitespace-nowrap">
                 <i data-lucide="history" class="w-4 h-4"></i> Storico Ordini
             </button>
-            <button onclick="switchTab('magazzino')" id="tab-magazzino" class="tab-btn px-4 py-2.5 font-semibold text-xs sm:text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center gap-1.5 whitespace-nowrap">
-                <i data-lucide="wrench" class="w-4 h-4"></i> Magazzino <i data-lucide="lock" class="w-3 h-3 text-slate-400"></i>
+            <button onclick="switchTab('magazzino')" id="tab-magazzino" class="tab-btn px-4 py-2.5 font-semibold text-xs sm:text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-1.5 whitespace-nowrap">
+                <i data-lucide="wrench" class="w-4 h-4"></i> Magazzino <i data-lucide="lock" class="w-3 h-3 text-slate-500"></i>
             </button>
-            <button onclick="switchTab('fornitori')" id="tab-fornitori" class="tab-btn px-4 py-2.5 font-semibold text-xs sm:text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center gap-1.5 whitespace-nowrap">
-                <i data-lucide="truck" class="w-4 h-4"></i> Fornitori <i data-lucide="lock" class="w-3 h-3 text-slate-400"></i>
+            <button onclick="switchTab('fornitori')" id="tab-fornitori" class="tab-btn px-4 py-2.5 font-semibold text-xs sm:text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-1.5 whitespace-nowrap">
+                <i data-lucide="truck" class="w-4 h-4"></i> Fornitori <i data-lucide="lock" class="w-3 h-3 text-slate-500"></i>
             </button>
-            <button onclick="switchTab('report')" id="tab-report" class="tab-btn px-4 py-2.5 font-semibold text-xs sm:text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center gap-1.5 whitespace-nowrap">
-                <i data-lucide="bar-chart-2" class="w-4 h-4"></i> Report Consumi <i data-lucide="lock" class="w-3 h-3 text-slate-400"></i>
+            <button onclick="switchTab('report')" id="tab-report" class="tab-btn px-4 py-2.5 font-semibold text-xs sm:text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-1.5 whitespace-nowrap">
+                <i data-lucide="bar-chart-2" class="w-4 h-4"></i> Report Consumi <i data-lucide="lock" class="w-3 h-3 text-slate-500"></i>
             </button>
-            <button onclick="switchTab('faq')" id="tab-faq" class="tab-btn px-4 py-2.5 font-semibold text-xs sm:text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center gap-1.5 whitespace-nowrap">
+            <button onclick="switchTab('faq')" id="tab-faq" class="tab-btn px-4 py-2.5 font-semibold text-xs sm:text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-1.5 whitespace-nowrap">
                 <i data-lucide="help-circle" class="w-4 h-4"></i> Guida & FAQ
             </button>
-            <button onclick="switchTab('bug')" id="tab-bug" class="tab-btn px-4 py-2.5 font-semibold text-xs sm:text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center gap-1.5 whitespace-nowrap text-amber-700">
+            <button onclick="switchTab('bug')" id="tab-bug" class="tab-btn px-4 py-2.5 font-semibold text-xs sm:text-sm border-b-2 border-transparent text-amber-400 hover:text-amber-300 flex items-center gap-1.5 whitespace-nowrap">
                 <i data-lucide="bug" class="w-4 h-4"></i> Segnala Bug
             </button>
-            <button onclick="switchTab('impostazioni')" id="tab-impostazioni" class="tab-btn px-4 py-2.5 font-semibold text-xs sm:text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center gap-1.5 whitespace-nowrap">
-                <i data-lucide="settings" class="w-4 h-4"></i> Impostazioni <i data-lucide="lock" class="w-3 h-3 text-slate-400"></i>
+            <button onclick="switchTab('impostazioni')" id="tab-impostazioni" class="tab-btn px-4 py-2.5 font-semibold text-xs sm:text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-1.5 whitespace-nowrap">
+                <i data-lucide="settings" class="w-4 h-4"></i> Impostazioni <i data-lucide="lock" class="w-3 h-3 text-slate-500"></i>
             </button>
         </div>
 
         <!-- 1. ORDINI -->
         <section id="sec-orders" class="tab-content space-y-4">
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
+            <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex flex-col md:flex-row justify-between md:items-center gap-3">
                 <div>
-                    <h3 class="font-bold text-lg text-slate-800">Pianificazione Ordini Fornitori</h3>
-                    <p class="text-xs text-slate-500">I dati mostrano l'ultimo operatore e la data dell'ultimo aggiornamento scorte.</p>
+                    <h3 class="font-bold text-lg text-white">Pianificazione Ordini Fornitori</h3>
+                    <p class="text-xs text-slate-400">Seleziona la quantità da ordinare per ciascun ingrediente sotto soglia.</p>
                 </div>
-                <div class="flex gap-2">
-                    <button onclick="filterOrdersLocation('vasastan')" id="btn-ord-vasastan" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-800 text-white shadow-sm">Vasastan</button>
-                    <button onclick="filterOrdersLocation('ostermalm')" id="btn-ord-ostermalm" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200">Östermalm</button>
+                <div class="flex items-center gap-2">
+                    <button onclick="filterOrdersLocation('vasastan')" id="btn-ord-vasastan" class="px-4 py-2 rounded-lg text-xs font-bold bg-emerald-700 text-white shadow-sm">Vasastan</button>
+                    <button onclick="filterOrdersLocation('ostermalm')" id="btn-ord-ostermalm" class="px-4 py-2 rounded-lg text-xs font-bold bg-slate-700 text-slate-300 hover:bg-slate-600">Östermalm</button>
                 </div>
             </div>
-            
+
+            <!-- FILTRI A TENDINA ORDINI -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-slate-800/60 p-3 rounded-xl border border-slate-700/60">
+                <select id="orderCatFilter" onchange="renderOrders()" class="bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-lg p-2.5 focus:ring-emerald-500">
+                    <option value="ALL">📁 Tutte le Categorie</option>
+                    <option value="Cibo">🧀 Cibo & Ingredienti</option>
+                    <option value="Bevande">🍷 Alcolici & Bevande</option>
+                    <option value="Supplies">📦 Supplies & Materiali</option>
+                </select>
+
+                <select id="orderSupplierFilter" onchange="renderOrders()" class="bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-lg p-2.5 focus:ring-emerald-500">
+                    <option value="ALL">🚚 Tutti i Fornitori</option>
+                </select>
+
+                <input type="date" id="orderDeliveryDate" class="bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-lg p-2.5 focus:ring-emerald-500">
+            </div>
+
             <div id="ordersList" class="space-y-3">
-                <div class="bg-white p-6 rounded-xl border border-slate-200 text-center text-slate-400">
-                    Caricamento riepilogo ordini...
+                <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 text-center text-slate-400">
+                    Caricamento ingredienti per l'ordine...
+                </div>
+            </div>
+
+            <!-- BARRA AZIONI RIEPILOGO ORDINE -->
+            <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-3">
+                <div class="text-xs text-slate-300">
+                    Totale articoli in bozza: <strong id="orderDraftCount" class="text-amber-400 font-bold text-sm">0</strong>
+                </div>
+                <div class="flex gap-2 w-full sm:w-auto">
+                    <button onclick="generateOrderSummary()" class="flex-1 sm:flex-initial bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-4 py-2.5 rounded-lg text-xs transition flex items-center justify-center gap-2 shadow-sm">
+                        <i data-lucide="file-text" class="w-4 h-4"></i> Genera Riepilogo / Invia
+                    </button>
                 </div>
             </div>
         </section>
 
         <!-- 2. SCORTE & GIACENZE -->
         <section id="sec-inventory" class="tab-content hidden space-y-4">
-            <div class="flex flex-col sm:flex-row justify-between gap-3 bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+            <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex flex-col md:flex-row justify-between md:items-center gap-3">
                 <div class="flex gap-2">
-                    <button onclick="filterLocation('vasastan')" id="btn-vasastan" class="px-4 py-2 rounded-lg text-sm font-bold bg-emerald-800 text-white shadow-sm">Vasastan</button>
-                    <button onclick="filterLocation('ostermalm')" id="btn-ostermalm" class="px-4 py-2 rounded-lg text-sm font-bold bg-slate-100 text-slate-600 hover:bg-slate-200">Östermalm</button>
+                    <button onclick="filterLocation('vasastan')" id="btn-vasastan" class="px-4 py-2 rounded-lg text-sm font-bold bg-emerald-700 text-white shadow-sm">Vasastan</button>
+                    <button onclick="filterLocation('ostermalm')" id="btn-ostermalm" class="px-4 py-2 rounded-lg text-sm font-bold bg-slate-700 text-slate-300 hover:bg-slate-600">Östermalm</button>
                 </div>
+
                 <div class="flex items-center gap-2">
-                    <button onclick="exportToExcel()" class="bg-emerald-700 hover:bg-emerald-600 text-white font-bold px-3 py-1.5 rounded-lg text-xs transition flex items-center gap-1 shadow-sm">
+                    <button onclick="openExportModal()" class="bg-emerald-700 hover:bg-emerald-600 text-white font-bold px-3 py-2 rounded-lg text-xs transition flex items-center gap-1.5 shadow-sm">
                         <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Export Excel
                     </button>
-                    <input type="text" id="searchInventory" oninput="renderInventory()" placeholder="Cerca ingrediente..." class="w-full sm:w-64 px-3 py-1.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
                 </div>
             </div>
 
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <!-- MENÙ A TENDINA FILTRI GIACENZA -->
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 bg-slate-800/60 p-3 rounded-xl border border-slate-700/60">
+                <select id="invCatFilter" onchange="renderInventory()" class="bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-lg p-2.5 focus:ring-emerald-500">
+                    <option value="ALL">📁 Tutte le Categorie</option>
+                    <option value="Cibo">🧀 Cibo & Ingredienti</option>
+                    <option value="Bevande">🍷 Alcolici & Bevande</option>
+                    <option value="Supplies">📦 Supplies & Materiali</option>
+                </select>
+
+                <select id="invSupplierFilter" onchange="renderInventory()" class="bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-lg p-2.5 focus:ring-emerald-500">
+                    <option value="ALL">🚚 Tutti i Fornitori</option>
+                </select>
+
+                <select id="invSortFilter" onchange="renderInventory()" class="bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-lg p-2.5 focus:ring-emerald-500">
+                    <option value="name">🔤 Nome (A-Z)</option>
+                    <option value="low">🚨 Prima Sotto Soglia</option>
+                    <option value="qtyAsc">📉 Giacenza Crescente</option>
+                </select>
+
+                <input type="text" id="searchInventory" oninput="renderInventory()" placeholder="🔍 Cerca ingrediente..." class="bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-lg p-2.5 focus:ring-emerald-500 focus:outline-none">
+            </div>
+
+            <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-sm">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-sm">
-                        <thead class="bg-slate-50 text-slate-500 uppercase text-xs border-b border-slate-200">
+                        <thead class="bg-slate-900/80 text-slate-400 uppercase text-xs border-b border-slate-700">
                             <tr>
                                 <th class="px-4 py-3">Articolo / Ingrediente</th>
                                 <th class="px-4 py-3 text-center">Giacenza Reale</th>
@@ -145,9 +202,9 @@
                                 <th id="adminActionsCol" class="px-4 py-3 text-right hidden">Azione Admin</th>
                             </tr>
                         </thead>
-                        <tbody id="inventoryTableBody" class="divide-y divide-slate-100">
+                        <tbody id="inventoryTableBody" class="divide-y divide-slate-700/50">
                             <tr>
-                                <td colspan="5" class="text-center py-8 text-slate-400">Caricamento articoli in corso...</td>
+                                <td colspan="5" class="text-center py-8 text-slate-400">Caricamento articoli...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -157,30 +214,30 @@
 
         <!-- 3. STORICO ORDINI -->
         <section id="sec-history" class="tab-content hidden space-y-4">
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-                <h3 class="font-bold text-lg text-slate-800">Storico Ordini Registrati</h3>
-                <p class="text-xs text-slate-500">Consulta e controlla le consegne effettuate dai fornitori.</p>
+            <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
+                <h3 class="font-bold text-lg text-white">Storico Ordini Registrati</h3>
+                <p class="text-xs text-slate-400">Consulta gli ordini inviati e salvati per la sede attiva.</p>
             </div>
             <div id="historyList" class="space-y-3">
-                <div class="bg-white p-6 rounded-xl border border-slate-200 text-center text-slate-400">
-                    Caricamento storico...
+                <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 text-center text-slate-400">
+                    Caricamento storico ordini...
                 </div>
             </div>
         </section>
 
         <!-- 4. MAGAZZINO (ADMIN ONLY) -->
         <section id="sec-magazzino" class="tab-content hidden space-y-4">
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
+            <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
                 <div>
-                    <h3 class="font-bold text-lg text-slate-800">Anagrafica Prodotti Magazzino</h3>
-                    <p class="text-xs text-slate-500">Gestisci i prezzi, le minime per sede e lo stato di disponibilità.</p>
+                    <h3 class="font-bold text-lg text-white">Anagrafica Prodotti Magazzino</h3>
+                    <p class="text-xs text-slate-400">Modifica, elimina o aggiungi nuovi prodotti nel database.</p>
                 </div>
-                <button onclick="openAddItemModal()" class="bg-emerald-800 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-lg text-xs transition flex items-center gap-1 shadow-sm">
+                <button onclick="openAddItemModal()" class="admin-only hidden bg-emerald-700 hover:bg-emerald-600 text-white font-bold px-4 py-2 rounded-lg text-xs transition flex items-center gap-1 shadow-sm">
                     <i data-lucide="plus-circle" class="w-4 h-4"></i> Nuovo Prodotto
                 </button>
             </div>
             <div id="magazzinoContent" class="space-y-3">
-                <div class="bg-white p-6 rounded-xl border border-slate-200 text-center text-slate-400">
+                <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 text-center text-slate-400">
                     Caricamento anagrafica magazzino...
                 </div>
             </div>
@@ -188,17 +245,17 @@
 
         <!-- 5. FORNITORI (ADMIN ONLY) -->
         <section id="sec-fornitori" class="tab-content hidden space-y-4">
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
+            <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
                 <div>
-                    <h3 class="font-bold text-lg text-slate-800">Anagrafica Fornitori</h3>
-                    <p class="text-xs text-slate-500">Elenco dei contatti e dei fornitori convenzionati.</p>
+                    <h3 class="font-bold text-lg text-white">Anagrafica Fornitori</h3>
+                    <p class="text-xs text-slate-400">Gestisci i contatti ed i dettagli dei fornitori partner.</p>
                 </div>
-                <button onclick="openAddSupplierModal()" class="bg-emerald-800 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-lg text-xs transition flex items-center gap-1 shadow-sm">
+                <button onclick="openAddSupplierModal()" class="admin-only hidden bg-emerald-700 hover:bg-emerald-600 text-white font-bold px-4 py-2 rounded-lg text-xs transition flex items-center gap-1 shadow-sm">
                     <i data-lucide="plus-circle" class="w-4 h-4"></i> Nuovo Fornitore
                 </button>
             </div>
             <div id="fornitoriContent" class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div class="bg-white p-6 rounded-xl border border-slate-200 text-center text-slate-400 col-span-2">
+                <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 text-center text-slate-400 col-span-2">
                     Caricamento elenco fornitori...
                 </div>
             </div>
@@ -206,70 +263,59 @@
 
         <!-- 6. REPORT CONSUMI (ADMIN ONLY) -->
         <section id="sec-report" class="tab-content hidden space-y-4">
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-                <h3 class="font-bold text-lg text-slate-800">Report Consumi & Valore Inventario</h3>
-                <p class="text-xs text-slate-500">Analisi dettagliata per categoria e costo globale per sede.</p>
+            <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
+                <div>
+                    <h3 class="font-bold text-lg text-white">Report Consumi & Valore Inventario</h3>
+                    <p class="text-xs text-slate-400">Analisi economica dell'inventario suddivisa per categoria.</p>
+                </div>
+                <select id="reportPeriodSelect" onchange="renderReport()" class="bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-lg p-2 focus:ring-emerald-500">
+                    <option value="current">Giacenza Attuale Magazzino</option>
+                    <option value="7d">Ultimi 7 Giorni</option>
+                    <option value="30d">Questo Mese (30gg)</option>
+                </select>
             </div>
             <div id="reportContent" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="bg-white p-4 rounded-xl border border-slate-200 space-y-3">
-                    <h4 class="font-bold text-slate-800 text-sm border-b pb-2 flex items-center gap-2">
-                        <i data-lucide="utensils" class="w-4 h-4 text-emerald-600"></i> Cibo & Consumabili
+                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
+                    <h4 class="font-bold text-slate-200 text-sm border-b border-slate-700 pb-2 flex items-center gap-2">
+                        <i data-lucide="utensils" class="w-4 h-4 text-emerald-400"></i> Cibo & Supplies
                     </h4>
-                    <div id="foodReportList" class="text-xs space-y-1 text-slate-600">Caricamento...</div>
+                    <div id="foodReportList" class="text-xs space-y-1 text-slate-300">Caricamento...</div>
                 </div>
-                <div class="bg-white p-4 rounded-xl border border-slate-200 space-y-3">
-                    <h4 class="font-bold text-slate-800 text-sm border-b pb-2 flex items-center gap-2">
-                        <i data-lucide="wine" class="w-4 h-4 text-amber-600"></i> Alcolici & Bevande
+                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
+                    <h4 class="font-bold text-slate-200 text-sm border-b border-slate-700 pb-2 flex items-center gap-2">
+                        <i data-lucide="wine" class="w-4 h-4 text-amber-400"></i> Alcolici & Bevande
                     </h4>
-                    <div id="alcoholReportList" class="text-xs space-y-1 text-slate-600">Caricamento...</div>
+                    <div id="alcoholReportList" class="text-xs space-y-1 text-slate-300">Caricamento...</div>
                 </div>
             </div>
         </section>
 
         <!-- 7. GUIDA & FAQ -->
         <section id="sec-faq" class="tab-content hidden space-y-4">
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 space-y-6">
+            <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-6">
                 <div>
-                    <h2 class="text-xl font-bold text-emerald-900 flex items-center gap-2">
-                        <i data-lucide="book-open" class="w-6 h-6 text-emerald-600"></i> Guida Operativa & FAQ Staff
+                    <h2 class="text-xl font-bold text-emerald-400 flex items-center gap-2">
+                        <i data-lucide="book-open" class="w-6 h-6"></i> Guida Operativa & FAQ Staff
                     </h2>
-                    <p class="text-sm text-slate-500 mt-1">Procedure standard per la gestione delle giacenze, riassortimenti e storni.</p>
+                    <p class="text-sm text-slate-400 mt-1">Procedure standard per la gestione delle giacenze, riassortimenti e storni.</p>
                 </div>
 
                 <div class="space-y-4">
-                    <div class="border border-slate-200 rounded-lg p-4 bg-slate-50/50">
-                        <h3 class="font-bold text-slate-800 flex items-center gap-2 text-sm">
-                            <i data-lucide="shopping-bag" class="w-4 h-4 text-emerald-600"></i> Come fare gli ordini e scegliere cosa comprare prima?
+                    <div class="border border-slate-700 rounded-lg p-4 bg-slate-900/60">
+                        <h3 class="font-bold text-slate-200 flex items-center gap-2 text-sm">
+                            <i data-lucide="shopping-bag" class="w-4 h-4 text-emerald-400"></i> Come fare gli ordini e scegliere cosa comprare prima?
                         </h3>
-                        <p class="text-sm text-slate-600 mt-2 leading-relaxed">
-                            Prima di inviare l'ordine, controlla la scheda <strong>Scorte & Giacenze</strong>. Filtra per la tua sede e individua gli articoli con il badge rosso <strong>Sotto Soglia</strong>. Prioritizza sempre i prodotti freschi a rapido deterioramento.
+                        <p class="text-sm text-slate-400 mt-2 leading-relaxed">
+                            Controlla la scheda <strong>Scorte</strong> o <strong>Ordini</strong>. Gli articoli contrassegnati in rosso <strong>Sotto Soglia</strong> hanno la priorità d'acquisto.
                         </p>
                     </div>
 
-                    <div class="border border-slate-200 rounded-lg p-4 bg-slate-50/50">
-                        <h3 class="font-bold text-slate-800 flex items-center gap-2 text-sm">
-                            <i data-lucide="clipboard-check" class="w-4 h-4 text-emerald-600"></i> Come verificare la merce all'arrivo e gestire gli storni?
+                    <div class="border border-slate-700 rounded-lg p-4 bg-slate-900/60">
+                        <h3 class="font-bold text-slate-200 flex items-center gap-2 text-sm">
+                            <i data-lucide="clipboard-check" class="w-4 h-4 text-emerald-400"></i> Come verificare la merce all'arrivo?
                         </h3>
-                        <p class="text-sm text-slate-600 mt-2 leading-relaxed">
-                            Quando arriva la consegna, confronta la bolla con la merce reale. Aggiorna subito le quantità nella scheda delle giacenze per allineare lo stock di magazzino al valore effettivo.
-                        </p>
-                    </div>
-
-                    <div class="border border-slate-200 rounded-lg p-4 bg-slate-50/50">
-                        <h3 class="font-bold text-slate-800 flex items-center gap-2 text-sm">
-                            <i data-lucide="alert-triangle" class="w-4 h-4 text-emerald-600"></i> Cosa fare se un ingrediente è arrivato danneggiato o manca?
-                        </h3>
-                        <p class="text-sm text-slate-600 mt-2 leading-relaxed">
-                            Scatta una foto alla bolla o al collo compromesso, annota la quantità reale ricevuta nel sistema e segnala l'anomalia all'Admin.
-                        </p>
-                    </div>
-
-                    <div class="border border-slate-200 rounded-lg p-4 bg-slate-50/50">
-                        <h3 class="font-bold text-slate-800 flex items-center gap-2 text-sm">
-                            <i data-lucide="refresh-cw" class="w-4 h-4 text-emerald-600"></i> Quando va fatto il conteggio fisico del magazzino?
-                        </h3>
-                        <p class="text-sm text-slate-600 mt-2 leading-relaxed">
-                            Il conteggio fisico va eseguito a fine turno o prima dei nuovi ordini. Ricordati di selezionare la sede corretta (<strong>Vasastan</strong> o <strong>Östermalm</strong>). Ogni variazione registrerà il tuo nome e l'ora esatta dell'aggiornamento.
+                        <p class="text-sm text-slate-400 mt-2 leading-relaxed">
+                            Confronta la bolla del fornitore con i colli ricevuti ed aggiorna immediatamente le quantità nella scheda Scorte per registrare il tuo nome e l'orario.
                         </p>
                     </div>
                 </div>
@@ -278,16 +324,16 @@
 
         <!-- 8. SEGNALA BUG -->
         <section id="sec-bug" class="tab-content hidden space-y-4">
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 max-w-xl mx-auto space-y-4">
-                <h3 class="font-bold text-lg text-slate-800 flex items-center gap-2">
-                    <i data-lucide="bug" class="w-5 h-5 text-amber-600"></i> Segnala Bug & Feedback
+            <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 max-w-xl mx-auto space-y-4">
+                <h3 class="font-bold text-lg text-white flex items-center gap-2">
+                    <i data-lucide="bug" class="w-5 h-5 text-amber-400"></i> Segnala Bug & Feedback
                 </h3>
-                <p class="text-xs text-slate-500">Invia una segnalazione tecnica direttamente al team sviluppatore.</p>
+                <p class="text-xs text-slate-400">Invia una segnalazione diretta all'Amministratore del sistema.</p>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Descrizione Problema</label>
-                    <textarea id="bugText" rows="3" placeholder="Descrivi l'errore o la richiesta..." class="w-full p-3 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"></textarea>
+                    <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Descrizione Problema</label>
+                    <textarea id="bugText" rows="3" placeholder="Descrivi il problema riscontrato..." class="w-full p-3 bg-slate-900 border border-slate-700 rounded-lg text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-amber-500"></textarea>
                 </div>
-                <button onclick="submitBug()" class="w-full bg-amber-500 hover:bg-amber-400 text-emerald-950 font-bold py-2.5 rounded-lg text-sm transition shadow-sm">
+                <button onclick="submitBug()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2.5 rounded-lg text-sm transition shadow-sm">
                     Invia Segnalazione
                 </button>
             </div>
@@ -295,81 +341,112 @@
 
         <!-- 9. IMPOSTAZIONI (ADMIN ONLY) -->
         <section id="sec-impostazioni" class="tab-content hidden space-y-4">
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 max-w-2xl mx-auto space-y-6">
+            <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 max-w-3xl mx-auto space-y-6">
                 <div>
-                    <h3 class="font-bold text-lg text-slate-800 flex items-center gap-2">
-                        <i data-lucide="settings" class="w-5 h-5 text-emerald-700"></i> Impostazioni & Gestione Utenti Staff
+                    <h3 class="font-bold text-lg text-white flex items-center gap-2">
+                        <i data-lucide="settings" class="w-5 h-5 text-emerald-400"></i> Pannello Controllo Admin
                     </h3>
-                    <p class="text-xs text-slate-500">Gestisci la bacheca avvisi e gli accreditamenti degli operatori.</p>
+                    <p class="text-xs text-slate-400">Gestisci gli utenti staff, la bacheca avvisi e consulta i report dei bug.</p>
                 </div>
 
-                <div class="bg-amber-50/60 p-4 rounded-xl border border-amber-200/80 space-y-3">
-                    <h4 class="font-bold text-sm text-amber-950 flex items-center gap-2">
-                        <i data-lucide="megaphone" class="w-4 h-4 text-amber-600"></i> Pubblica Banner Avviso Staff
+                <!-- AVVISO STAFF -->
+                <div class="bg-amber-950/40 p-4 rounded-xl border border-amber-700/50 space-y-3">
+                    <h4 class="font-bold text-sm text-amber-300 flex items-center gap-2">
+                        <i data-lucide="megaphone" class="w-4 h-4"></i> Pubblica Banner Avviso Staff
                     </h4>
-                    <textarea id="noticeInputText" rows="2" placeholder="Es. Verificare la scadenza del fiordilatte..." class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white"></textarea>
-                    <button onclick="publishNotice()" class="bg-amber-500 hover:bg-amber-400 text-emerald-950 font-bold px-4 py-2 rounded-lg text-xs transition shadow-sm">
+                    <textarea id="noticeInputText" rows="2" placeholder="Scrivi il messaggio da mostrare in cima..." class="w-full p-2.5 bg-slate-900 border border-slate-700 rounded-lg text-sm text-slate-100 focus:ring-2 focus:ring-amber-500"></textarea>
+                    <button onclick="publishNotice()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-4 py-2 rounded-lg text-xs transition shadow-sm">
                         Pubblica Avviso
                     </button>
                 </div>
 
-                <div class="space-y-3 border-t pt-4">
-                    <h4 class="font-bold text-sm text-slate-800 flex items-center gap-2">
-                        <i data-lucide="users" class="w-4 h-4 text-emerald-700"></i> Utenti Registrati nel Sistema
+                <!-- GESTIONE UTENTI STAFF -->
+                <div class="space-y-3 border-t border-slate-700 pt-4">
+                    <h4 class="font-bold text-sm text-slate-200 flex items-center gap-2">
+                        <i data-lucide="users" class="w-4 h-4 text-emerald-400"></i> Utenti Registrati & Ruoli
                     </h4>
                     <div id="usersList" class="space-y-2 text-xs">Caricamento utenti...</div>
+                </div>
+
+                <!-- GESTIONE BUG RICEVUTI -->
+                <div class="space-y-3 border-t border-slate-700 pt-4">
+                    <h4 class="font-bold text-sm text-slate-200 flex items-center gap-2">
+                        <i data-lucide="bug" class="w-4 h-4 text-amber-400"></i> Segnalazioni Bug Ricevute
+                    </h4>
+                    <div id="adminBugList" class="space-y-2 text-xs">Caricamento bug...</div>
                 </div>
             </div>
         </section>
 
     </main>
 
+    <!-- MODALE EXPORT EXCEL CONFIGURABILE -->
+    <div id="exportModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-md w-full p-6 space-y-4">
+            <h3 class="font-bold text-lg text-white flex items-center gap-2">
+                <i data-lucide="file-spreadsheet" class="w-5 h-5 text-emerald-400"></i> Export Inventario Excel
+            </h3>
+            <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Seleziona Categoria</label>
+                <select id="excelCategorySelect" class="w-full p-2.5 bg-slate-900 border border-slate-700 rounded-lg text-sm text-slate-200">
+                    <option value="ALL">📦 Tutto l'Inventario Completo</option>
+                    <option value="Cibo">🧀 Cibo & Supplies</option>
+                    <option value="Bevande">🍷 Alcolici & Bevande</option>
+                </select>
+            </div>
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="closeExportModal()" class="px-4 py-2 bg-slate-700 text-slate-300 font-bold rounded-lg text-xs">Annulla</button>
+                <button onclick="executeExcelExport()" class="px-4 py-2 bg-emerald-700 hover:bg-emerald-600 text-white font-bold rounded-lg text-xs">Scarica Excel</button>
+            </div>
+        </div>
+    </div>
+
     <!-- MODALE AUTENTICAZIONE -->
-    <div id="authModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full overflow-hidden">
-            <div class="bg-emerald-900 text-white p-4 flex justify-between items-center">
+    <div id="authModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-md w-full overflow-hidden">
+            <div class="bg-emerald-950 text-white p-4 flex justify-between items-center border-b border-emerald-800">
                 <h3 class="font-bold text-base flex items-center gap-2">
                     <i data-lucide="key-round" class="w-5 h-5 text-amber-400"></i> Accesso Magari App DEV
                 </h3>
-                <button onclick="closeAuthModal()" class="text-emerald-200 hover:text-white">
+                <button onclick="closeAuthModal()" class="text-slate-400 hover:text-white">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
 
             <div class="p-6 space-y-4">
-                <div class="flex border-b border-slate-200 text-sm font-semibold">
-                    <button id="btnTabLogin" onclick="setAuthTab('login')" class="w-1/2 py-2 border-b-2 border-emerald-600 text-emerald-700">Login</button>
-                    <button id="btnTabRegister" onclick="setAuthTab('register')" class="w-1/2 py-2 border-b-2 border-transparent text-slate-400">Nuovo Account Staff</button>
+                <div class="flex border-b border-slate-700 text-sm font-semibold">
+                    <button id="btnTabLogin" onclick="setAuthTab('login')" class="w-1/2 py-2 border-b-2 border-emerald-500 text-emerald-400">Login</button>
+                    <button id="btnTabRegister" onclick="setAuthTab('register')" class="w-1/2 py-2 border-b-2 border-transparent text-slate-400">Nuovo Account</button>
                 </div>
 
                 <form id="formLogin" onsubmit="handleLogin(event)" class="space-y-3">
                     <div>
-                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Email Staff</label>
-                        <input type="email" id="loginEmail" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Email Staff</label>
+                        <input type="email" id="loginEmail" required class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-sm text-slate-100 focus:ring-2 focus:ring-emerald-500">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Password</label>
-                        <input type="password" id="loginPassword" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Password</label>
+                        <input type="password" id="loginPassword" required class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-sm text-slate-100 focus:ring-2 focus:ring-emerald-500">
                     </div>
-                    <button type="submit" class="w-full bg-emerald-800 hover:bg-emerald-700 text-white font-bold py-2 rounded-lg text-sm shadow-sm transition">
+                    <button type="submit" class="w-full bg-emerald-700 hover:bg-emerald-600 text-white font-bold py-2 rounded-lg text-sm shadow-sm transition">
                         Entra
                     </button>
                 </form>
 
                 <form id="formRegister" onsubmit="handleRegister(event)" class="space-y-3 hidden">
                     <div>
-                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Nome e Cognome (Firma Operatore)</label>
-                        <input type="text" id="regName" required placeholder="Es. Nicolas Cappiello" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Nome e Cognome</label>
+                        <input type="text" id="regName" required placeholder="Es. Vanessa" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-sm text-slate-100 focus:ring-2 focus:ring-emerald-500">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Email Staff</label>
-                        <input type="email" id="regEmail" required placeholder="nome@magaripizza.com" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Email Staff</label>
+                        <input type="email" id="regEmail" required placeholder="vane@magari.com" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-sm text-slate-100 focus:ring-2 focus:ring-emerald-500">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Password (Min. 6 caratteri)</label>
-                        <input type="password" id="regPassword" minlength="6" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Password (Min. 6 caratteri)</label>
+                        <input type="password" id="regPassword" minlength="6" required class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-sm text-slate-100 focus:ring-2 focus:ring-emerald-500">
                     </div>
-                    <button type="submit" class="w-full bg-amber-500 hover:bg-amber-400 text-emerald-950 font-bold py-2 rounded-lg text-sm shadow-sm transition">
+                    <button type="submit" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2 rounded-lg text-sm shadow-sm transition">
                         Crea Account Staff
                     </button>
                 </form>
@@ -378,14 +455,14 @@
     </div>
 
     <!-- FOOTER CON FIRMA DEVELOPER -->
-    <footer class="bg-slate-800 text-slate-400 text-xs py-4 border-t border-slate-700 mt-auto">
+    <footer class="bg-slate-950 text-slate-500 text-xs py-4 border-t border-slate-800 mt-auto">
         <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2">
             <div>
                 &copy; 2026 <strong>Magari Pizzeria Stockholm</strong> - Ambiente DEV Isolato
             </div>
             <div class="flex items-center gap-1.5 text-slate-400">
                 <span>App sviluppata da</span>
-                <span class="text-amber-400 font-semibold bg-slate-900 px-2 py-0.5 rounded border border-slate-700">Nicolas Cappiello</span>
+                <span class="text-amber-400 font-semibold bg-slate-900 px-2 py-0.5 rounded border border-slate-800">Nicolas Cappiello</span>
             </div>
         </div>
     </footer>
@@ -396,7 +473,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
     <script>
-        // CONFIGURAZIONE FIREBASE AMBIENTE DEV (ISOLATO)
+        // CONFIGURAZIONE FIREBASE DEV (ISOLATO)
         const firebaseConfig = {
             apiKey: "AIzaSyCv1G_nShEHX3_Yho1sWSK0ceK6gWbEEPU",
             authDomain: "magari-app-dev.firebaseapp.com",
@@ -416,6 +493,7 @@
         let currentOrdersLoc = 'vasastan';
         let inventoryData = [];
         let suppliersData = [];
+        let orderDraft = {};
 
         document.addEventListener("DOMContentLoaded", () => {
             lucide.createIcons();
@@ -425,6 +503,7 @@
             loadSuppliers();
             loadHistory();
             loadUsers();
+            loadBugs();
         });
 
         function listenAuth() {
@@ -439,22 +518,19 @@
                         currentUserRole = d.role || 'operator';
                     }
                     document.getElementById("userNameDisplay").textContent = name;
+                    document.getElementById("userRoleBadge").textContent = currentUserRole.substring(0, 3).toUpperCase();
                     document.getElementById("userBadge").classList.remove("hidden");
                     document.getElementById("authBtn").innerHTML = `<i data-lucide="log-out" class="w-4 h-4"></i> Esci`;
                     document.getElementById("authBtn").onclick = () => auth.signOut();
 
-                    if (currentUserRole === 'admin' || currentUserRole === 'master') {
-                        document.getElementById("clearNoticeBtn").classList.remove("hidden");
-                        document.getElementById("adminActionsCol").classList.remove("hidden");
-                    }
+                    applyRolePermissions();
                 } else {
                     currentUser = null;
                     currentUserRole = 'operator';
                     document.getElementById("userBadge").classList.add("hidden");
                     document.getElementById("authBtn").innerHTML = `<i data-lucide="log-in" class="w-4 h-4"></i> Accedi`;
                     document.getElementById("authBtn").onclick = () => openAuthModal();
-                    document.getElementById("clearNoticeBtn").classList.add("hidden");
-                    document.getElementById("adminActionsCol").classList.add("hidden");
+                    applyRolePermissions();
                 }
                 renderInventory();
                 renderOrders();
@@ -462,6 +538,22 @@
                 renderReport();
                 lucide.createIcons();
             });
+        }
+
+        function applyRolePermissions() {
+            const isAdmin = currentUserRole === 'admin' || currentUserRole === 'master';
+            document.querySelectorAll(".admin-only").forEach(el => {
+                if (isAdmin) el.classList.remove("hidden");
+                else el.classList.add("hidden");
+            });
+
+            if (isAdmin) {
+                document.getElementById("clearNoticeBtn").classList.remove("hidden");
+                document.getElementById("adminActionsCol").classList.remove("hidden");
+            } else {
+                document.getElementById("clearNoticeBtn").classList.add("hidden");
+                document.getElementById("adminActionsCol").classList.add("hidden");
+            }
         }
 
         function loadInventory() {
@@ -480,8 +572,16 @@
         function loadSuppliers() {
             db.collection("suppliers").onSnapshot((snapshot) => {
                 suppliersData = [];
+                const orderSelect = document.getElementById("orderSupplierFilter");
+                const invSelect = document.getElementById("invSupplierFilter");
+                orderSelect.innerHTML = `<option value="ALL">🚚 Tutti i Fornitori</option>`;
+                invSelect.innerHTML = `<option value="ALL">🚚 Tutti i Fornitori</option>`;
+
                 snapshot.forEach((doc) => {
-                    suppliersData.push({ id: doc.id, ...doc.data() });
+                    const sup = { id: doc.id, ...doc.data() };
+                    suppliersData.push(sup);
+                    orderSelect.innerHTML += `<option value="${sup.name}">${sup.name}</option>`;
+                    invSelect.innerHTML += `<option value="${sup.name}">${sup.name}</option>`;
                 });
                 renderFornitori();
             });
@@ -492,20 +592,20 @@
                 const list = document.getElementById("historyList");
                 list.innerHTML = "";
                 if (snapshot.empty) {
-                    list.innerHTML = `<div class="bg-white p-6 rounded-xl border text-center text-slate-400">Nessun ordine nello storico.</div>`;
+                    list.innerHTML = `<div class="bg-slate-800 p-6 rounded-xl border border-slate-700 text-center text-slate-400">Nessun ordine nello storico.</div>`;
                     return;
                 }
                 snapshot.forEach((doc) => {
                     const data = doc.data();
                     const div = document.createElement("div");
-                    div.className = "bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row justify-between gap-2";
+                    div.className = "bg-slate-800 p-4 rounded-xl border border-slate-700 flex flex-col sm:flex-row justify-between gap-2 text-xs";
                     div.innerHTML = `
                         <div>
-                            <span class="text-xs font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">${data.supplier || 'Fornitore'}</span>
-                            <h4 class="font-bold text-slate-800 text-sm mt-1">${data.details || 'Ordine Sede'}</h4>
-                            <p class="text-xs text-slate-500">Inviato da: <strong>${data.author || 'N/D'}</strong></p>
+                            <span class="font-bold text-amber-400 bg-amber-950/60 px-2 py-0.5 rounded border border-amber-800">${data.supplier || 'Fornitore'}</span>
+                            <p class="font-semibold text-slate-200 mt-2">${data.details || 'Ordine Sede'}</p>
+                            <p class="text-slate-400 mt-1">Inviato da: <strong>${data.author || 'N/D'}</strong></p>
                         </div>
-                        <div class="text-xs text-slate-400 text-right">
+                        <div class="text-slate-400 sm:text-right">
                             ${data.date ? new Date(data.date.toDate()).toLocaleString('it-IT') : ''}
                         </div>
                     `;
@@ -520,40 +620,92 @@
                 list.innerHTML = "";
                 snapshot.forEach((doc) => {
                     const d = doc.data();
+                    const id = doc.id;
                     const div = document.createElement("div");
-                    div.className = "p-2 bg-slate-50 rounded border flex justify-between items-center";
+                    div.className = "p-2.5 bg-slate-900 rounded-lg border border-slate-700 flex justify-between items-center";
                     div.innerHTML = `
                         <div>
-                            <strong class="text-slate-800">${d.name || d.displayName || 'Utente'}</strong>
-                            <span class="text-slate-400">(${d.email})</span>
+                            <strong class="text-slate-200">${d.name || d.displayName || 'Utente'}</strong>
+                            <span class="text-slate-400 block">${d.email}</span>
                         </div>
-                        <span class="px-2 py-0.5 rounded font-bold uppercase text-[10px] ${d.role === 'admin' || d.role === 'master' ? 'bg-amber-100 text-amber-800' : 'bg-slate-200 text-slate-700'}">${d.role || 'operator'}</span>
+                        <div class="flex items-center gap-2">
+                            <select onchange="updateUserRole('${id}', this.value)" class="bg-slate-800 border border-slate-700 text-slate-200 text-xs p-1 rounded">
+                                <option value="operator" ${d.role === 'operator' ? 'selected' : ''}>OPERATOR</option>
+                                <option value="admin" ${d.role === 'admin' ? 'selected' : ''}>ADMIN</option>
+                            </select>
+                        </div>
                     `;
                     list.appendChild(div);
                 });
             });
         }
 
+        async function updateUserRole(userId, newRole) {
+            if (currentUserRole !== 'admin' && currentUserRole !== 'master') return alert("Solo un Admin può modificare i ruoli.");
+            await db.collection("users").doc(userId).update({ role: newRole });
+            alert("Ruolo utente aggiornato!");
+        }
+
+        function loadBugs() {
+            db.collection("bugReports").orderBy("date", "desc").onSnapshot((snapshot) => {
+                const list = document.getElementById("adminBugList");
+                list.innerHTML = "";
+                if (snapshot.empty) {
+                    list.innerHTML = `<div class="text-slate-400 p-2">Nessun bug segnalato.</div>`;
+                    return;
+                }
+                snapshot.forEach((doc) => {
+                    const b = doc.data();
+                    const id = doc.id;
+                    const div = document.createElement("div");
+                    div.className = "p-2.5 bg-slate-900 border border-slate-700 rounded-lg flex justify-between items-center";
+                    div.innerHTML = `
+                        <div>
+                            <p class="text-slate-200 font-medium">${b.text}</p>
+                            <span class="text-slate-400 text-[10px]">Inviato da ${b.author || 'N/D'}</span>
+                        </div>
+                        <button onclick="deleteBug('${id}')" class="text-rose-400 hover:text-rose-200 font-bold text-xs bg-rose-950/50 p-1.5 rounded border border-rose-800">Risolto</button>
+                    `;
+                    list.appendChild(div);
+                });
+            });
+        }
+
+        async function deleteBug(bugId) {
+            await db.collection("bugReports").doc(bugId).delete();
+        }
+
         function filterLocation(loc) {
             currentLoc = loc;
-            document.getElementById("btn-vasastan").className = loc === 'vasastan' ? "px-4 py-2 rounded-lg text-sm font-bold bg-emerald-800 text-white shadow-sm" : "px-4 py-2 rounded-lg text-sm font-bold bg-slate-100 text-slate-600 hover:bg-slate-200";
-            document.getElementById("btn-ostermalm").className = loc === 'ostermalm' ? "px-4 py-2 rounded-lg text-sm font-bold bg-emerald-800 text-white shadow-sm" : "px-4 py-2 rounded-lg text-sm font-bold bg-slate-100 text-slate-600 hover:bg-slate-200";
+            document.getElementById("btn-vasastan").className = loc === 'vasastan' ? "px-4 py-2 rounded-lg text-sm font-bold bg-emerald-700 text-white shadow-sm" : "px-4 py-2 rounded-lg text-sm font-bold bg-slate-700 text-slate-300 hover:bg-slate-600";
+            document.getElementById("btn-ostermalm").className = loc === 'ostermalm' ? "px-4 py-2 rounded-lg text-sm font-bold bg-emerald-700 text-white shadow-sm" : "px-4 py-2 rounded-lg text-sm font-bold bg-slate-700 text-slate-300 hover:bg-slate-600";
             renderInventory();
         }
 
         function filterOrdersLocation(loc) {
             currentOrdersLoc = loc;
-            document.getElementById("btn-ord-vasastan").className = loc === 'vasastan' ? "px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-800 text-white shadow-sm" : "px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200";
-            document.getElementById("btn-ord-ostermalm").className = loc === 'ostermalm' ? "px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-800 text-white shadow-sm" : "px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200";
+            document.getElementById("btn-ord-vasastan").className = loc === 'vasastan' ? "px-4 py-2 rounded-lg text-xs font-bold bg-emerald-700 text-white shadow-sm" : "px-4 py-2 rounded-lg text-xs font-bold bg-slate-700 text-slate-300 hover:bg-slate-600";
+            document.getElementById("btn-ord-ostermalm").className = loc === 'ostermalm' ? "px-4 py-2 rounded-lg text-xs font-bold bg-emerald-700 text-white shadow-sm" : "px-4 py-2 rounded-lg text-xs font-bold bg-slate-700 text-slate-300 hover:bg-slate-600";
             renderOrders();
         }
 
         function renderInventory() {
             const tbody = document.getElementById("inventoryTableBody");
             const search = document.getElementById("searchInventory").value.toLowerCase();
+            const catFilter = document.getElementById("invCatFilter").value;
+            const supFilter = document.getElementById("invSupplierFilter").value;
+            const sortFilter = document.getElementById("invSortFilter").value;
             tbody.innerHTML = "";
 
-            const filtered = inventoryData.filter(item => item.name && item.name.toLowerCase().includes(search));
+            let filtered = inventoryData.filter(item => {
+                const matchName = item.name && item.name.toLowerCase().includes(search);
+                const matchCat = catFilter === 'ALL' || item.category === catFilter;
+                const matchSup = supFilter === 'ALL' || item.supplier === supFilter;
+                return matchName && matchCat && matchSup;
+            });
+
+            if (sortFilter === 'name') filtered.sort((a,b) => a.name.localeCompare(b.name));
+            else if (sortFilter === 'low') filtered.sort((a,b) => (a.qty?.[currentLoc] || 0) - (b.qty?.[currentLoc] || 0));
 
             if (filtered.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="5" class="text-center py-8 text-slate-400">Nessun ingrediente trovato.</td></tr>`;
@@ -567,36 +719,36 @@
                 const isAdmin = currentUserRole === 'admin' || currentUserRole === 'master';
 
                 const isLow = qty < min;
-                const lastBy = item.lastUpdateBy || 'N/D';
+                const lastBy = item.lastUpdateBy || 'Operatore Sconosciuto';
                 const lastDate = item.lastUpdateDate ? new Date(item.lastUpdateDate.toDate ? item.lastUpdateDate.toDate() : item.lastUpdateDate).toLocaleString('it-IT') : 'Data non presente';
 
                 const tr = document.createElement("tr");
-                tr.className = `border-b border-slate-100 hover:bg-slate-50 transition ${isBlocked ? 'item-blocked' : ''}`;
+                tr.className = `border-b border-slate-700/50 hover:bg-slate-800/80 transition ${isBlocked ? 'item-blocked' : ''}`;
 
                 tr.innerHTML = `
-                    <td class="px-4 py-3 font-semibold text-slate-800">
+                    <td class="px-4 py-3 font-semibold text-slate-200">
                         <div class="flex items-center gap-2">
                             <span>${item.name}</span>
-                            ${isBlocked ? `<span class="bg-rose-100 text-rose-700 text-xs px-2 py-0.5 rounded font-bold">🚫 Non Disponibile</span>` : ''}
+                            ${isBlocked ? `<span class="bg-rose-950/80 text-rose-300 border border-rose-800 text-xs px-2 py-0.5 rounded font-bold">🚫 Non Disponibile</span>` : ''}
                         </div>
                     </td>
                     <td class="px-4 py-3 text-center">
                         <div class="inline-flex items-center gap-2">
-                            <button onclick="updateQty('${item.id}', -1)" ${isBlocked && !isAdmin ? 'disabled' : ''} class="w-7 h-7 bg-slate-200 hover:bg-slate-300 rounded font-bold text-slate-700 disabled:opacity-30">-</button>
-                            <span class="font-bold text-base w-8 text-center">${qty}</span>
-                            <button onclick="updateQty('${item.id}', 1)" ${isBlocked && !isAdmin ? 'disabled' : ''} class="w-7 h-7 bg-slate-200 hover:bg-slate-300 rounded font-bold text-slate-700 disabled:opacity-30">+</button>
+                            <button onclick="updateQty('${item.id}', -1)" ${isBlocked && !isAdmin ? 'disabled' : ''} class="w-7 h-7 bg-slate-700 hover:bg-slate-600 rounded font-bold text-slate-100 disabled:opacity-30">-</button>
+                            <span class="font-bold text-base w-8 text-center text-slate-100">${qty}</span>
+                            <button onclick="updateQty('${item.id}', 1)" ${isBlocked && !isAdmin ? 'disabled' : ''} class="w-7 h-7 bg-slate-700 hover:bg-slate-600 rounded font-bold text-slate-100 disabled:opacity-30">+</button>
                         </div>
                     </td>
                     <td class="px-4 py-3 text-center">
-                        ${isLow ? `<span class="bg-red-100 text-red-700 text-xs px-2.5 py-1 rounded-full font-bold">🚨 Sotto Soglia</span>` : `<span class="bg-emerald-100 text-emerald-700 text-xs px-2.5 py-1 rounded-full font-bold">OK</span>`}
+                        ${isLow ? `<span class="bg-rose-950/80 text-rose-300 border border-rose-800 text-xs px-2.5 py-1 rounded-full font-bold">🚨 Sotto Soglia</span>` : `<span class="bg-emerald-950/80 text-emerald-300 border border-emerald-800 text-xs px-2.5 py-1 rounded-full font-bold">OK</span>`}
                     </td>
-                    <td class="px-4 py-3 text-xs text-slate-500">
-                        <div><strong class="text-slate-700">${lastBy}</strong></div>
-                        <div class="text-slate-400">${lastDate}</div>
+                    <td class="px-4 py-3 text-xs text-slate-400">
+                        <div><strong class="text-slate-200">${lastBy}</strong></div>
+                        <div class="text-slate-400 text-[10px]">${lastDate}</div>
                     </td>
                     ${isAdmin ? `
                         <td class="px-4 py-3 text-right">
-                            <button onclick="toggleBlockItem('${item.id}',${!isBlocked})" class="text-xs px-3 py-1 rounded font-bold ${isBlocked ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
+                            <button onclick="toggleBlockItem('${item.id}',${!isBlocked})" class="text-xs px-3 py-1 rounded font-bold ${isBlocked ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-rose-950 text-rose-300 border border-rose-800'}">
                                 ${isBlocked ? 'Sblocca' : 'Blocca'}
                             </button>
                         </td>
@@ -630,13 +782,13 @@
         }
 
         async function toggleBlockItem(itemId, status) {
-            await db.collection("inventory").doc(itemId).update({
-                isBlocked: status
-            });
+            await db.collection("inventory").doc(itemId).update({ isBlocked: status });
         }
 
         function renderOrders() {
             const list = document.getElementById("ordersList");
+            const catFilter = document.getElementById("orderCatFilter").value;
+            const supFilter = document.getElementById("orderSupplierFilter").value;
             list.innerHTML = "";
 
             let count = 0;
@@ -645,68 +797,156 @@
                 const min = item.minQty && item.minQty[currentOrdersLoc] !== undefined ? item.minQty[currentOrdersLoc] : 5;
                 const isBlocked = item.isBlocked || false;
 
-                if (qty < min) {
+                const matchCat = catFilter === 'ALL' || item.category === catFilter;
+                const matchSup = supFilter === 'ALL' || item.supplier === supFilter;
+
+                if (qty < min && matchCat && matchSup) {
                     count++;
+                    const orderQty = orderDraft[item.id] !== undefined ? orderDraft[item.id] : Math.max(1, min - qty);
+                    orderDraft[item.id] = orderQty;
+
                     const lastBy = item.lastUpdateBy || 'Operatore Sconosciuto';
                     const lastDate = item.lastUpdateDate ? new Date(item.lastUpdateDate.toDate ? item.lastUpdateDate.toDate() : item.lastUpdateDate).toLocaleString('it-IT') : 'Data non presente';
 
                     const div = document.createElement("div");
-                    div.className = `bg-white p-4 rounded-xl border-l-4 border-amber-500 shadow-sm flex flex-col sm:flex-row justify-between sm:items-center gap-2 ${isBlocked ? 'item-blocked' : ''}`;
+                    div.className = `bg-slate-800 p-4 rounded-xl border-l-4 border-amber-500 shadow-sm flex flex-col sm:flex-row justify-between sm:items-center gap-3 ${isBlocked ? 'item-blocked' : ''}`;
                     div.innerHTML = `
                         <div>
                             <div class="flex items-center gap-2">
-                                <h4 class="font-bold text-slate-800 text-base">${item.name}</h4>
-                                ${isBlocked ? `<span class="bg-rose-100 text-rose-700 text-xs px-2 py-0.5 rounded font-bold">🚫 Non Disponibile</span>` : ''}
+                                <h4 class="font-bold text-slate-100 text-base">${item.name}</h4>
+                                ${isBlocked ? `<span class="bg-rose-950 text-rose-300 border border-rose-800 text-xs px-2 py-0.5 rounded font-bold">🚫 Non Disponibile</span>` : ''}
                             </div>
-                            <p class="text-xs text-slate-500 mt-0.5">Giacenza attuale: <strong class="text-amber-700">${qty}</strong> (Minima: ${min})</p>
+                            <p class="text-xs text-slate-400 mt-0.5">Giacenza attuale: <strong class="text-amber-400">${qty}</strong> (Minima: ${min})</p>
+                            <div class="text-[11px] text-slate-400 mt-2 bg-slate-900/60 p-2 rounded-lg border border-slate-700/60 inline-block">
+                                Ultima modifica: <strong class="text-slate-200">${lastBy}</strong> - ${lastDate}
+                            </div>
                         </div>
-                        <div class="text-xs text-slate-500 sm:text-right bg-slate-50 p-2 rounded-lg border border-slate-100">
-                            <div>Ultima modifica: <strong class="text-slate-700">${lastBy}</strong></div>
-                            <div class="text-slate-400">${lastDate}</div>
+
+                        <!-- CONTROLLO QUANTITÀ DA ORDINARE -->
+                        <div class="flex items-center gap-2 bg-slate-900 p-2 rounded-lg border border-slate-700">
+                            <span class="text-xs font-bold text-slate-400">Ordina:</span>
+                            <button onclick="changeOrderDraftQty('${item.id}', -1)" class="w-7 h-7 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded font-bold">-</button>
+                            <input type="number" value="${orderQty}" onchange="setOrderDraftQty('${item.id}', this.value)" class="w-12 text-center bg-slate-800 border border-slate-700 rounded py-1 font-bold text-amber-400 text-sm">
+                            <button onclick="changeOrderDraftQty('${item.id}', 1)" class="w-7 h-7 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded font-bold">+</button>
                         </div>
                     `;
                     list.appendChild(div);
                 }
             });
 
+            document.getElementById("orderDraftCount").textContent = count;
+
             if (count === 0) {
-                list.innerHTML = `<div class="bg-white p-6 rounded-xl border border-slate-200 text-center text-emerald-700 font-semibold">Tutti gli ingredienti sono sopra la soglia minima per ${currentOrdersLoc.toUpperCase()}!</div>`;
+                list.innerHTML = `<div class="bg-slate-800 p-6 rounded-xl border border-slate-700 text-center text-emerald-400 font-semibold">Nessun ingrediente sotto soglia per i filtri selezionati (${currentOrdersLoc.toUpperCase()}).</div>`;
+            }
+        }
+
+        function changeOrderDraftQty(itemId, delta) {
+            const current = orderDraft[itemId] || 1;
+            orderDraft[itemId] = Math.max(1, current + delta);
+            renderOrders();
+        }
+
+        function setOrderDraftQty(itemId, val) {
+            orderDraft[itemId] = Math.max(1, parseInt(val) || 1);
+            renderOrders();
+        }
+
+        async function generateOrderSummary() {
+            let summary = `📋 RIEPILOGO ORDINE - MAGARI (${currentOrdersLoc.toUpperCase()})\n`;
+            summary += `Data Consegna: ${document.getElementById("orderDeliveryDate").value || 'Da concordare'}\n\n`;
+
+            let hasItems = false;
+            inventoryData.forEach(item => {
+                if (orderDraft[item.id] && orderDraft[item.id] > 0) {
+                    summary += `- ${item.name}: Quantità ${orderDraft[item.id]}\n`;
+                    hasItems = true;
+                }
+            });
+
+            if (!hasItems) return alert("Nessun articolo selezionato nell'ordine.");
+
+            if (confirm(summary + "\nVuoi registrare questo ordine nello storico?")) {
+                const name = currentUser ? document.getElementById("userNameDisplay").textContent : "Operatore";
+                await db.collection("history").add({
+                    supplier: document.getElementById("orderSupplierFilter").value,
+                    details: summary,
+                    author: name,
+                    date: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                alert("Ordine salvato nello storico con successo!");
             }
         }
 
         function renderMagazzino() {
             const container = document.getElementById("magazzinoContent");
             container.innerHTML = "";
+            const isAdmin = currentUserRole === 'admin' || currentUserRole === 'master';
+
             inventoryData.forEach(item => {
                 const div = document.createElement("div");
-                div.className = "bg-white p-3 rounded-lg border border-slate-200 flex justify-between items-center text-xs";
+                div.className = "bg-slate-800 p-3 rounded-lg border border-slate-700 flex justify-between items-center text-xs";
                 div.innerHTML = `
                     <div>
-                        <strong class="text-slate-800 text-sm">${item.name}</strong>
+                        <strong class="text-slate-100 text-sm">${item.name}</strong>
                         <div class="text-slate-400">Prezzo: ${item.price || 0} SEK | Unità: ${item.unit || 'Kg'}</div>
                     </div>
-                    <div class="text-right">
-                        <span class="text-slate-500 block">Min Vas: ${item.minQty?.vasastan || 5}</span>
-                        <span class="text-slate-500 block">Min Öst: ${item.minQty?.ostermalm || 5}</span>
-                    </div>
+                    ${isAdmin ? `
+                        <div class="flex items-center gap-2">
+                            <button onclick="editProduct('${item.id}')" class="px-2 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded font-bold">Modifica</button>
+                            <button onclick="deleteProduct('${item.id}')" class="px-2 py-1 bg-rose-950 text-rose-300 border border-rose-800 rounded font-bold">Elimina</button>
+                        </div>
+                    ` : '<span class="text-slate-500">Solo Lettura</span>'}
                 `;
                 container.appendChild(div);
             });
         }
 
+        async function editProduct(id) {
+            const p = inventoryData.find(i => i.id === id);
+            if (!p) return;
+            const newName = prompt("Modifica nome prodotto:", p.name);
+            const newPrice = prompt("Modifica prezzo SEK:", p.price || 0);
+            if (newName) {
+                await db.collection("inventory").doc(id).update({
+                    name: newName,
+                    price: parseFloat(newPrice) || 0
+                });
+            }
+        }
+
+        async function deleteProduct(id) {
+            if (confirm("Sei sicuro di voler eliminare questo prodotto?")) {
+                await db.collection("inventory").doc(id).delete();
+            }
+        }
+
         function renderFornitori() {
             const container = document.getElementById("fornitoriContent");
             container.innerHTML = "";
+            const isAdmin = currentUserRole === 'admin' || currentUserRole === 'master';
+
             suppliersData.forEach(sup => {
                 const div = document.createElement("div");
-                div.className = "bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-1";
+                div.className = "bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-2";
                 div.innerHTML = `
-                    <h4 class="font-bold text-slate-800 text-sm">${sup.name}</h4>
-                    <p class="text-xs text-slate-500">📞 ${sup.phone || 'N/D'}</p>
-                    <p class="text-xs text-slate-500">✉️ ${sup.email || 'N/D'}</p>
+                    <div class="flex justify-between items-start">
+                        <h4 class="font-bold text-slate-100 text-sm">${sup.name}</h4>
+                        ${isAdmin ? `
+                            <button onclick="deleteSupplier('${sup.id}')" class="text-rose-400 text-xs font-bold underline">Elimina</button>
+                        ` : ''}
+                    </div>
+                    <p class="text-xs text-slate-400">📞 ${sup.phone || 'N/D'}</p>
+                    <p class="text-xs text-slate-400">✉️ ${sup.email || 'N/D'}</p>
                 `;
                 container.appendChild(div);
             });
+        }
+
+        async function deleteSupplier(id) {
+            if (confirm("Eliminare il fornitore?")) {
+                await db.collection("suppliers").doc(id).delete();
+            }
         }
 
         function renderReport() {
@@ -718,7 +958,7 @@
             inventoryData.forEach(item => {
                 const qty = (item.qty?.vasastan || 0) + (item.qty?.ostermalm || 0);
                 const val = qty * (item.price || 0);
-                const row = `<div class="flex justify-between py-1 border-b"><span>${item.name} (${qty} ${item.unit || 'st'})</span><strong class="text-slate-700">${val.toFixed(2)} SEK</strong></div>`;
+                const row = `<div class="flex justify-between py-1 border-b border-slate-700/50"><span>${item.name} (${qty} ${item.unit || 'st'})</span><strong class="text-slate-200">${val.toFixed(2)} SEK</strong></div>`;
                 if (item.category === 'Alcolici' || item.category === 'Bevande') {
                     alcList.innerHTML += row;
                 } else {
@@ -727,18 +967,44 @@
             });
         }
 
-        function exportToExcel() {
-            const data = inventoryData.map(i => ({
-                Nome: i.name,
-                "Giacenza Vasastan": i.qty?.vasastan || 0,
-                "Giacenza Östermalm": i.qty?.ostermalm || 0,
-                Prezzo: i.price || 0,
-                Unita: i.unit || 'st'
-            }));
+        function openExportModal() { document.getElementById("exportModal").classList.remove("hidden"); }
+        function closeExportModal() { document.getElementById("exportModal").classList.add("hidden"); }
+
+        function executeExcelExport() {
+            const cat = document.getElementById("excelCategorySelect").value;
+            let filtered = inventoryData;
+            if (cat === 'Cibo') filtered = inventoryData.filter(i => i.category !== 'Alcolici' && i.category !== 'Bevande');
+            else if (cat === 'Bevande') filtered = inventoryData.filter(i => i.category === 'Alcolici' || i.category === 'Bevande');
+
+            let totalVal = 0;
+            const data = filtered.map(i => {
+                const qtyV = i.qty?.vasastan || 0;
+                const qtyO = i.qty?.ostermalm || 0;
+                const totQty = qtyV + qtyO;
+                const val = totQty * (i.price || 0);
+                totalVal += val;
+
+                return {
+                    "Prodotto / Ingrediente": i.name,
+                    "Categoria": i.category || 'N/D',
+                    "Giacenza Vasastan": qtyV,
+                    "Giacenza Östermalm": qtyO,
+                    "Totale Stock": totQty,
+                    "Prezzo Unitario (SEK)": i.price || 0,
+                    "Valore Totale Stock (SEK)": val.toFixed(2)
+                };
+            });
+
+            data.push({
+                "Prodotto / Ingrediente": "--- VALORE TOTALE INVENTARIO ---",
+                "Valore Totale Stock (SEK)": totalVal.toFixed(2)
+            });
+
             const ws = XLSX.utils.json_to_sheet(data);
             const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Inventario");
-            XLSX.writeFile(wb, "Inventario_Magari_DEV.xlsx");
+            XLSX.utils.book_append_sheet(wb, ws, "Report Giacenze");
+            XLSX.writeFile(wb, `Inventario_Magari_${cat}_DEV.xlsx`);
+            closeExportModal();
         }
 
         function listenNotice() {
@@ -766,8 +1032,7 @@
             });
 
             document.getElementById("noticeInputText").value = "";
-            switchTab('inventory');
-            alert("Avviso pubblicato per tutto lo staff!");
+            alert("Avviso pubblicato in bacheca!");
         }
 
         async function deleteNotice() {
@@ -786,7 +1051,7 @@
             });
 
             document.getElementById("bugText").value = "";
-            alert("Segnalazione inviata con successo!");
+            alert("Segnalazione inviata all'Amministratore!");
         }
 
         function openAddItemModal() {
@@ -797,31 +1062,34 @@
                 qty: { vasastan: 0, ostermalm: 0 },
                 minQty: { vasastan: 5, ostermalm: 5 },
                 price: 0,
-                unit: 'Kg'
+                unit: 'Kg',
+                category: 'Cibo'
             });
         }
 
         function openAddSupplierModal() {
             const name = prompt("Nome nuovo fornitore:");
             if (!name) return;
-            db.collection("suppliers").add({
-                name: name,
-                phone: '',
-                email: ''
-            });
+            db.collection("suppliers").add({ name: name, phone: '', email: '' });
         }
 
         function switchTab(tabId) {
+            const restricted = ['magazzino', 'fornitori', 'report', 'impostazioni'];
+            if (restricted.includes(tabId) && currentUserRole !== 'admin' && currentUserRole !== 'master') {
+                alert("🔒 Accesso Riservato agli Amministratori.");
+                return;
+            }
+
             document.querySelectorAll(".tab-content").forEach(el => el.classList.add("hidden"));
             document.querySelectorAll(".tab-btn").forEach(el => {
-                el.classList.remove("border-emerald-600", "text-emerald-700");
-                el.classList.add("border-transparent", "text-slate-500");
+                el.classList.remove("border-emerald-500", "text-emerald-400");
+                el.classList.add("border-transparent", "text-slate-400");
             });
 
             document.getElementById(`sec-${tabId}`).classList.remove("hidden");
             const activeBtn = document.getElementById(`tab-${tabId}`);
             if (activeBtn) {
-                activeBtn.classList.add("border-emerald-600", "text-emerald-700");
+                activeBtn.classList.add("border-emerald-500", "text-emerald-400");
             }
         }
 
@@ -832,12 +1100,12 @@
             if (tab === 'login') {
                 document.getElementById("formLogin").classList.remove("hidden");
                 document.getElementById("formRegister").classList.add("hidden");
-                document.getElementById("btnTabLogin").className = "w-1/2 py-2 border-b-2 border-emerald-600 text-emerald-700";
+                document.getElementById("btnTabLogin").className = "w-1/2 py-2 border-b-2 border-emerald-500 text-emerald-400";
                 document.getElementById("btnTabRegister").className = "w-1/2 py-2 border-b-2 border-transparent text-slate-400";
             } else {
                 document.getElementById("formLogin").classList.add("hidden");
                 document.getElementById("formRegister").classList.remove("hidden");
-                document.getElementById("btnTabRegister").className = "w-1/2 py-2 border-b-2 border-emerald-600 text-emerald-700";
+                document.getElementById("btnTabRegister").className = "w-1/2 py-2 border-b-2 border-emerald-500 text-emerald-400";
                 document.getElementById("btnTabLogin").className = "w-1/2 py-2 border-b-2 border-transparent text-slate-400";
             }
         }
