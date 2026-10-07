@@ -275,7 +275,6 @@
                 <div style="font-size:12px; color:var(--text-secondary);">Manuale operativo per lo staff di Vasastan e Östermalm.</div>
             </div>
             <div class="content-list">
-                
                 <div class="faq-item-box">
                     <div class="faq-question">📍 1. Come cambiare la Sede attiva?</div>
                     <div class="faq-answer">
@@ -337,7 +336,12 @@
                 <div class="faq-item-box">
                     <div class="faq-question">🐛 8. Come segnalare un bug o un errore nei prezzi/dati?</div>
                     <div class="faq-answer">
-                        Apri la voce del menu <b>🐛 Segnala Bug & Feedback</b>, seleziona la tipologia di problema, scrivi una breve spiegazione e premi <b>"🚀 Invia Segnalazione"</b>. L'amministratore riceverà la notifica e prenderà in car
+                        Apri la voce del menu <b>🐛 Segnala Bug & Feedback</b>, seleziona la tipologia di problema, scrivi una breve spiegazione e premi <b>"🚀 Invia Segnalazione"</b>. L'amministratore riceverà la notifica e prenderà in carico la richiesta.
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- 8. SEGNALA BUG -->
         <div id="view-bugreport" class="view-section">
             <div class="top-bar-container">
@@ -1883,7 +1887,7 @@
             const isAlcohol = (cat) => (cat === 'Alcolici' || cat === 'Bevande');
             const activeLocShort = window.activeLocation ? window.activeLocation.split(' ')[0] : '';
 
-            let itemTotals = {}; // { itemName: { qty: X, price: Y, isAlcohol: bool } }
+            let itemTotals = {}; 
 
             if (periodType === 'stock') {
                 titleDisplay.innerText = `📊 Report Valore Giacenze Attuali (${window.activeLocation || 'Tutte le sedi'})`;
@@ -1907,7 +1911,6 @@
                     if (!matchLoc) return false;
 
                     if (periodType === 'month') {
-                        // Formato data nello storico: "DD/MM/YYYY, HH:mm" o ISO
                         if (!h.timestamp) return false;
                         const parts = h.timestamp.split(',')[0].split('/');
                         if (parts.length === 3) {
@@ -1962,7 +1965,16 @@
             if (!hasAlc) alcTbody.innerHTML = '<tr><td colspan="3" style="color:#888; text-align:center;">Nessun dato registrato.</td></tr>';
             if (!hasFood) foodTbody.innerHTML = '<tr><td colspan="3" style="color:#888; text-align:center;">Nessun dato registrato.</td></tr>';
 
-            const grandTotal = parseFloat((totalAlcCost + totalFoodCost).toFix            if (!window.checkAuthGuard()) return;
+            const grandTotal = parseFloat((totalAlcCost + totalFoodCost).toFixed(2));
+            grandTotalBox.innerHTML = `💰 COSTO TOTALE ESTIMATO: <span style="font-size:16px;">${grandTotal.toFixed(2)} SEK</span>`;
+
+            resultsContainer.style.display = 'block';
+            window.showAlert("📊 Report generato con successo!");
+        };
+
+        // BUG REPORT & AZIONI RESET
+        window.submitBugReport = async function() {
+            if (!window.checkAuthGuard()) return;
             const op = window.currentUserProfile.name;
             const desc = document.getElementById('bug-desc-input').value.trim();
             if (!desc) return window.showAlert("⚠️ Compila la descrizione.");
