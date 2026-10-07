@@ -5,8 +5,9 @@
 ====================================================================
 [MAGARI APP - HISTORICAL CHANGELOG REGISTRY & ARCHIVE]
 - v3.9.12 DEVELOPER:
-  * Avvisi Staff separati ed emessi in modo indipendente per Sede (Vasastan / Östermalm).
-  * Ripristinato e corretto il motore di calcolo Report Consumi con selezione del mese.
+  * Avvisi Staff riprogettati in formato Card Pastello (Opzione A).
+  * Menu Laterale e Modali aggiornati con palette pastello riposante.
+  * Ripristinato e corretto il motore di calcolo Report Consumi.
   * Ampliata e dettagliata la sezione FAQ & Guida Rapida per lo staff.
 ====================================================================
 -->
@@ -98,18 +99,16 @@
             <div class="page-badge" id="page-title">Ordini</div>
         </div>
 
-        <!-- BANNER AVVISI STAFF (INTEGRAZIONE) -->
-        <div id="staff-notice-banner" style="display:none; background:#fffbe8; border-bottom:1px solid #ffe0b2; padding:10px 16px; font-size:12px; color:#b45309;">
-            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                <div>
-                    <div style="font-weight:bold; font-size:13px; display:flex; align-items:center; gap:4px;">
-                        <span>📢 Avviso per lo Staff</span>
-                    </div>
-                    <div id="staff-notice-text" style="margin-top:2px; color:#1e293b; font-weight:600;"></div>
-                    <div id="staff-notice-meta" style="font-size:10px; color:#78350f; margin-top:2px;"></div>
+        <!-- BANNER AVVISI STAFF (OPZIONE A - CARD PASTELLO) -->
+        <div id="staff-notice-banner" style="display:none; background:#fffbeb; border-left:5px solid #f59e0b; border-bottom:1px solid #fef3c7; padding:12px 16px; margin:10px 12px; border-radius:8px; box-shadow:0 2px 5px rgba(0,0,0,0.04);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                <div style="display:flex; align-items:center; gap:6px;">
+                    <span style="font-size:11px; font-weight:800; background:#fef3c7; color:#b45309; padding:2px 8px; border-radius:12px; border:1px solid #fde68a;">📢 COMUNICAZIONE STAFF</span>
                 </div>
-                <button id="btn-delete-notice" onclick="deleteNoticeFromDb()" style="display:none; background:none; border:none; color:#c62828; font-size:11px; font-weight:bold; cursor:pointer; text-decoration:underline;">Rimuovi</button>
+                <button id="btn-delete-notice" onclick="deleteNoticeFromDb()" style="display:none; background:#fee2e2; border:1px solid #fca5a5; color:#991b1b; font-size:10px; font-weight:bold; padding:3px 8px; border-radius:12px; cursor:pointer;">🗑️ Rimuovi</button>
             </div>
+            <div id="staff-notice-text" style="font-size:15px; font-weight:800; color:#1e293b; line-height:1.3; margin-top:4px;"></div>
+            <div id="staff-notice-meta" style="font-size:11px; color:#78350f; margin-top:6px; font-weight:500;"></div>
         </div>
 
         <div class="location-active-banner" id="active-location-banner" style="display: none;">
@@ -195,7 +194,6 @@
             </div>
             <div class="content-list" id="stock-list"></div>
         </div>
-
         <!-- 3. STORICO ORDINI -->
         <div id="view-storico" class="view-section">
             <div class="top-bar-container">
@@ -304,7 +302,7 @@
                 <div class="faq-item-box">
                     <div class="faq-question">✍️ 4. Come verificare una Consegna arrivata e stornare la Scorta?</div>
                     <div class="faq-answer">
-                        Quando la merce arriva in pizzeria:<br>
+                        Quando la merce arrives in pizzeria:<br>
                         1. Vai nella sezione <b>📜 Storico Ordini</b>.<br>
                         2. Trova l'ordine con il bollino rosso ⚠️ <i>Da Controllare</i>.<br>
                         3. Clicca su <b>"✍️ Verifica & Storna"</b>.<br>
@@ -406,9 +404,9 @@
 
     </div>
 
-    <!-- MODALI UTILITY -->
+    <!-- MODALI UTILITY PASTELLO -->
     <div class="modal" id="user-edit-modal">
-        <div class="modal-title" id="user-modal-title" style="color:var(--primary); font-size:18px;">👤 Operatore</div>
+        <div class="modal-title" id="user-modal-title">👤 Operatore</div>
         <input type="hidden" id="edit-user-uid">
         
         <div class="form-group"><label>Nome e Cognome</label><input type="text" id="user-field-name" class="form-control" placeholder="es. Marco Rossi"></div>
@@ -429,7 +427,7 @@
 
     <!-- MODALE AUTHENTICATION -->
     <div class="modal" id="auth-modal">
-        <div class="modal-title" id="auth-modal-title" style="color:var(--primary); font-size:18px; text-align:center;">🔑 Accedi a Magari App DEV</div>
+        <div class="modal-title" id="auth-modal-title" style="text-align:center;">🔑 Accedi a Magari App DEV</div>
         <div style="display:flex; justify-content:center; gap:10px; margin-bottom:12px;">
             <button id="tab-btn-login" onclick="switchAuthTab('login')" style="flex:1; padding:6px; border-radius:6px; font-weight:bold; border:1px solid var(--primary); background:var(--primary); color:white;">Login</button>
             <button id="tab-btn-register" onclick="switchAuthTab('register')" style="flex:1; padding:6px; border-radius:6px; font-weight:bold; border:1px solid #cbd5e1; background:#f1f5f9; color:#334155;">Nuovo Account Staff</button>
@@ -451,9 +449,8 @@
         <div class="modal-actions" style="margin-top:12px;"><button class="btn-cancel" onclick="closeAuthModal()" style="width:100%;">Annulla</button></div>
     </div>
 
-    <!-- MODALI UTILITY -->
     <div class="modal" id="verify-delivery-modal" style="max-width: 520px;">
-        <div class="modal-title" style="color:var(--primary);">✍️ Verifica Consegna & Storno Giacenze</div>
+        <div class="modal-title">✍️ Verifica Consegna & Storno Giacenze</div>
         <div style="font-size: 13px; color: #555; margin-bottom: 10px;">Inserisci le quantità effettivamente ricevute per accreditarle in giacenza.</div>
         <div id="verify-items-checklist-container" style="display:flex; flex-direction:column; gap:8px; max-height:220px; overflow-y:auto; margin-bottom:12px; background:#f8fafc; padding:8px; border-radius:8px; border:1px solid #e2e8f0;"></div>
         <div class="form-group"><label style="font-weight:bold; color:var(--primary);">📝 Note / Messaggio (Opzionale):</label><input type="text" id="verify-note-input" class="form-control" placeholder="es. Arrivate tutte le unità..."></div>
@@ -467,7 +464,7 @@
     </div>
 
     <div class="modal" id="summary-modal">
-        <div class="modal-title" style="font-size:20px; color:var(--primary);">📋 Riepilogo Ordine Generato</div>
+        <div class="modal-title">📋 Riepilogo Ordine Generato</div>
         <div id="summary-content"></div>
         <div class="modal-actions" style="margin-top:14px;"><button class="btn-cancel" onclick="closeSummaryModal()">Chiudi</button></div>
     </div>
@@ -580,25 +577,28 @@
         .faq-question { font-size: 14px; font-weight: 800; color: var(--primary); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
         .faq-answer { font-size: 13px; color: #334155; line-height: 1.4; }
 
-        .drawer { position: absolute; top: 0; left: -280px; width: 280px; height: 100%; min-height: 100vh; background-color: white; box-shadow: 4px 0 15px rgba(0,0,0,0.25); transition: left 0.3s ease; z-index: 2000; padding: 20px; overflow-y: auto; }
+        /* MENU DRAWER PASTELLO */
+        .drawer { position: absolute; top: 0; left: -280px; width: 280px; height: 100%; min-height: 100vh; background-color: #faf8f5; box-shadow: 4px 0 15px rgba(0,0,0,0.15); transition: left 0.3s ease; z-index: 2000; padding: 20px; overflow-y: auto; border-right: 1px solid #e6e2d8; }
         .drawer.open { left: 0; }
-        .drawer-header { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 20px; border-bottom: 1px solid var(--border); background-color: var(--primary); border-radius: 8px; padding: 16px 12px; }
+        .drawer-header { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 16px; border-bottom: 1px solid #1b4332; background-color: var(--primary); border-radius: 10px; padding: 16px 12px; }
         .drawer-menu { list-style: none; }
-        .drawer-menu li { padding: 12px 0; font-size: 14px; font-weight: 600; border-bottom: 1px solid #f0f0f0; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .drawer-menu li { padding: 12px 10px; font-size: 14px; font-weight: 600; color: #2d3748; border-bottom: 1px solid #eae6df; cursor: pointer; display: flex; justify-content: space-between; align-items: center; border-radius: 6px; transition: background 0.15s ease; }
+        .drawer-menu li:active { background-color: #e8f3ee; color: #043927; }
 
         .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; min-height: 100vh; background: rgba(0,0,0,0.6); display: none; z-index: 1000; backdrop-filter: blur(4px); }
         .overlay.active { display: block; }
 
-        .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 12px; width: 92%; max-width: 480px; max-height: 88vh; overflow-y: auto; box-shadow: 0 8px 30px rgba(0,0,0,0.3); display: none; z-index: 9999; }
+        /* MODALI POPUP PASTELLO */
+        .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #fdfcf7; padding: 22px; border-radius: 14px; width: 92%; max-width: 480px; max-height: 88vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.2); display: none; z-index: 9999; border: 1px solid #e2ded4; }
         .modal.active { display: block !important; }
         
-        .modal-title { font-size: 18px; font-weight: bold; margin-bottom: 12px; }
+        .modal-title { font-size: 17px; font-weight: 800; margin-bottom: 14px; padding: 8px 12px; background: #e8f0ec; color: #043927; border-radius: 8px; border-left: 4px solid #2d6a4f; }
         .form-group { margin-bottom: 12px; }
         .form-group label { display: block; font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; }
         .form-control { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; background-color: white; }
         .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
-        .btn-cancel { background: #eee; border: none; padding: 10px 14px; border-radius: 6px; cursor: pointer; font-size: 14px; }
-        .btn-save { background: var(--primary); color: white; border: none; padding: 10px 14px; border-radius: 6px; cursor: pointer; font-size: 14px; }
+        .btn-cancel { background: #e5e2d9; color: #4a5568; border: none; padding: 10px 14px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; }
+        .btn-save { background: #2d6a4f; color: white; border: none; padding: 10px 14px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; }
         .btn-danger { background: var(--danger); color: white; border: none; padding: 10px 14px; border-radius: 6px; cursor: pointer; font-size: 14px; }
 
         .toast-notification { 
@@ -635,7 +635,6 @@
 
         .badge-notification { background: var(--danger); color: white; border-radius: 12px; font-size: 11px; font-weight: 800; padding: 2px 8px; display: inline-block; }
     </style>
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { 
@@ -814,7 +813,7 @@
                 if (docSnap.exists() && docSnap.data().text) {
                     const data = docSnap.data();
                     if (txt) txt.innerText = data.text;
-                    if (meta) meta.innerText = `📍 [${data.location || locKey.toUpperCase()}] Pubblicato da ${data.author || 'Admin'} - ${data.date ? new Date(data.date.toDate ? data.date.toDate() : data.date).toLocaleString('it-IT') : ''}`;
+                    if (meta) meta.innerText = `📍 ${data.location || locKey.toUpperCase()} • Pubblicato da ${data.author || 'Admin'} - ${data.date ? new Date(data.date.toDate ? data.date.toDate() : data.date).toLocaleString('it-IT') : ''}`;
                     if (banner) banner.style.display = 'block';
                 } else {
                     if (banner) banner.style.display = 'none';
