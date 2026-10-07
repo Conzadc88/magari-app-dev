@@ -4,14 +4,10 @@
 <!--
 ====================================================================
 [MAGARI APP - HISTORICAL CHANGELOG REGISTRY & ARCHIVE]
-- v3.9.11 DEVELOPER:
-  * Puntamento al database Firebase DEV isolato (magari-app-dev).
-  * Inserimento Firma Developer "Nicolas Cappiello" nel footer.
-  * Mostrato l'ultimo aggiornamento scorta (operatore + data/ora) nella scheda Ordini.
-  * Integrato Banner Avvisi Staff in tempo reale.
-  * Tema cromatico Sabbia/Beige riposante per la vista.
-  * Export Excel Alcolici & Bevande con subtotali separati e gran totale.
-  * Corretta anagrafica fornitori con opzioni di modifica ed eliminazione.
+- v3.9.12 DEVELOPER:
+  * Avvisi Staff separati ed emessi in modo indipendente per Sede (Vasastan / Östermalm).
+  * Ripristinato e corretto il motore di calcolo Report Consumi con selezione del mese.
+  * Ampliata e dettagliata la sezione FAQ & Guida Rapida per lo staff.
 ====================================================================
 -->
     <meta charset="UTF-8">
@@ -29,7 +25,7 @@
     <link rel="apple-touch-icon" href="logo-square.png">
     <link rel="icon" type="image/png" href="logo-square.png">
 
-    <title>Magari v3.9.11 DEV</title>
+    <title>Magari v3.9.12 DEV</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -61,7 +57,7 @@
             <div class="drawer-header" style="text-align: center;">
                 <img src="logo-header.png" alt="Magari Logo" style="max-width: 170px; height: auto; margin-bottom: 4px;" onerror="this.style.display='none'; document.getElementById('drawer-text-fallback').style.display='block';">
                 <div id="drawer-text-fallback" class="brand-title" style="display:none; font-size: 24px;">MAGARI</div>
-                <div class="brand-subtitle" style="font-size: 9px; background:#b45309;">v3.9.11 DEVELOPER</div>
+                <div class="brand-subtitle" style="font-size: 9px; background:#b45309;">v3.9.12 DEVELOPER</div>
             </div>
 
             <!-- USER ACCOUNT BANNER NELLO MENU -->
@@ -97,7 +93,7 @@
             <div class="header-brand-text">
                 <img src="logo-header.png" alt="Magari" style="height: 34px; width: auto;" onerror="this.style.display='none'; document.getElementById('header-text-fallback').style.display='block';">
                 <div id="header-text-fallback" class="brand-title" style="display:none;">MAGARI</div>
-                <div class="brand-subtitle" style="background:#b45309;">v3.9.11 DEVELOPER</div>
+                <div class="brand-subtitle" style="background:#b45309;">v3.9.12 DEVELOPER</div>
             </div>
             <div class="page-badge" id="page-title">Ordini</div>
         </div>
@@ -272,19 +268,76 @@
             </div>
         </div>
 
-        <!-- 7. FAQ -->
+        <!-- 7. FAQ & GUIDA RAPIDA -->
         <div id="view-faq" class="view-section">
             <div class="top-bar-container">
-                <div style="font-size:16px; font-weight:800; color:var(--primary);">❓ Guida Rapida & Domande Frequenti</div>
+                <div style="font-size:16px; font-weight:800; color:var(--primary);">❓ Guida Rapida & FAQ Staff</div>
+                <div style="font-size:12px; color:var(--text-secondary);">Manuale operativo per lo staff di Vasastan e Östermalm.</div>
             </div>
             <div class="content-list">
+                
                 <div class="faq-item-box">
-                    <div class="faq-question">🛒 Come inviare un ordine ai fornitori?</div>
-                    <div class="faq-answer">1. Seleziona la Sede in alto.<br>2. Accedi con il tuo Profilo Operatore.<br>3. Inserisci le quantità da ordinare e genera il riepilogo.<br>4. Invia via WhatsApp o Email.</div>
+                    <div class="faq-question">📍 1. Come cambiare la Sede attiva?</div>
+                    <div class="faq-answer">
+                        In cima alla schermata o nel banner verde in alto è indicato il locale attivo (<b>Vasastan</b> o <b>Östermalm</b>). Clicca su <b>"Cambia Sede"</b> per switchare. Le giacenze, i minimi scorta e il carrello sono <b>isolati per ciascun locale</b>.
+                    </div>
                 </div>
-            </div>
-        </div>
 
+                <div class="faq-item-box">
+                    <div class="faq-question">🔑 2. Come effettuare il Login o la Registrazione?</div>
+                    <div class="faq-answer">
+                        Apri il menu laterale (☰) e clicca sul pulsante blu <b>"🔑 Accedi / Registrati"</b>.<br>
+                        • Se hai già un account staff, inserisci email e password.<br>
+                        • Se sei un nuovo operatore, passa alla scheda <i>"Nuovo Account Staff"</i> per creare il tuo profilo con il tuo nome e cognome.
+                    </div>
+                </div>
+
+                <div class="faq-item-box">
+                    <div class="faq-question">🛒 3. Come creare ed inviare un Ordine Fornitori?</div>
+                    <div class="faq-answer">
+                        1. Seleziona la data di consegna prevista in alto alla pagina <b>Ordini</b>.<br>
+                        2. Regola le quantità dei prodotti da ordinare usando i tasti <b>+</b> / <b>-</b>.<br>
+                        3. Clicca in basso su <b>"📋 Genera Riepilogo Ordine"</b>.<br>
+                        4. Dalla finestra potrai inviare la lista in svedese via <b>WhatsApp</b> o <b>Email</b> al singolo fornitore, oppure confermare l'ordine per salvarlo nello storico.
+                    </div>
+                </div>
+
+                <div class="faq-item-box">
+                    <div class="faq-question">✍️ 4. Come verificare una Consegna arrivata e stornare la Scorta?</div>
+                    <div class="faq-answer">
+                        Quando la merce arriva in pizzeria:<br>
+                        1. Vai nella sezione <b>📜 Storico Ordini</b>.<br>
+                        2. Trova l'ordine con il bollino rosso ⚠️ <i>Da Controllare</i>.<br>
+                        3. Clicca su <b>"✍️ Verifica & Storna"</b>.<br>
+                        4. Controlla le unità arrivate, modifica la quantità se ci sono ammanchi o merci danneggiate e conferma. L'app accrediterà in automatico le quantità nelle giacenze del locale.
+                    </div>
+                </div>
+
+                <div class="faq-item-box">
+                    <div class="faq-question">📦 5. Come aggiornare le Giacenze in Magazzino?</div>
+                    <div class="faq-answer">
+                        Nella sezione <b>📦 Scorte (Giacenze)</b> puoi modificare manualmente la quantità disponibile in frigo/magazzino. L'app registrerà in automatico <b>chi ha effettuato la modifica e a che ora</b>, mostrando il dato nella scheda del prodotto.
+                    </div>
+                </div>
+
+                <div class="faq-item-box">
+                    <div class="faq-question">🚨 6. Cosa indicano i prodotti evidenziati in rosso?</div>
+                    <div class="faq-answer">
+                        I prodotti bordati di rosso lampeggiante hanno raggiunto o superato il <b>limite minimo di scorta</b> impostato per la sede corrente. Ordinali al più presto per evitare rotture di stock durante il servizio.
+                    </div>
+                </div>
+
+                <div class="faq-item-box">
+                    <div class="faq-question">📊 7. Come scaricare il Report Inventory in Excel?</div>
+                    <div class="faq-answer">
+                        Dalla pagina <b>📦 Scorte</b>, clicca sul pulsante verde <b>"📊 Export Inventory (Excel)"</b>. Potrai scegliere se scaricare il foglio <i>Food & Supplies</i>, il foglio <i>Alcohol & Beverages</i> (con i subtotali separati per alcolici e bibite), oppure l'intero inventario.
+                    </div>
+                </div>
+
+                <div class="faq-item-box">
+                    <div class="faq-question">🐛 8. Come segnalare un bug o un errore nei prezzi/dati?</div>
+                    <div class="faq-answer">
+                        Apri la voce del menu <b>🐛 Segnala Bug & Feedback</b>, seleziona la tipologia di problema, scrivi una breve spiegazione e premi <b>"🚀 Invia Segnalazione"</b>. L'amministratore riceverà la notifica e prenderà in car
         <!-- 8. SEGNALA BUG -->
         <div id="view-bugreport" class="view-section">
             <div class="top-bar-container">
@@ -738,21 +791,32 @@
             if (toast) { toast.innerText = msg; toast.classList.add('show'); setTimeout(() => { toast.classList.remove('show'); }, 3500); }
         };
 
-        // 2. LISTENERS AVVISI STAFF (INTEGRAZIONE)
-        onSnapshot(doc(db, "settings", "staffNotice"), (docSnap) => {
-            const banner = document.getElementById('staff-notice-banner');
-            const txt = document.getElementById('staff-notice-text');
-            const meta = document.getElementById('staff-notice-meta');
+        // 2. LISTENERS AVVISI STAFF SEPARATI PER SEDE
+        window.activeNoticeUnsubscribe = null;
 
-            if (docSnap.exists() && docSnap.data().text) {
-                const data = docSnap.data();
-                if (txt) txt.innerText = data.text;
-                if (meta) meta.innerText = `Pubblicato da ${data.author || 'Admin'} - ${data.date ? new Date(data.date.toDate ? data.date.toDate() : data.date).toLocaleString('it-IT') : ''}`;
-                if (banner) banner.style.display = 'block';
-            } else {
-                if (banner) banner.style.display = 'none';
+        window.listenToStaffNotice = function() {
+            if (window.activeNoticeUnsubscribe) {
+                window.activeNoticeUnsubscribe();
             }
-        });
+
+            const locKey = window.getLocationKey ? window.getLocationKey() : 'vasastan';
+            const noticeDocId = `staffNotice_${locKey}`;
+
+            window.activeNoticeUnsubscribe = onSnapshot(doc(db, "settings", noticeDocId), (docSnap) => {
+                const banner = document.getElementById('staff-notice-banner');
+                const txt = document.getElementById('staff-notice-text');
+                const meta = document.getElementById('staff-notice-meta');
+
+                if (docSnap.exists() && docSnap.data().text) {
+                    const data = docSnap.data();
+                    if (txt) txt.innerText = data.text;
+                    if (meta) meta.innerText = `📍 [${data.location || locKey.toUpperCase()}] Pubblicato da ${data.author || 'Admin'} - ${data.date ? new Date(data.date.toDate ? data.date.toDate() : data.date).toLocaleString('it-IT') : ''}`;
+                    if (banner) banner.style.display = 'block';
+                } else {
+                    if (banner) banner.style.display = 'none';
+                }
+            });
+        };
 
         window.publishStaffNotice = async function() {
             if (!window.checkAuthGuard()) return;
@@ -760,20 +824,26 @@
             const text = input ? input.value.trim() : '';
             if (!text) return window.showAlert("⚠️ Inserisci un testo per l'avviso.");
 
-            await setDoc(doc(db, "settings", "staffNotice"), {
+            const locKey = window.getLocationKey();
+            const noticeDocId = `staffNotice_${locKey}`;
+
+            await setDoc(doc(db, "settings", noticeDocId), {
                 text: text,
                 author: window.currentUserProfile.name,
+                location: window.activeLocation || locKey,
                 date: new Date().toISOString()
             });
 
             if (input) input.value = '';
-            window.showAlert("📢 Avviso pubblicato in bacheca!");
+            window.showAlert(`📢 Avviso pubblicato per ${window.activeLocation || locKey}!`);
         };
 
         window.deleteNoticeFromDb = async function() {
             if (!window.checkAuthGuard()) return;
-            await deleteDoc(doc(db, "settings", "staffNotice"));
-            window.showAlert("🗑️ Avviso rimosso.");
+            const locKey = window.getLocationKey();
+            const noticeDocId = `staffNotice_${locKey}`;
+            await deleteDoc(doc(db, "settings", noticeDocId));
+            window.showAlert(`🗑️ Avviso rimosso per ${window.activeLocation || locKey}.`);
         };
 
         // LOGIN E REGISTRAZIONE AUTONOMA OPERATORI
@@ -1008,11 +1078,20 @@
             document.getElementById('active-location-banner').style.display = 'flex';
             const bugLocInput = document.getElementById('bug-location-display');
             if (bugLocInput) bugLocInput.value = loc;
+            if (typeof window.listenToStaffNotice === 'function') window.listenToStaffNotice();
             window.refreshAllViews();
         };
 
         window.promptChangeLocation = () => document.getElementById('location-guard-banner').style.display = 'flex';
         window.toggleMenu = () => { document.getElementById('drawer').classList.toggle('open'); document.getElementById('overlay').classList.toggle('active'); };
+
+        window.toggleReportPeriodInputs = function() {
+            const type = document.getElementById('report-period-type')?.value;
+            const monthGroup = document.getElementById('report-month-select-group');
+            if (monthGroup) {
+                monthGroup.style.display = (type === 'month') ? 'block' : 'none';
+            }
+        };
         window.closeAll = () => { 
             document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); 
             document.getElementById('overlay').classList.remove('active'); 
@@ -1785,9 +1864,105 @@
             window.showAlert("📊 File Excel scaricato con la distinzione Alcolici/Bevande!");
         };
 
-        // BUG REPORT & AZIONI RESET
-        window.submitBugReport = async function() {
+        // REPORT CONSUMI GENERATION ENGINE
+        window.generateRealReport = function() {
             if (!window.checkAuthGuard()) return;
+
+            const periodType = document.getElementById('report-period-type').value;
+            const monthVal = document.getElementById('report-month-picker').value;
+            const resultsContainer = document.getElementById('report-results-container');
+            const titleDisplay = document.getElementById('report-title-display');
+            const alcTbody = document.querySelector('#table-alcohol-report tbody');
+            const foodTbody = document.querySelector('#table-food-report tbody');
+            const grandTotalBox = document.getElementById('grand-total-report-box');
+
+            if (periodType === 'month' && !monthVal) {
+                return window.showAlert("⚠️ Seleziona un mese per generare il report.");
+            }
+
+            const isAlcohol = (cat) => (cat === 'Alcolici' || cat === 'Bevande');
+            const activeLocShort = window.activeLocation ? window.activeLocation.split(' ')[0] : '';
+
+            let itemTotals = {}; // { itemName: { qty: X, price: Y, isAlcohol: bool } }
+
+            if (periodType === 'stock') {
+                titleDisplay.innerText = `📊 Report Valore Giacenze Attuali (${window.activeLocation || 'Tutte le sedi'})`;
+                window.inventoryData.forEach(item => {
+                    const qty = window.getQty(item);
+                    if (qty > 0) {
+                        itemTotals[item.name] = {
+                            qty: qty,
+                            price: item.price || 0,
+                            unit: item.unit,
+                            isAlc: isAlcohol(item.category)
+                        };
+                    }
+                });
+            } else {
+                const label = periodType === 'month' ? `Mese: ${monthVal}` : 'Totale Storico';
+                titleDisplay.innerText = `📋 Report Consumi & Ordini (${label} - ${window.activeLocation || 'Tutte le sedi'})`;
+
+                const filteredHistory = window.orderHistoryData.filter(h => {
+                    const matchLoc = !activeLocShort || (h.destination && h.destination.includes(activeLocShort));
+                    if (!matchLoc) return false;
+
+                    if (periodType === 'month') {
+                        // Formato data nello storico: "DD/MM/YYYY, HH:mm" o ISO
+                        if (!h.timestamp) return false;
+                        const parts = h.timestamp.split(',')[0].split('/');
+                        if (parts.length === 3) {
+                            const formattedHistoryMonth = `${parts[2]}-${parts[1].padStart(2, '0')}`;
+                            return formattedHistoryMonth === monthVal;
+                        }
+                        return false;
+                    }
+                    return true;
+                });
+
+                filteredHistory.forEach(h => {
+                    if (Array.isArray(h.items)) {
+                        h.items.forEach(it => {
+                            const invMatch = window.inventoryData.find(x => x.id === it.id || x.name.toLowerCase() === it.name.toLowerCase());
+                            const price = invMatch ? (invMatch.price || 0) : 0;
+                            const isAlc = invMatch ? isAlcohol(invMatch.category) : false;
+
+                            if (!itemTotals[it.name]) {
+                                itemTotals[it.name] = { qty: 0, price: price, unit: it.unit, isAlc: isAlc };
+                            }
+                            itemTotals[it.name].qty += parseFloat(it.qty) || 0;
+                        });
+                    }
+                });
+            }
+
+            // Render Tabelle
+            alcTbody.innerHTML = '';
+            foodTbody.innerHTML = '';
+            let totalAlcCost = 0;
+            let totalFoodCost = 0;
+            let hasAlc = false;
+            let hasFood = false;
+
+            Object.keys(itemTotals).sort().forEach(name => {
+                const data = itemTotals[name];
+                const cost = parseFloat((data.qty * data.price).toFixed(2));
+                const rowHtml = `<tr><td><b>${name}</b></td><td>${data.qty} ${data.unit}</td><td>${cost.toFixed(2)} SEK</td></tr>`;
+
+                if (data.isAlc) {
+                    alcTbody.innerHTML += rowHtml;
+                    totalAlcCost += cost;
+                    hasAlc = true;
+                } else {
+                    foodTbody.innerHTML += rowHtml;
+                    totalFoodCost += cost;
+                    hasFood = true;
+                }
+            });
+
+            if (!hasAlc) alcTbody.innerHTML = '<tr><td colspan="3" style="color:#888; text-align:center;">Nessun dato registrato.</td></tr>';
+            if (!hasFood) foodTbody.innerHTML = '<tr><td colspan="3" style="color:#888; text-align:center;">Nessun dato registrato.</td></tr>';
+
+            const grandTotal = parseFloat((totalAlcCost + totalFoodCost).toFix            if (!window.checkAuthGuard()) return;
             const op = window.currentUserProfile.name;
             const desc = document.getElementById('bug-desc-input').value.trim();
             if (!desc) return window.showAlert("⚠️ Compila la descrizione.");
