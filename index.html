@@ -3,30 +3,33 @@
 <head>
 <!--
 ====================================================================
-[MAGARI APP - HISTORICAL CHANGELOG REGISTRY & ARCHIVE]
-- v3.9.12 STABLE:
-  * Avvisi Staff riprogettati in formato Card Pastello (Opzione A).
-  * Menu Laterale e Modali aggiornati con palette pastello riposante.
-  * Ripristinato e corretto il motore di calcolo Report Consumi.
-  * Ampliata e dettagliata la sezione FAQ & Guida Rapida per lo staff.
+[MAGARI APP - DEVELOPMENT / TEST ENVIRONMENT]
+- VERSION: v4.1.2-DEV
+- FIREBASE PROJECT: magari-app-dev
+- TARGET: Ambiente isolato di test e sviluppo
 ====================================================================
 -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#043927">
+    <meta name="theme-color" content="#b45309">
     
+    <!-- META TAGS NO-CACHE -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
     <!-- PWA Meta Tags -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Magari App">
+    <meta name="apple-mobile-web-app-title" content="Magari DEV">
     
     <!-- Icone Schermata Home & Favicon -->
-    <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="logo-square.png">
-    <link rel="icon" type="image/png" href="logo-square.png">
+    <link rel="manifest" href="manifest.json?v=4.1.2-dev">
+    <link rel="apple-touch-icon" href="logo-square.png?v=4.1.2-dev">
+    <link rel="icon" type="image/png" href="logo-square.png?v=4.1.2-dev">
 
-    <title>Magari v3.9.12 STABLE</title>
+    <title>Magari v4.1.2 [DEV TEST]</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -36,13 +39,14 @@
 <body>
 
     <div id="toast-notification" class="toast-notification"></div>
+    <div id="realtime-user-toast-container" style="position: fixed; top: 20px; right: 20px; z-index: 99999; display: flex; flex-direction: column; gap: 8px;"></div>
 
     <!-- SELEZIONE SEDE GUARD -->
     <div class="page-lock-banner" id="location-guard-banner" style="display: flex; position: fixed; z-index: 3000; padding-top: 100px;">
         <div class="page-lock-box" style="max-width: 340px;">
-            <div style="font-size: 32px; margin-bottom: 8px;">📍</div>
-            <h3 style="margin-bottom: 6px; color: var(--primary);">Seleziona la Sede</h3>
-            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 14px;">Seleziona il locale in cui ti trovi per caricare le giacenze e il carrello corretti.</p>
+            <div style="font-size: 32px; margin-bottom: 8px;">🧪</div>
+            <h3 style="margin-bottom: 6px; color: #b45309;">Seleziona Sede (DEV)</h3>
+            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 14px;">Sei nell'ambiente di test. Seleziona il locale per caricare i dati di prova.</p>
             <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;">
                 <button class="btn-save" style="padding: 12px; font-size: 14px; background-color: #043927;" onclick="setActiveLocation('Vasastan (Sankt Eriksgatan 110)')">📍 Vasastan<br><span style="font-size:10px; opacity:0.8;">Sankt Eriksgatan 110</span></button>
                 <button class="btn-save" style="padding: 12px; font-size: 14px; background-color: #1b5e20;" onclick="setActiveLocation('Östermalm (Styrmansgatan 52)')">📍 Östermalm<br><span style="font-size:10px; opacity:0.8;">Styrmansgatan 52</span></button>
@@ -55,15 +59,15 @@
 
         <!-- DRAWER MENU -->
         <div class="drawer" id="drawer">
-            <div class="drawer-header" style="text-align: center;">
+            <div class="drawer-header" style="text-align: center; background-color: #b45309;">
                 <img src="logo-header.png" alt="Magari Logo" style="max-width: 170px; height: auto; margin-bottom: 4px;" onerror="this.style.display='none'; document.getElementById('drawer-text-fallback').style.display='block';">
                 <div id="drawer-text-fallback" class="brand-title" style="display:none; font-size: 24px;">MAGARI</div>
-                <div class="brand-subtitle" style="font-size: 9px; background:#b45309;">v3.9.12 STABLE</div>
+                <div class="brand-subtitle" style="font-size: 9px; background:#d97706;">🧪 DEV TEST MODE</div>
             </div>
 
             <!-- USER ACCOUNT BANNER NELLO MENU -->
-            <div id="drawer-user-box" style="background:#f1f5f9; padding:10px; border-radius:8px; margin-bottom:12px; text-align:center; border:1px solid #cbd5e1;">
-                <div id="user-status-text" style="font-size:12px; font-weight:bold; color:var(--primary);">👁️ Modalità Lettura (Guest)</div>
+            <div id="drawer-user-box" style="background:#fffbe8; padding:10px; border-radius:8px; margin-bottom:12px; text-align:center; border:1px solid #fde68a;">
+                <div id="user-status-text" style="font-size:12px; font-weight:bold; color:#b45309;">👁️ Modalità Lettura (Guest)</div>
                 <button id="btn-auth-action" onclick="openAuthModal()" class="btn-save" style="width:100%; margin-top:6px; padding:6px; font-size:12px; background:#2563eb;">🔑 Accedi / Registrati</button>
             </div>
 
@@ -89,21 +93,21 @@
             </ul>
         </div>
 
-        <div class="header">
+        <div class="header" style="background-color: #b45309;">
             <button class="menu-btn" onclick="toggleMenu()">☰</button>
             <div class="header-brand-text">
                 <img src="logo-header.png" alt="Magari" style="height: 34px; width: auto;" onerror="this.style.display='none'; document.getElementById('header-text-fallback').style.display='block';">
                 <div id="header-text-fallback" class="brand-title" style="display:none;">MAGARI</div>
-                <div class="brand-subtitle" style="background:#b45309;">v3.9.12 STABLE</div>
+                <div class="brand-subtitle" style="background:#d97706;">🧪 DEV ENVIRONMENT</div>
             </div>
             <div class="page-badge" id="page-title">Ordini</div>
         </div>
 
-        <!-- BANNER AVVISI STAFF (OPZIONE A - CARD PASTELLO) -->
+        <!-- BANNER AVVISI STAFF -->
         <div id="staff-notice-banner" style="display:none; background:#fffbeb; border-left:5px solid #f59e0b; border-bottom:1px solid #fef3c7; padding:12px 16px; margin:10px 12px; border-radius:8px; box-shadow:0 2px 5px rgba(0,0,0,0.04);">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
                 <div style="display:flex; align-items:center; gap:6px;">
-                    <span style="font-size:11px; font-weight:800; background:#fef3c7; color:#b45309; padding:2px 8px; border-radius:12px; border:1px solid #fde68a;">📢 COMUNICAZIONE STAFF</span>
+                    <span style="font-size:11px; font-weight:800; background:#fef3c7; color:#b45309; padding:2px 8px; border-radius:12px; border:1px solid #fde68a;">📢 COMUNICAZIONE DEV</span>
                 </div>
                 <button id="btn-delete-notice" onclick="deleteNoticeFromDb()" style="display:none; background:#fee2e2; border:1px solid #fca5a5; color:#991b1b; font-size:10px; font-weight:bold; padding:3px 8px; border-radius:12px; cursor:pointer;">🗑️ Rimuovi</button>
             </div>
@@ -111,9 +115,9 @@
             <div id="staff-notice-meta" style="font-size:11px; color:#78350f; margin-top:6px; font-weight:500;"></div>
         </div>
 
-        <div class="location-active-banner" id="active-location-banner" style="display: none;">
-            <span id="active-location-text">📍 Sede: Non selezionata</span>
-            <button onclick="promptChangeLocation()" style="background: white; border: 1px solid #2e7d32; color: #2e7d32; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer;">Cambia Sede</button>
+        <div class="location-active-banner" id="active-location-banner" style="display: none; background:#fffbe8; border-color:#fde68a; color:#b45309;">
+            <span id="active-location-text">📍 Sede DEV: Non selezionata</span>
+            <button onclick="promptChangeLocation()" style="background: white; border: 1px solid #b45309; color: #b45309; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer;">Cambia Sede</button>
         </div>
 
         <!-- 1. ORDINI -->
@@ -149,10 +153,10 @@
                         <option value="low-stock">🚨 Prima Scorte Basse</option>
                     </select>
                 </div>
-                <div class="search-row"><input type="text" id="search-order-input" class="search-input" placeholder="Cerca prodotto da ordinare..." oninput="filterOrderItems()"></div>
+                <div class="search-row"><input type="text" id="search-order-input" class="search-input" placeholder="Cerca prodotto DEV..." oninput="filterOrderItems()"></div>
             </div>
             <div class="content-list" id="order-list"></div>
-            <div class="sticky-checkout-container"><button class="btn-checkout" onclick="generateOrderSummary()">📋 Genera Riepilogo Ordine</button></div>
+            <div class="sticky-checkout-container"><button class="btn-checkout" style="background:#b45309;" onclick="generateOrderSummary()">📋 Genera Riepilogo Ordine (DEV)</button></div>
         </div>
 
         <!-- 2. SCORTE -->
@@ -164,7 +168,7 @@
                 <div style="display:flex; gap:8px; align-items:center; width: 100%;">
                     <button class="btn-excel" onclick="promptExportExcelModal()">📊 Export Inventory (Excel)</button>
                 </div>
-                <button class="reset-btn" onclick="executeResetStockGuard()">🔒 🔄 Azzera Giacenze Sede Attiva</button>
+                <button class="reset-btn" onclick="executeResetStockGuard()">🔒 🔄 Azzera Giacenze Sede Attiva (DEV)</button>
                 <div style="display: flex; gap: 8px; width: 100%;">
                     <select id="filter-stock-category" class="filter-select" onchange="filterStockItems()">
                         <option value="">📂 Categorie</option>
@@ -190,26 +194,26 @@
                         <option value="last-update">🕒 Ultima Modifica (Recenti)</option>
                     </select>
                 </div>
-                <div class="search-row"><input type="text" id="search-stock-input" class="search-input" placeholder="Cerca alimento in scorta..." oninput="filterStockItems()"></div>
+                <div class="search-row"><input type="text" id="search-stock-input" class="search-input" placeholder="Cerca alimento in scorta DEV..." oninput="filterStockItems()"></div>
             </div>
             <div class="content-list" id="stock-list"></div>
         </div>
+
         <!-- 3. STORICO ORDINI -->
         <div id="view-storico" class="view-section">
             <div class="top-bar-container">
-                <button class="reset-btn" onclick="executeClearHistoryGuard()">🔒 🗑️ Svuota Tutto lo Storico Ordini</button>
-                <div style="font-size:12px; font-weight:700; color:var(--primary); background:#e8f5e9; padding:6px 10px; border-radius:6px; border:1px solid #c8e6c9;">
-                    📍 Ordini visualizzati per la Sede Attiva
+                <button class="reset-btn" onclick="executeClearHistoryGuard()">🔒 🗑️ Svuota Tutto lo Storico Ordini (DEV)</button>
+                <div style="font-size:12px; font-weight:700; color:#b45309; background:#fffbe8; padding:6px 10px; border-radius:6px; border:1px solid #fde68a;">
+                    📍 Ordini visualizzati per la Sede Attiva (Database DEV)
                 </div>
-                <input type="text" id="search-history-input" class="search-input" placeholder="Cerca nello storico..." oninput="filterHistoryItems()">
+                <input type="text" id="search-history-input" class="search-input" placeholder="Cerca nello storico DEV..." oninput="filterHistoryItems()">
             </div>
             <div class="content-list" id="history-list"></div>
         </div>
-
-        <!-- 4. MAGAZZINO (SOLO ADMIN) -->
+<!-- 4. MAGAZZINO (SOLO ADMIN) -->
         <div id="view-magazzino" class="view-section">
             <div class="page-lock-banner" id="lock-banner-magazzino">
-                <div class="page-lock-box"><div style="font-size: 32px; margin-bottom: 8px;">🔒</div><h3 style="margin-bottom: 6px;">Sezione Riservata Admin</h3><p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Effettua il Login con account Admin per accedere.</p><button class="btn-save" onclick="openAuthModal()">Accedi come Admin</button></div>
+                <div class="page-lock-box"><div style="font-size: 32px; margin-bottom: 8px;">🔒</div><h3 style="margin-bottom: 6px;">Sezione Riservata Admin DEV</h3><p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Effettua il Login con account Admin per accedere.</p><button class="btn-save" onclick="openAuthModal()">Accedi come Admin</button></div>
             </div>
             <div class="top-bar-container">
                 <div style="font-size:11px; background:#fff3cd; color:#856404; padding:6px 10px; border-radius:6px; font-weight:600;">
@@ -232,7 +236,7 @@
                     </select>
                     <select id="filter-inventory-supplier" class="filter-select" onchange="filterItems()"><option value="">🚚 Tutti i Fornitori</option></select>
                 </div>
-                <div class="search-row"><input type="text" id="search-input" class="search-input" placeholder="Cerca in anagrafica..." oninput="filterItems()"><button class="add-btn" onclick="openAddModal()">+ Nuovo</button></div>
+                <div class="search-row"><input type="text" id="search-input" class="search-input" placeholder="Cerca in anagrafica DEV..." oninput="filterItems()"><button class="add-btn" style="background:#b45309;" onclick="openAddModal()">+ Nuovo</button></div>
             </div>
             <div class="content-list" id="inventory-list"></div>
         </div>
@@ -240,101 +244,57 @@
         <!-- 5. FORNITORI (SOLO ADMIN) -->
         <div id="view-fornitori" class="view-section">
             <div class="page-lock-banner" id="lock-banner-fornitori">
-                <div class="page-lock-box"><div style="font-size: 32px; margin-bottom: 8px;">🔒</div><h3 style="margin-bottom: 6px;">Sezione Riservata Admin</h3><p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Effettua il Login con account Admin per accedere.</p><button class="btn-save" onclick="openAuthModal()">Accedi come Admin</button></div>
+                <div class="page-lock-box"><div style="font-size: 32px; margin-bottom: 8px;">🔒</div><h3 style="margin-bottom: 6px;">Sezione Riservata Admin DEV</h3><p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Effettua il Login con account Admin per accedere.</p><button class="btn-save" onclick="openAuthModal()">Accedi come Admin</button></div>
             </div>
-            <div class="top-bar-container"><div class="search-row"><input type="text" id="search-supplier-input" class="search-input" placeholder="Cerca fornitore..." oninput="filterSuppliers()"><button class="add-btn" onclick="openAddSupplierModal()">+ Fornitore</button></div></div>
+            <div class="top-bar-container"><div class="search-row"><input type="text" id="search-supplier-input" class="search-input" placeholder="Cerca fornitore DEV..." oninput="filterSuppliers()"><button class="add-btn" style="background:#b45309;" onclick="openAddSupplierModal()">+ Fornitore</button></div></div>
             <div class="content-list" id="suppliers-list"></div>
         </div>
 
         <!-- 6. REPORT CONSUMI (SOLO ADMIN) -->
         <div id="view-sprechi" class="view-section">
             <div class="page-lock-banner" id="lock-banner-sprechi">
-                <div class="page-lock-box"><div style="font-size: 32px; margin-bottom: 8px;">🔒</div><h3 style="margin-bottom: 6px;">Sezione Riservata Admin</h3><p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Effettua il Login con account Admin per accedere.</p><button class="btn-save" onclick="openAuthModal()">Accedi come Admin</button></div>
+                <div class="page-lock-box"><div style="font-size: 32px; margin-bottom: 8px;">🔒</div><h3 style="margin-bottom: 6px;">Sezione Riservata Admin DEV</h3><p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Effettua il Login con account Admin per accedere.</p><button class="btn-save" onclick="openAuthModal()">Accedi come Admin</button></div>
             </div>
             <div class="top-bar-container">
                 <div class="form-group"><label>Periodo Report:</label><select id="report-period-type" class="form-control" onchange="toggleReportPeriodInputs()"><option value="total">Totale Storico Ordini</option><option value="month">Mese Specifico</option><option value="stock">Giacenze Attuali</option></select></div>
                 <div class="form-group" id="report-month-select-group" style="display:none;"><label>Mese:</label><input type="month" id="report-month-picker" class="form-control"></div>
-                <button class="btn-save" onclick="generateRealReport()" style="width:100%; padding:10px;">📋 Genera Report</button>
+                <button class="btn-save" onclick="generateRealReport()" style="width:100%; padding:10px; background:#b45309;">📋 Genera Report (DEV)</button>
             </div>
             <div id="report-results-container" style="display:none; background:white; padding:16px; border-radius:8px; margin:16px;">
-                <h3 id="report-title-display" style="font-size:14px; margin-bottom:10px; color:var(--primary);"></h3>
+                <h3 id="report-title-display" style="font-size:14px; margin-bottom:10px; color:#b45309;"></h3>
                 <div style="font-weight:bold; font-size:12px; color:#1e293b;">🍷 Alcolici & Bevande</div>
                 <table class="report-table" id="table-alcohol-report"><thead><tr><th>Prodotto</th><th>Qtà</th><th>Costo Totale</th></tr></thead><tbody></tbody></table>
                 <div style="font-weight:bold; font-size:12px; color:#1e293b; margin-top:10px;">🍕 Cibo & Consumabili</div>
                 <table class="report-table" id="table-food-report"><thead><tr><th>Prodotto</th><th>Qtà</th><th>Costo Totale</th></tr></thead><tbody></tbody></table>
-                <div id="grand-total-report-box" style="margin-top:14px; padding:10px; background:#e8f5e9; border:1px solid #c8e6c9; border-radius:6px; font-weight:800; font-size:14px; color:#2e7d32; text-align:right;"></div>
+                <div id="grand-total-report-box" style="margin-top:14px; padding:10px; background:#fffbe8; border:1px solid #fde68a; border-radius:6px; font-weight:800; font-size:14px; color:#b45309; text-align:right;"></div>
             </div>
         </div>
 
         <!-- 7. FAQ & GUIDA RAPIDA -->
         <div id="view-faq" class="view-section">
             <div class="top-bar-container">
-                <div style="font-size:16px; font-weight:800; color:var(--primary);">❓ Guida Rapida & FAQ Staff</div>
-                <div style="font-size:12px; color:var(--text-secondary);">Manuale operativo per lo staff di Vasastan e Östermalm.</div>
+                <div style="font-size:16px; font-weight:800; color:#b45309;">❓ Guida Rapida DEV Environment</div>
+                <div style="font-size:12px; color:var(--text-secondary);">Manuale ed indicazioni operative per l'ambiente di test.</div>
             </div>
             <div class="content-list">
                 <div class="faq-item-box">
-                    <div class="faq-question">📍 1. Come cambiare la Sede attiva?</div>
+                    <div class="faq-question">🧪 1. Che cos'è questa versione DEV?</div>
                     <div class="faq-answer">
-                        In cima alla schermata o nel banner verde in alto è indicato il locale attivo (<b>Vasastan</b> o <b>Östermalm</b>). Clicca su <b>"Cambia Sede"</b> per switchare. Le giacenze, i minimi scorta e il carrello sono <b>isolati per ciascun locale</b>.
+                        Questa è la copia speculare di test collegata al progetto Firebase <b>magari-app-dev</b>. Qualsiasi modifica effettuata qui non tocca il database dei locali reali.
                     </div>
                 </div>
 
                 <div class="faq-item-box">
-                    <div class="faq-question">🔑 2. Come effettuare il Login o la Registrazione?</div>
+                    <div class="faq-question">🔑 2. Come funziona il Login nel DEV?</div>
                     <div class="faq-answer">
-                        Apri il menu laterale (☰) e clicca sul pulsante blu <b>"🔑 Accedi / Registrati"</b>.<br>
-                        • Se hai già un account staff, inserisci email e password.<br>
-                        • Se sei un nuovo operatore, passa alla scheda <i>"Nuovo Account Staff"</i> per creare il tuo profilo con il tuo nome e cognome.
+                        Gli account staff creati qui sono registrati nel database di test. Puoi creare liberamente utenti per fare prove senza alterare gli account del personale reale.
                     </div>
                 </div>
 
                 <div class="faq-item-box">
-                    <div class="faq-question">🛒 3. Come creare ed inviare un Ordine Fornitori?</div>
+                    <div class="faq-question">📦 3. Come resettare o simulare ordini?</div>
                     <div class="faq-answer">
-                        1. Seleziona la data di consegna prevista in alto alla pagina <b>Ordini</b>.<br>
-                        2. Regola le quantità dei prodotti da ordinare usando i tasti <b>+</b> / <b>-</b>.<br>
-                        3. Clicca in basso su <b>"📋 Genera Riepilogo Ordine"</b>.<br>
-                        4. Dalla finestra potrai inviare la lista in svedese via <b>WhatsApp</b> o <b>Email</b> al singolo fornitore, oppure confermare l'ordine per salvarlo nello storico.
-                    </div>
-                </div>
-
-                <div class="faq-item-box">
-                    <div class="faq-question">✍️ 4. Come verificare una Consegna arrivata e stornare la Scorta?</div>
-                    <div class="faq-answer">
-                        Quando la merce arrives in pizzeria:<br>
-                        1. Vai nella sezione <b>📜 Storico Ordini</b>.<br>
-                        2. Trova l'ordine con il bollino rosso ⚠️ <i>Da Controllare</i>.<br>
-                        3. Clicca su <b>"✍️ Verifica & Storna"</b>.<br>
-                        4. Controlla le unità arrivate, modifica la quantità se ci sono ammanchi o merci danneggiate e conferma. L'app accrediterà in automatico le quantità nelle giacenze del locale.
-                    </div>
-                </div>
-
-                <div class="faq-item-box">
-                    <div class="faq-question">📦 5. Come aggiornare le Giacenze in Magazzino?</div>
-                    <div class="faq-answer">
-                        Nella sezione <b>📦 Scorte (Giacenze)</b> puoi modificare manualmente la quantità disponibile in frigo/magazzino. L'app registrerà in automatico <b>chi ha effettuato la modifica e a che ora</b>, mostrando il dato nella scheda del prodotto.
-                    </div>
-                </div>
-
-                <div class="faq-item-box">
-                    <div class="faq-question">🚨 6. Cosa indicano i prodotti evidenziati in rosso?</div>
-                    <div class="faq-answer">
-                        I prodotti bordati di rosso lampeggiante hanno raggiunto o superato il <b>limite minimo di scorta</b> impostato per la sede corrente. Ordinali al più presto per evitare rotture di stock durante il servizio.
-                    </div>
-                </div>
-
-                <div class="faq-item-box">
-                    <div class="faq-question">📊 7. Come scaricare il Report Inventory in Excel?</div>
-                    <div class="faq-answer">
-                        Dalla pagina <b>📦 Scorte</b>, clicca sul pulsante verde <b>"📊 Export Inventory (Excel)"</b>. Potrai scegliere se scaricare il foglio <i>Food & Supplies</i>, il foglio <i>Alcohol & Beverages</i> (con i subtotali separati per alcolici e bibite), oppure l'intero inventario.
-                    </div>
-                </div>
-
-                <div class="faq-item-box">
-                    <div class="faq-question">🐛 8. Come segnalare un bug o un errore nei prezzi/dati?</div>
-                    <div class="faq-answer">
-                        Apri la voce del menu <b>🐛 Segnala Bug & Feedback</b>, seleziona la tipologia di problema, scrivi una breve spiegazione e premi <b>"🚀 Invia Segnalazione"</b>. L'amministratore riceverà la notifica e prenderà in carico la richiesta.
+                        Dalle impostazioni DEV puoi eseguire il reset totale dei dati di test in qualsiasi momento per ripartire da una configurazione pulita.
                     </div>
                 </div>
             </div>
@@ -343,74 +303,74 @@
         <!-- 8. SEGNALA BUG -->
         <div id="view-bugreport" class="view-section">
             <div class="top-bar-container">
-                <div style="font-size:16px; font-weight:800; color:#d97706;">🐛 Segnala Bug o Invia Feedback</div>
+                <div style="font-size:16px; font-weight:800; color:#d97706;">🐛 Segnala Bug o Feedback (DEV)</div>
             </div>
             <div style="padding:16px;">
                 <div class="form-group"><label>Sede Rilevata</label><input type="text" id="bug-location-display" class="form-control" readonly style="background:#f1f5f9; font-weight:bold;"></div>
                 <div class="form-group"><label>Operatore</label><input type="text" id="bug-operator-input" class="form-control" readonly style="background:#f1f5f9; font-weight:bold;"></div>
                 <div class="form-group"><label>Tipo di Segnalazione</label><select id="bug-type-select" class="form-control"><option value="🐛 Errore Tecnico / Bug App">🐛 Errore Tecnico / Bug App</option><option value="🧀 Errore Dati">🧀 Errore Dati</option><option value="💡 Suggerimento">💡 Suggerimento</option></select></div>
-                <div class="form-group"><label>Descrizione</label><textarea id="bug-desc-input" class="form-control" rows="4" placeholder="Descrivi il problema o il suggerimento..."></textarea></div>
-                <button class="btn-save" onclick="submitBugReport()" style="width:100%; padding:12px; background:#d97706;">🚀 Invia Segnalazione</button>
+                <div class="form-group"><label>Descrizione</label><textarea id="bug-desc-input" class="form-control" rows="4" placeholder="Descrivi il test o il problema..."></textarea></div>
+                <button class="btn-save" onclick="submitBugReport()" style="width:100%; padding:12px; background:#d97706;">🚀 Invia Segnalazione DEV</button>
             </div>
         </div>
 
         <!-- 9. IMPOSTAZIONI -->
         <div id="view-impostazioni" class="view-section">
             <div class="page-lock-banner" id="lock-banner-impostazioni">
-                <div class="page-lock-box"><div style="font-size: 32px; margin-bottom: 8px;">🔒</div><h3 style="margin-bottom: 6px;">Sezione Riservata Admin</h3><p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Effettua il Login con account Admin per accedere.</p><button class="btn-save" onclick="openAuthModal()">Accedi come Admin</button></div>
+                <div class="page-lock-box"><div style="font-size: 32px; margin-bottom: 8px;">🔒</div><h3 style="margin-bottom: 6px;">Sezione Riservata Admin DEV</h3><p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Effettua il Login con account Admin per accedere.</p><button class="btn-save" onclick="openAuthModal()">Accedi come Admin</button></div>
             </div>
             <div class="settings-card">
-                <h3>⚙️ Gestione Avanzata Impostazioni</h3>
+                <h3>⚙️ Gestione Impostazioni (DEV MODE)</h3>
 
                 <!-- PUBBLICAZIONE AVVISO STAFF -->
                 <div style="background:#fffbe8; border:1px solid #ffe0b2; padding:12px; border-radius:8px; margin-top:8px;">
-                    <h4 style="font-size:14px; color:#b45309; margin-bottom:6px;">📢 Pubblica Banner Avviso Staff</h4>
-                    <textarea id="notice-input-field" class="form-control" rows="2" placeholder="Scrivi un avviso per la bacheca staff..."></textarea>
-                    <button onclick="publishStaffNotice()" class="btn-save" style="width:100%; margin-top:8px; background:#b45309;">Pubblica Avviso</button>
+                    <h4 style="font-size:14px; color:#b45309; margin-bottom:6px;">📢 Pubblica Banner Avviso Staff DEV</h4>
+                    <textarea id="notice-input-field" class="form-control" rows="2" placeholder="Scrivi un avviso di test..."></textarea>
+                    <button onclick="publishStaffNotice()" class="btn-save" style="width:100%; margin-top:8px; background:#b45309;">Pubblica Avviso DEV</button>
                 </div>
 
                 <!-- 👥 PANNELLO GESTIONE STAFF -->
                 <div style="background:#f8fafc; padding:12px; border-radius:8px; border:1px solid #cbd5e1; margin-top:8px;">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                        <h4 style="font-size:14px; color:var(--primary);">👥 Gestione Operatori & Team</h4>
+                        <h4 style="font-size:14px; color:#b45309;">👥 Gestione Staff (Database DEV)</h4>
                         <div style="display:flex; gap:6px;">
-                            <button onclick="openUserModal()" class="add-btn" style="padding:4px 8px; font-size:11px;">+ Nuovo Utente</button>
+                            <button onclick="openUserModal()" class="add-btn" style="padding:4px 8px; font-size:11px; background:#b45309;">+ Nuovo Utente</button>
                             <button onclick="loadUsersListForAdmin()" style="background:none; border:none; color:#2563eb; font-size:12px; font-weight:bold; cursor:pointer;">🔄</button>
                         </div>
                     </div>
                     <div id="admin-users-list-container" style="display:flex; flex-direction:column; gap:8px; max-height:280px; overflow-y:auto; background:white; padding:8px; border-radius:6px; border:1px solid #e2e8f0;">
-                        <div style="font-size:12px; color:#666; text-align:center;">Caricamento utenti...</div>
+                        <div style="font-size:12px; color:#666; text-align:center;">Caricamento utenti test...</div>
                     </div>
                 </div>
 
                 <hr style="border:0; border-top:1px solid #eee; margin: 12px 0;">
                 
-                <h4 style="font-size:14px; color:#d97706;">🐛 Segnalazioni Staff Rilevate</h4>
+                <h4 style="font-size:14px; color:#d97706;">🐛 Segnalazioni Staff Rilevate (DEV)</h4>
                 <div id="admin-bug-reports-container" style="display:flex; flex-direction:column; gap:8px; max-height:300px; overflow-y:auto; margin-top:6px; background:#fafafa; padding:8px; border-radius:6px; border:1px solid #e2e8f0;"></div>
                 
                 <hr style="border:0; border-top:1px solid #eee; margin: 12px 0;">
-                <button class="reset-btn" onclick="executeResetSuppliersGuard()">🔒 🔄 Ripristina Fornitori Default</button>
-                <button class="btn-danger" onclick="executeResetAllGuard()" style="width:100%; margin-top: 6px;">🔒 ⚠️ RESET TOTALE DATABASE</button>
+                <button class="reset-btn" onclick="executeResetSuppliersGuard()">🔒 🔄 Ripristina Fornitori Default (DEV)</button>
+                <button class="btn-danger" onclick="executeResetAllGuard()" style="width:100%; margin-top: 6px;">🔒 ⚠️ RESET TOTALE DATABASE DEV TEST</button>
             </div>
         </div>
 
         <!-- FOOTER FIRMA DEVELOPER -->
-        <footer style="background:#043927; color:#c8e6c9; text-align:center; padding:16px 14px; font-size:11px; border-top:1px solid #1b5e20; margin-top:auto; width:100%; position:relative; z-index:80;">
-            <div>&copy; 2026 <b>Magari Pizzeria Stockholm</b> - Tutti i diritti riservati</div>
+        <footer style="background:#b45309; color:#fffbe8; text-align:center; padding:16px 14px; font-size:11px; border-top:1px solid #d97706; margin-top:auto; width:100%; position:relative; z-index:80;">
+            <div>&copy; 2026 <b>Magari Pizzeria DEV</b> - Ambiente di Test Isolato</div>
             <div style="margin-top:6px; font-size:11px; color:#ffffff;">
-                App sviluppata da <span style="color:#f59e0b; font-weight:bold; background:rgba(0,0,0,0.3); padding:2px 6px; border-radius:4px; border:1px solid rgba(245,158,11,0.3);">Nicolas Cappiello</span>
+                Sviluppato da <span style="color:#ffffff; font-weight:bold; background:rgba(0,0,0,0.2); padding:2px 6px; border-radius:4px;">Nicolas Cappiello</span>
             </div>
         </footer>
 
     </div>
 
-    <!-- MODALI UTILITY PASTELLO -->
+    <!-- MODALI UTILITY -->
     <div class="modal" id="user-edit-modal">
-        <div class="modal-title" id="user-modal-title">👤 Operatore</div>
+        <div class="modal-title" id="user-modal-title">👤 Operatore DEV</div>
         <input type="hidden" id="edit-user-uid">
         
-        <div class="form-group"><label>Nome e Cognome</label><input type="text" id="user-field-name" class="form-control" placeholder="es. Marco Rossi"></div>
-        <div class="form-group"><label>Email</label><input type="email" id="user-field-email" class="form-control" placeholder="es. marco@magaripizza.com"></div>
+        <div class="form-group"><label>Nome e Cognome</label><input type="text" id="user-field-name" class="form-control" placeholder="es. Tester Marco"></div>
+        <div class="form-group"><label>Email</label><input type="email" id="user-field-email" class="form-control" placeholder="es. test@magaripizza.com"></div>
         <div class="form-group" id="user-field-pass-group"><label>Password (Min. 6 caratteri)</label><input type="password" id="user-field-pass" class="form-control" placeholder="••••••••"></div>
         <div class="form-group"><label>Ruolo</label>
             <select id="user-field-role" class="form-control">
@@ -421,56 +381,62 @@
 
         <div class="modal-actions" style="margin-top:16px;">
             <button class="btn-cancel" onclick="closeUserModal()">Annulla</button>
-            <button class="btn-save" onclick="saveUserFromAdmin()">Salva Utente</button>
+            <button class="btn-save" style="background:#b45309;" onclick="saveUserFromAdmin()">Salva Utente DEV</button>
         </div>
     </div>
 
     <!-- MODALE AUTHENTICATION -->
     <div class="modal" id="auth-modal">
-        <div class="modal-title" id="auth-modal-title" style="text-align:center;">🔑 Accedi a Magari App</div>
+        <div class="modal-title" id="auth-modal-title" style="text-align:center;">🔑 Login - Magari DEV</div>
         <div style="display:flex; justify-content:center; gap:10px; margin-bottom:12px;">
-            <button id="tab-btn-login" onclick="switchAuthTab('login')" style="flex:1; padding:6px; border-radius:6px; font-weight:bold; border:1px solid var(--primary); background:var(--primary); color:white;">Login</button>
-            <button id="tab-btn-register" onclick="switchAuthTab('register')" style="flex:1; padding:6px; border-radius:6px; font-weight:bold; border:1px solid #cbd5e1; background:#f1f5f9; color:#334155;">Nuovo Account Staff</button>
+            <button id="tab-btn-login" onclick="switchAuthTab('login')" style="flex:1; padding:6px; border-radius:6px; font-weight:bold; border:1px solid #b45309; background:#b45309; color:white;">Login</button>
+            <button id="tab-btn-register" onclick="switchAuthTab('register')" style="flex:1; padding:6px; border-radius:6px; font-weight:bold; border:1px solid #cbd5e1; background:#f1f5f9; color:#334155;">Nuovo Account DEV</button>
         </div>
 
         <div id="auth-form-login">
-            <div class="form-group"><label>Email</label><input type="email" id="login-email" class="form-control" placeholder="es. marco@magaripizza.com"></div>
+            <div class="form-group"><label>Email</label><input type="email" id="login-email" class="form-control" placeholder="es. test@magaripizza.com"></div>
             <div class="form-group"><label>Password</label><input type="password" id="login-password" class="form-control" placeholder="••••••••"></div>
-            <button class="btn-save" onclick="handleLoginSubmit()" style="width:100%; padding:10px; margin-top:6px;">Entra</button>
+            
+            <div style="display:flex; align-items:center; gap:8px; margin:10px 0 4px 0;">
+                <input type="checkbox" id="remember-me-checkbox" checked style="width:18px; height:18px; accent-color:#b45309; cursor:pointer;">
+                <label for="remember-me-checkbox" style="font-size:13px; font-weight:600; color:#334155; cursor:pointer; user-select:none;">Rimani collegato (DEV)</label>
+            </div>
+
+            <button class="btn-save" onclick="handleLoginSubmit()" style="width:100%; padding:10px; margin-top:8px; background:#b45309;">Entra in DEV</button>
         </div>
 
         <div id="auth-form-register" style="display:none;">
-            <div class="form-group"><label>Nome e Cognome (Firma Operatore)</label><input type="text" id="reg-name" class="form-control" placeholder="es. Marco Rossi"></div>
-            <div class="form-group"><label>Email</label><input type="email" id="reg-email" class="form-control" placeholder="es. marco@magaripizza.com"></div>
+            <div class="form-group"><label>Nome e Cognome</label><input type="text" id="reg-name" class="form-control" placeholder="es. Tester Marco"></div>
+            <div class="form-group"><label>Email</label><input type="email" id="reg-email" class="form-control" placeholder="es. test@magaripizza.com"></div>
             <div class="form-group"><label>Password</label><input type="password" id="reg-password" class="form-control" placeholder="Min. 6 caratteri"></div>
-            <button class="btn-save" onclick="handleRegisterSubmit()" style="width:100%; padding:10px; background:#1b5e20; margin-top:6px;">Crea Account Staff</button>
+            <button class="btn-save" onclick="handleRegisterSubmit()" style="width:100%; padding:10px; background:#1b5e20; margin-top:6px;">Crea Account DEV</button>
         </div>
 
         <div class="modal-actions" style="margin-top:12px;"><button class="btn-cancel" onclick="closeAuthModal()" style="width:100%;">Annulla</button></div>
     </div>
 
     <div class="modal" id="verify-delivery-modal" style="max-width: 520px;">
-        <div class="modal-title">✍️ Verifica Consegna & Storno Giacenze</div>
-        <div style="font-size: 13px; color: #555; margin-bottom: 10px;">Inserisci le quantità effettivamente ricevute per accreditarle in giacenza.</div>
+        <div class="modal-title">✍️ Verifica Consegna & Storno (DEV)</div>
+        <div style="font-size: 13px; color: #555; margin-bottom: 10px;">Inserisci le quantità effettivamente ricevute per accreditarle in giacenza DEV.</div>
         <div id="verify-items-checklist-container" style="display:flex; flex-direction:column; gap:8px; max-height:220px; overflow-y:auto; margin-bottom:12px; background:#f8fafc; padding:8px; border-radius:8px; border:1px solid #e2e8f0;"></div>
-        <div class="form-group"><label style="font-weight:bold; color:var(--primary);">📝 Note / Messaggio (Opzionale):</label><input type="text" id="verify-note-input" class="form-control" placeholder="es. Arrivate tutte le unità..."></div>
-        <div class="modal-actions"><button class="btn-cancel" onclick="closeVerifyDeliveryModal()">Annulla</button><button class="btn-save" onclick="submitDeliveryVerification()" style="background:#1b5e20;">✅ Conferma e Storna</button></div>
+        <div class="form-group"><label style="font-weight:bold; color:#b45309;">📝 Note / Messaggio (Opzionale):</label><input type="text" id="verify-note-input" class="form-control" placeholder="es. Prova verifica..."></div>
+        <div class="modal-actions"><button class="btn-cancel" onclick="closeVerifyDeliveryModal()">Annulla</button><button class="btn-save" onclick="submitDeliveryVerification()" style="background:#1b5e20;">✅ Conferma e Storna DEV</button></div>
     </div>
 
     <div class="modal" id="export-excel-modal">
-        <div class="modal-title">📊 Export Inventory (English Excel)</div>
+        <div class="modal-title">📊 Export Inventory (English Excel - DEV)</div>
         <div class="form-group"><label>Tipologia Report:</label><select id="export-type-select" class="form-control"><option value="food">🍕 Food & Supplies</option><option value="alcohol">🍷 Alcohol & Beverages</option><option value="all">📦 Full Inventory (Entrambi i Fogli)</option></select></div>
         <div class="modal-actions"><button class="btn-cancel" onclick="closeExportExcelModal()">Annulla</button><button class="btn-save" style="background-color: var(--excel-green);" onclick="generateAndExportExcel()">Download Excel</button></div>
     </div>
 
     <div class="modal" id="summary-modal">
-        <div class="modal-title">📋 Riepilogo Ordine Generato</div>
+        <div class="modal-title">📋 Riepilogo Ordine Generato (DEV)</div>
         <div id="summary-content"></div>
         <div class="modal-actions" style="margin-top:14px;"><button class="btn-cancel" onclick="closeSummaryModal()">Chiudi</button></div>
     </div>
 
     <div class="modal" id="add-modal">
-        <div class="modal-title" id="item-modal-title">Prodotto</div>
+        <div class="modal-title" id="item-modal-title">Prodotto DEV</div>
         <input type="hidden" id="edit-item-id">
         <div class="form-group"><label>Nome</label><input type="text" id="new-name" class="form-control"></div>
         <div class="form-group"><label>Categoria</label><select id="new-category-select" class="form-control"><option value="Latticini">🧀 Latticini</option><option value="Farine & Secco">🌾 Farine & Secco</option><option value="Conserve & Pomodoro">🍅 Conserve & Pomodoro</option><option value="Salumi & Carni">🥩 Salumi & Carni</option><option value="Alcolici">🍷 Alcolici</option><option value="Bevande">🥤 Bevande</option><option value="Surgelati">❄️ Surgelati</option><option value="Ortofrutta">🥗 Ortofrutta</option><option value="Pulizia & Monouso">🧹 Pulizia & Monouso</option><option value="Altro">📦 Altro</option></select></div>
@@ -483,23 +449,23 @@
             <div class="form-group" style="flex:1;"><label>Prezzo (SEK)</label><input type="number" step="0.01" id="new-price" class="form-control" value="0"></div>
             <div class="form-group" style="flex:1;"><label>Unità</label><select id="new-unit" class="form-control"><option value="Bottiglie">Bottiglie</option><option value="Unità">Unità</option><option value="Kg">Kg</option><option value="Litri">Litri</option><option value="Cartoni">Cartoni</option></select></div>
         </div>
-        <div class="modal-actions"><button class="btn-cancel" onclick="closeAddModal()">Annulla</button><button class="btn-save" onclick="saveInventoryItem()">Salva</button></div>
+        <div class="modal-actions"><button class="btn-cancel" onclick="closeAddModal()">Annulla</button><button class="btn-save" style="background:#b45309;" onclick="saveInventoryItem()">Salva DEV</button></div>
     </div>
 
     <div class="modal" id="add-supplier-modal">
-        <div class="modal-title" id="supplier-modal-title">Fornitore</div>
+        <div class="modal-title" id="supplier-modal-title">Fornitore DEV</div>
         <input type="hidden" id="edit-supplier-id">
         <div class="form-group"><label>Nome</label><input type="text" id="supp-name" class="form-control"></div>
         <div class="form-group"><label>Colore</label><input type="color" id="supp-color-input" class="form-control" value="#1976d2"></div>
         <div class="form-group"><label>Telefono</label><input type="tel" id="supp-phone" class="form-control"></div>
         <div class="form-group"><label>Email</label><input type="email" id="supp-email" class="form-control"></div>
-        <div class="modal-actions"><button class="btn-cancel" onclick="closeAddSupplierModal()">Annulla</button><button class="btn-save" onclick="saveSupplier()">Salva</button></div>
+        <div class="modal-actions"><button class="btn-cancel" onclick="closeAddSupplierModal()">Annulla</button><button class="btn-save" style="background:#b45309;" onclick="saveSupplier()">Salva DEV</button></div>
     </div>
 
     <style>
         :root {
-            --primary: #043927; --bg: #e6e3dc; --card-bg: #f5f3ed; --text: #1c1c1a;
-            --text-secondary: #5a5854; --border: #d4d0c7; --warning: #ff9800; --danger: #e53935; --whatsapp: #25d366;
+            --primary: #b45309; --bg: #fef3c7; --card-bg: #fffbeb; --text: #1c1c1a;
+            --text-secondary: #78350f; --border: #fde68a; --warning: #ff9800; --danger: #e53935; --whatsapp: #25d366;
             --excel-green: #107c41; --star-gold: #ffb300;
         }
 
@@ -521,7 +487,7 @@
 
         .search-row { display: flex; gap: 8px; width: 100%; }
         .search-input { flex: 1; min-width: 0; padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; outline: none; width: 100%; }
-        .filter-select, .location-select, .date-picker, .operator-input { flex: 1; min-width: 0; padding: 8px 10px; border: 1px solid var(--primary); border-radius: 8px; font-size: 13px; font-weight: 600; background-color: #f0f7f4; color: var(--primary); outline: none; width: 100%; text-overflow: ellipsis; }
+        .filter-select, .location-select, .date-picker, .operator-input { flex: 1; min-width: 0; padding: 8px 10px; border: 1px solid var(--primary); border-radius: 8px; font-size: 13px; font-weight: 600; background-color: #fffbe8; color: var(--primary); outline: none; width: 100%; text-overflow: ellipsis; }
         
         .add-btn { background-color: var(--primary); color: white; border: none; padding: 8px 12px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
         .btn-excel { background-color: var(--excel-green); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; box-shadow: 0 2px 6px rgba(16, 124, 65, 0.3); }
@@ -529,13 +495,13 @@
 
         .star-toggle-btn { background: none; border: none; font-size: 20px; cursor: pointer; transition: transform 0.15s ease; padding: 2px 4px; }
 
-        .location-active-banner { background: #e8f5e9; border-bottom: 1px solid #c8e6c9; padding: 8px 16px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: bold; color: #2e7d32; }
+        .location-active-banner { background: #fffbe8; border-bottom: 1px solid #fde68a; padding: 8px 16px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: bold; color: #b45309; }
 
         .view-section { display: none; flex-direction: column; flex: 1; padding-bottom: 20px; position: relative; width: 100%; }
         .view-section.active { display: flex; }
         #view-ordini { padding-bottom: 140px; }
 
-        .page-lock-banner { position: absolute; top: 0; left: 0; width: 100%; height: 100%; min-height: 100vh; background-color: rgba(244, 246, 248, 0.98); backdrop-filter: blur(8px); z-index: 500; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 80px 20px 20px 20px; text-align: center; }
+        .page-lock-banner { position: absolute; top: 0; left: 0; width: 100%; height: 100%; min-height: 100vh; background-color: rgba(254, 243, 199, 0.98); backdrop-filter: blur(8px); z-index: 500; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 80px 20px 20px 20px; text-align: center; }
         .page-lock-box { background: white; padding: 24px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); width: 100%; max-width: 320px; border: 1px solid var(--border); }
 
         .content-list { padding: 12px 16px; display: flex; flex-direction: column; gap: 12px; flex: 1; width: 100%; }
@@ -554,14 +520,14 @@
 
         .stock-warning-badge { display: inline-flex; align-items: center; font-size: 13px; font-weight: 800; padding: 4px 8px; border-radius: 6px; margin-top: 6px; line-height: 1.3; }
         .stock-warning-badge.alert { background-color: #ffebee; color: #c62828; border: 1px solid #ef9a9a; }
-        .stock-warning-badge.normal { background-color: #f1f8e9; color: #33691e; border: 1px solid #c5e1a5; }
+        .stock-warning-badge.normal { background-color: #fffbe8; color: #b45309; border: 1px solid #fde68a; }
 
         .badges-row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-top: 6px; }
-        .category-label-tag { font-size: 11px; font-weight: 700; color: #444; text-transform: uppercase; background: #e8f5e9; padding: 3px 8px; border-radius: 4px; border: 1px solid #c8e6c9; }
+        .category-label-tag { font-size: 11px; font-weight: 700; color: #78350f; text-transform: uppercase; background: #fffbe8; padding: 3px 8px; border-radius: 4px; border: 1px solid #fde68a; }
         .supplier-badge { font-size: 13px; padding: 4px 10px; border-radius: 6px; display: inline-block; font-weight: 800; color: white; box-shadow: 0 1px 2px rgba(0,0,0,0.15); }
 
-        .item-controls { display: flex; align-items: center; justify-content: flex-end; gap: 6px; flex-wrap: nowrap; margin-top: 4px; border-top: 1px dashed #f0f0f0; padding-top: 8px; }
-        .qty-btn { width: 36px; height: 36px; min-width: 36px; border-radius: 50%; border: 1px solid var(--border); background-color: #f0f0f0; font-weight: bold; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .item-controls { display: flex; align-items: center; justify-content: flex-end; gap: 6px; flex-wrap: nowrap; margin-top: 4px; border-top: 1px dashed #fde68a; padding-top: 8px; }
+        .qty-btn { width: 36px; height: 36px; min-width: 36px; border-radius: 50%; border: 1px solid var(--border); background-color: #fffbe8; font-weight: bold; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .qty-input { width: 58px; min-width: 58px; text-align: center; padding: 6px 2px; border: 1px solid var(--border); border-radius: 6px; font-size: 15px; font-weight: 700; }
         .unit-label { font-size: 13px; color: var(--text-secondary); font-weight: 700; min-width: 38px; }
 
@@ -569,7 +535,7 @@
         .stock-label-main { font-size: 13px; font-weight: 600; color: var(--text-secondary); display: flex; align-items: center; }
         .stock-label-sub { font-size: 11px; font-weight: bold; margin-top: 2px; }
 
-        .action-row-btn { display: flex; gap: 8px; margin-top: 6px; border-top: 1px solid #f0f0f0; padding-top: 8px; }
+        .action-row-btn { display: flex; gap: 8px; margin-top: 6px; border-top: 1px solid #fde68a; padding-top: 8px; }
         .btn-action-edit { background: #e3f2fd; color: #0d47a1; border: 1px solid #bbdefb; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; }
         .btn-action-del { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; }
 
@@ -577,28 +543,26 @@
         .faq-question { font-size: 14px; font-weight: 800; color: var(--primary); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
         .faq-answer { font-size: 13px; color: #334155; line-height: 1.4; }
 
-        /* MENU DRAWER PASTELLO */
-        .drawer { position: absolute; top: 0; left: -280px; width: 280px; height: 100%; min-height: 100vh; background-color: #faf8f5; box-shadow: 4px 0 15px rgba(0,0,0,0.15); transition: left 0.3s ease; z-index: 2000; padding: 20px; overflow-y: auto; border-right: 1px solid #e6e2d8; }
+        .drawer { position: absolute; top: 0; left: -280px; width: 280px; height: 100%; min-height: 100vh; background-color: #fffdf5; box-shadow: 4px 0 15px rgba(0,0,0,0.15); transition: left 0.3s ease; z-index: 2000; padding: 20px; overflow-y: auto; border-right: 1px solid #fde68a; }
         .drawer.open { left: 0; }
-        .drawer-header { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 16px; border-bottom: 1px solid #1b4332; background-color: var(--primary); border-radius: 10px; padding: 16px 12px; }
+        .drawer-header { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 16px; border-bottom: 1px solid #b45309; background-color: var(--primary); border-radius: 10px; padding: 16px 12px; }
         .drawer-menu { list-style: none; }
-        .drawer-menu li { padding: 12px 10px; font-size: 14px; font-weight: 600; color: #2d3748; border-bottom: 1px solid #eae6df; cursor: pointer; display: flex; justify-content: space-between; align-items: center; border-radius: 6px; transition: background 0.15s ease; }
-        .drawer-menu li:active { background-color: #e8f3ee; color: #043927; }
+        .drawer-menu li { padding: 12px 10px; font-size: 14px; font-weight: 600; color: #2d3748; border-bottom: 1px solid #fde68a; cursor: pointer; display: flex; justify-content: space-between; align-items: center; border-radius: 6px; transition: background 0.15s ease; }
+        .drawer-menu li:active { background-color: #fffbe8; color: #b45309; }
 
         .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; min-height: 100vh; background: rgba(0,0,0,0.6); display: none; z-index: 1000; backdrop-filter: blur(4px); }
         .overlay.active { display: block; }
 
-        /* MODALI POPUP PASTELLO */
-        .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #fdfcf7; padding: 22px; border-radius: 14px; width: 92%; max-width: 480px; max-height: 88vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.2); display: none; z-index: 9999; border: 1px solid #e2ded4; }
+        .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #fffdf8; padding: 22px; border-radius: 14px; width: 92%; max-width: 480px; max-height: 88vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.2); display: none; z-index: 9999; border: 1px solid #fde68a; }
         .modal.active { display: block !important; }
         
-        .modal-title { font-size: 17px; font-weight: 800; margin-bottom: 14px; padding: 8px 12px; background: #e8f0ec; color: #043927; border-radius: 8px; border-left: 4px solid #2d6a4f; }
+        .modal-title { font-size: 17px; font-weight: 800; margin-bottom: 14px; padding: 8px 12px; background: #fffbe8; color: #b45309; border-radius: 8px; border-left: 4px solid #b45309; }
         .form-group { margin-bottom: 12px; }
         .form-group label { display: block; font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; }
         .form-control { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; background-color: white; }
         .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
         .btn-cancel { background: #e5e2d9; color: #4a5568; border: none; padding: 10px 14px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; }
-        .btn-save { background: #2d6a4f; color: white; border: none; padding: 10px 14px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; }
+        .btn-save { background: #b45309; color: white; border: none; padding: 10px 14px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; }
         .btn-danger { background: var(--danger); color: white; border: none; padding: 10px 14px; border-radius: 6px; cursor: pointer; font-size: 14px; }
 
         .toast-notification { 
@@ -635,18 +599,30 @@
 
         .badge-notification { background: var(--danger); color: white; border-radius: 12px; font-size: 11px; font-weight: 800; padding: 2px 8px; display: inline-block; }
     </style>
-    <script type="module">
+<script type="module">
+        // 1. DEREGISTRAZIONE SERVICE WORKER
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(registrations => {
+                for (let registration of registrations) {
+                    registration.unregister();
+                }
+            });
+        }
+
+        // 2. MODULI FIREBASE SDKS
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { 
             getAuth, 
             signInWithEmailAndPassword, 
             createUserWithEmailAndPassword, 
-            sendPasswordResetEmail,
             signOut, 
-            onAuthStateChanged 
+            onAuthStateChanged,
+            setPersistence,
+            browserLocalPersistence,
+            browserSessionPersistence
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { 
-            getFirestore,
+            getFirestore, 
             doc, 
             setDoc, 
             getDoc,
@@ -658,27 +634,21 @@
             writeBatch 
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-      // CONFIGURAZIONE FIREBASE AMBIENTE STABLE
-const firebaseConfig = {
-    apiKey: "AIzaSyDum2tdEg2WbugPk8flWsQ-uViJXZyK67M",
-    authDomain: "magari-b7f93.firebaseapp.com",
-    projectId: "magari-b7f93",
-    storageBucket: "magari-b7f93.firebasestorage.app",
-    messagingSenderId: "135472598053",
-    appId: "1:135472598053:web:a3fd59a851fe99f51a03cc",
-    measurementId: "G-QX5P0FC137"
-};
+        // ====================================================================
+        // CONFIGURAZIONE FIREBASE AMBIENTE DEVELOPMENT / TEST (magari-app-dev)
+        // ====================================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyCv1G_nShEHX3_Yho1sWSK0ceK6gWbEEPU",
+            authDomain: "magari-app-dev.firebaseapp.com",
+            projectId: "magari-app-dev",
+            storageBucket: "magari-app-dev.firebasestorage.app",
+            messagingSenderId: "653540923043",
+            appId: "1:653540923043:web:387815ffd7b79385ff1116"
+        };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-
-        // SERVICE WORKER REGISTRATION (per PWA)
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js').catch(err => console.log('ServiceWorker note:', err));
-            });
-        }
 
         window.currentUserProfile = null;
         window.activeLocation = null;
@@ -703,7 +673,7 @@ const firebaseConfig = {
         window.orderHistoryData = [];
         window.bugReportsData = [];
 
-        // 1. MONITORAGGIO STATO AUTENTICAZIONE
+        // MONITORAGGIO STATO AUTENTICAZIONE UTENTE
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 const isMasterAdmin = user.email && user.email.toLowerCase() === "nicolas@magaripizza.com";
@@ -727,7 +697,7 @@ const firebaseConfig = {
                         }
                         window.currentUserProfile.name = data.name || userName;
                     } else {
-                        await setDoc(userDocRef, window.currentUserProfile);
+                        await setDoc(userDocRef, window.currentUserProfile, { merge: true });
                     }
                 } catch (e) {
                     console.log("Firestore auth backup mode:", e);
@@ -739,6 +709,46 @@ const firebaseConfig = {
             window.refreshAllViews();
         });
 
+        // NOTIFICATORE POPUP REALTIME PER NUOVE REGISTRAZIONS STAFF DEV
+        let isInitialUsersLoad = true;
+        onSnapshot(collection(db, "users"), (snapshot) => {
+            if (isInitialUsersLoad) {
+                isInitialUsersLoad = false;
+                return;
+            }
+            snapshot.docChanges().forEach((change) => {
+                if (change.type === "added") {
+                    const newUser = change.doc.data();
+                    window.showRealtimeUserToast(newUser.name || newUser.email || "Nuovo Operatore DEV");
+                }
+            });
+        });
+
+        window.showRealtimeUserToast = function(identifier) {
+            const container = document.getElementById('realtime-user-toast-container');
+            if (!container) return;
+
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                background-color: #b45309;
+                color: white;
+                padding: 12px 18px;
+                border-radius: 8px;
+                font-size: 13px;
+                font-weight: bold;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+                border-left: 5px solid #fde68a;
+                transition: opacity 0.3s ease;
+            `;
+            toast.innerHTML = `🔔 <strong>Nuovo Account DEV:</strong> Si è registrato ${identifier}`;
+
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 5000);
+        };
+
         window.updateAuthUIState = function() {
             const statusTxt = document.getElementById('user-status-text');
             const authBtn = document.getElementById('btn-auth-action');
@@ -749,27 +759,29 @@ const firebaseConfig = {
 
             if (window.currentUserProfile) {
                 const isAdmin = window.currentUserProfile.role === 'admin';
-                const roleBadge = isAdmin ? '⭐ Admin' : '👤 Operatore';
+                const roleBadge = isAdmin ? '⭐ Admin DEV' : '👤 Operatore DEV';
+
                 if (statusTxt) statusTxt.innerHTML = `${roleBadge}: <b>${window.currentUserProfile.name}</b>`;
                 if (authBtn) { authBtn.innerText = '🚪 Logout'; authBtn.style.background = '#e53935'; authBtn.onclick = window.handleLogoutSubmit; }
                 if (btnDeleteNotice) btnDeleteNotice.style.display = isAdmin ? 'inline-block' : 'none';
                 
-                if (opOrderInput) opOrderInput.value = window.currentUserProfile.name;
-                if (opStockInput) opStockInput.value = window.currentUserProfile.name;
-                if (opBugInput) opBugInput.value = window.currentUserProfile.name;
+                const opText = window.currentUserProfile.name;
+                if (opOrderInput) opOrderInput.value = opText;
+                if (opStockInput) opStockInput.value = opText;
+                if (opBugInput) opBugInput.value = opText;
 
                 ['magazzino', 'fornitori', 'sprechi', 'impostazioni'].forEach(sec => {
                     const banner = document.getElementById(`lock-banner-${sec}`);
                     if (banner) banner.style.display = isAdmin ? 'none' : 'flex';
                 });
             } else {
-                if (statusTxt) statusTxt.innerHTML = '👁️ Modalità Lettura (Guest)';
+                if (statusTxt) statusTxt.innerHTML = '👁️ Modalità Lettura (Guest DEV)';
                 if (authBtn) { authBtn.innerText = '🔑 Accedi / Registrati'; authBtn.style.background = '#2563eb'; authBtn.onclick = window.openAuthModal; }
                 if (btnDeleteNotice) btnDeleteNotice.style.display = 'none';
                 
-                if (opOrderInput) opOrderInput.value = '👁 Nessun Operatore (Accedi)';
-                if (opStockInput) opStockInput.value = '👁 Nessun Operatore (Accedi)';
-                if (opBugInput) opBugInput.value = '👁 Nessun Operatore (Accedi)';
+                if (opOrderInput) opOrderInput.value = '👁 Nessun Operatore DEV';
+                if (opStockInput) opStockInput.value = '👁 Nessun Operatore DEV';
+                if (opBugInput) opBugInput.value = '👁 Nessun Operatore DEV';
 
                 ['magazzino', 'fornitori', 'sprechi', 'impostazioni'].forEach(sec => {
                     const banner = document.getElementById(`lock-banner-${sec}`);
@@ -787,13 +799,13 @@ const firebaseConfig = {
             return true;
         };
 
-        // NOTIFICHE
+        // NOTIFICHE TOAST
         window.showAlert = function(msg) {
             const toast = document.getElementById('toast-notification');
             if (toast) { toast.innerText = msg; toast.classList.add('show'); setTimeout(() => { toast.classList.remove('show'); }, 3500); }
         };
 
-        // 2. LISTENERS AVVISI STAFF SEPARATI PER SEDE
+        // LISTENERS AVVISI STAFF SEPARATI PER SEDE DEV
         window.activeNoticeUnsubscribe = null;
 
         window.listenToStaffNotice = function() {
@@ -812,7 +824,7 @@ const firebaseConfig = {
                 if (docSnap.exists() && docSnap.data().text) {
                     const data = docSnap.data();
                     if (txt) txt.innerText = data.text;
-                    if (meta) meta.innerText = `📍 ${data.location || locKey.toUpperCase()} • Pubblicato da ${data.author || 'Admin'} - ${data.date ? new Date(data.date.toDate ? data.date.toDate() : data.date).toLocaleString('it-IT') : ''}`;
+                    if (meta) meta.innerText = `📍 ${data.location || locKey.toUpperCase()} (DEV) • Pubblicato da ${data.author || 'Admin'} - ${data.date ? new Date(data.date.toDate ? data.date.toDate() : data.date).toLocaleString('it-IT') : ''}`;
                     if (banner) banner.style.display = 'block';
                 } else {
                     if (banner) banner.style.display = 'none';
@@ -837,7 +849,7 @@ const firebaseConfig = {
             });
 
             if (input) input.value = '';
-            window.showAlert(`📢 Avviso pubblicato per ${window.activeLocation || locKey}!`);
+            window.showAlert(`📢 Avviso pubblicato in DEV per ${window.activeLocation || locKey}!`);
         };
 
         window.deleteNoticeFromDb = async function() {
@@ -848,7 +860,7 @@ const firebaseConfig = {
             window.showAlert(`🗑️ Avviso rimosso per ${window.activeLocation || locKey}.`);
         };
 
-        // LOGIN E REGISTRAZIONE AUTONOMA OPERATORI
+        // MODALE AUTHENTICATION (LOGIN DEV)
         window.openAuthModal = () => { 
             window.closeAll();
             document.getElementById('auth-modal').classList.add('active'); 
@@ -863,20 +875,28 @@ const firebaseConfig = {
             const isLogin = tab === 'login';
             document.getElementById('auth-form-login').style.display = isLogin ? 'block' : 'none';
             document.getElementById('auth-form-register').style.display = isLogin ? 'none' : 'block';
-            document.getElementById('tab-btn-login').style.background = isLogin ? 'var(--primary)' : '#f1f5f9';
+            document.getElementById('tab-btn-login').style.background = isLogin ? '#b45309' : '#f1f5f9';
             document.getElementById('tab-btn-login').style.color = isLogin ? 'white' : '#334155';
-            document.getElementById('tab-btn-register').style.background = isLogin ? '#f1f5f9' : 'var(--primary)';
+            document.getElementById('tab-btn-register').style.background = isLogin ? '#f1f5f9' : '#b45309';
             document.getElementById('tab-btn-register').style.color = isLogin ? '#334155' : 'white';
         };
 
         window.handleLoginSubmit = async function() {
             const email = document.getElementById('login-email').value.trim();
             const pass = document.getElementById('login-password').value.trim();
+            const rememberMe = document.getElementById('remember-me-checkbox').checked;
+
             if (!email || !pass) return window.showAlert("⚠️ Compila tutti i campi.");
+
             try {
+                const persistenceType = rememberMe ? browserLocalPersistence : browserSessionPersistence;
+                await setPersistence(auth, persistenceType);
                 await signInWithEmailAndPassword(auth, email, pass);
-                closeAuthModal(); window.showAlert("🎉 Login effettuato con successo!");
-            } catch(e) { window.showAlert(`❌ Errore Login: ${e.message}`); }
+                closeAuthModal(); 
+                window.showAlert("🎉 Login DEV effettuato con successo!");
+            } catch(e) { 
+                window.showAlert(`❌ Errore Login DEV: ${e.message}`); 
+            }
         };
 
         window.handleRegisterSubmit = async function() {
@@ -887,1182 +907,49 @@ const firebaseConfig = {
             try {
                 const res = await createUserWithEmailAndPassword(auth, email, pass);
                 const isMasterAdmin = email.toLowerCase() === "nicolas@magaripizza.com";
-                const newUser = { uid: res.user.uid, email, name, role: isMasterAdmin ? 'admin' : 'operator' };
+                
+                const newUser = { 
+                    uid: res.user.uid, 
+                    email: email, 
+                    name: name, 
+                    role: isMasterAdmin ? 'admin' : 'operator'
+                };
+                
                 await setDoc(doc(db, "users", res.user.uid), newUser);
-                closeAuthModal(); window.showAlert("✅ Account Staff registrato con successo!");
-            } catch(e) { window.showAlert(`❌ Errore Registrazione: ${e.message}`); }
+
+                closeAuthModal(); 
+                window.showAlert("🎉 Account DEV registrato ed attivo!");
+            } catch(e) { window.showAlert(`❌ Errore Registrazione DEV: ${e.message}`); }
         };
 
         window.handleLogoutSubmit = async function() {
             await signOut(auth);
-            window.showAlert("🚪 Logout effettuato.");
+            window.showAlert("🚪 Logout DEV effettuato.");
         };
 
-        // PANNELLO GESTIONE COMPLETA OPERATORI (SOLO ADMIN)
+        // PANNELLO GESTIONE STAFF DEV
         window.loadUsersListForAdmin = async function() {
             const container = document.getElementById('admin-users-list-container');
             if (!container) return;
             
-            if (!window.currentUserProfile || window.currentUserProfile.role !== 'admin') {
-                container.innerHTML = '<div style="font-size:12px; color:#666; text-align:center;">Riservato agli Admin.</div>';
+            const currentUser = auth.currentUser;
+            const isMaster = currentUser && currentUser.email && currentUser.email.toLowerCase() === "nicolas@magaripizza.com";
+            const isAdmin = isMaster || (window.currentUserProfile && window.currentUserProfile.role === 'admin');
+
+            if (!isAdmin) {
+                container.innerHTML = '<div style="font-size:12px; color:#666; text-align:center; padding:10px;">Riservato agli Admin DEV.</div>';
                 return;
             }
 
             try {
+                container.innerHTML = '<div style="font-size:12px; color:#666; text-align:center; padding:10px;">Caricamento utenti test in corso...</div>';
                 const querySnapshot = await getDocs(collection(db, "users"));
+                
                 if (querySnapshot.empty) {
-                    container.innerHTML = '<div style="font-size:12px; color:#666; text-align:center;">Nessun operatore registrato.</div>';
+                    container.innerHTML = '<div style="font-size:12px; color:#666; text-align:center; padding:10px;">Nessun operatore presente nel DB DEV.</div>';
                     return;
                 }
 
                 container.innerHTML = '';
                 querySnapshot.forEach((docSnap) => {
-                    const uData = docSnap.data();
-                    const uUid = docSnap.id;
-                    const isAdmin = uData.role === 'admin';
-                    const isMaster = uData.email && uData.email.toLowerCase() === "nicolas@magaripizza.com";
-
-                    container.innerHTML += `
-                        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; padding:8px; display:flex; flex-direction:column; gap:6px;">
-                            <div style="display:flex; justify-content:space-between; align-items:center;">
-                                <div>
-                                    <div style="font-weight:bold; color:var(--primary); font-size:13px;">${uData.name || 'Senza Nome'}</div>
-                                    <div style="font-size:11px; color:#666;">${uData.email}</div>
-                                </div>
-                                <span style="font-weight:bold; font-size:11px; padding:2px 6px; border-radius:4px; background:${isAdmin ? '#e8f5e9' : '#e0f2fe'}; color:${isAdmin ? '#2e7d32' : '#0288d1'};">
-                                    ${isAdmin ? '⭐ Admin' : '👤 Operatore'}
-                                </span>
-                            </div>
-                            <div style="display:flex; justify-content:flex-end; gap:6px; margin-top:2px; border-top:1px dashed #e2e8f0; padding-top:6px;">
-                                <button onclick="sendUserPasswordReset('${uData.email}')" style="background:#fff3cd; color:#856404; border:1px solid #ffeeba; padding:3px 6px; border-radius:4px; font-size:10px; font-weight:bold; cursor:pointer;">🔑 Reset Pass</button>
-                                ${!isMaster ? `
-                                    <button onclick="openUserModal('${uUid}')" style="background:#e3f2fd; color:#0d47a1; border:1px solid #bbdefb; padding:3px 6px; border-radius:4px; font-size:10px; font-weight:bold; cursor:pointer;">✏️ Modifica</button>
-                                    <button onclick="deleteUserFromAdmin('${uUid}', '${uData.name}')" style="background:#ffebee; color:#c62828; border:1px solid #ffcdd2; padding:3px 6px; border-radius:4px; font-size:10px; font-weight:bold; cursor:pointer;">🗑 Elimina</button>
-                                ` : '<span style="font-size:10px; color:#999; font-style:italic; padding-top:2px;">Account Master</span>'}
-                            </div>
-                        </div>`;
-                });
-            } catch(e) {
-                container.innerHTML = `<div style="font-size:12px; color:red;">Errore caricamento: ${e.message}</div>`;
-            }
-        };
-
-        window.openUserModal = async function(uid = null) {
-            if (!window.checkAuthGuard()) return;
-            window.closeAll();
-            document.getElementById('edit-user-uid').value = '';
-            document.getElementById('user-field-name').value = '';
-            document.getElementById('user-field-email').value = '';
-            document.getElementById('user-field-pass').value = '';
-            document.getElementById('user-field-role').value = 'operator';
-
-            const passGroup = document.getElementById('user-field-pass-group');
-
-            if (uid) {
-                document.getElementById('user-modal-title').innerText = '✏️ Modifica Operatore';
-                passGroup.style.display = 'none';
-                const userDoc = await getDoc(doc(db, "users", uid));
-                if (userDoc.exists()) {
-                    const data = userDoc.data();
-                    document.getElementById('edit-user-uid').value = uid;
-                    document.getElementById('user-field-name').value = data.name || '';
-                    document.getElementById('user-field-email').value = data.email || '';
-                    document.getElementById('user-field-role').value = data.role || 'operator';
-                }
-            } else {
-                document.getElementById('user-modal-title').innerText = '➕ Nuovo Operatore';
-                passGroup.style.display = 'block';
-            }
-
-            document.getElementById('user-edit-modal').classList.add('active');
-            document.getElementById('overlay').classList.add('active');
-        };
-
-        window.closeUserModal = () => {
-            document.getElementById('user-edit-modal').classList.remove('active');
-            document.getElementById('overlay').classList.remove('active');
-        };
-
-        window.saveUserFromAdmin = async function() {
-            if (!window.checkAuthGuard()) return;
-            const uid = document.getElementById('edit-user-uid').value;
-            const name = document.getElementById('user-field-name').value.trim();
-            const email = document.getElementById('user-field-email').value.trim();
-            const role = document.getElementById('user-field-role').value;
-            const pass = document.getElementById('user-field-pass').value.trim();
-
-            if (!name || !email) return window.showAlert("⚠️ Inserisci Nome ed Email.");
-
-            if (uid) {
-                await updateDoc(doc(db, "users", uid), { name, email, role });
-                window.showAlert("✅ Operatore aggiornato!");
-            } else {
-                if (!pass || pass.length < 6) return window.showAlert("⚠️ Password di almeno 6 caratteri.");
-                try {
-                    const res = await createUserWithEmailAndPassword(auth, email, pass);
-                    await setDoc(doc(db, "users", res.user.uid), { uid: res.user.uid, name, email, role });
-                    window.showAlert("🎉 Nuovo operatore creato con successo!");
-                } catch(e) {
-                    return window.showAlert(`❌ Errore Creazione: ${e.message}`);
-                }
-            }
-
-            closeUserModal();
-            window.loadUsersListForAdmin();
-        };
-
-        window.sendUserPasswordReset = async function(email) {
-            if (!window.checkAuthGuard()) return;
-            if (confirm(`Inviare l'email di ripristino password a ${email}?`)) {
-                try {
-                    await sendPasswordResetEmail(auth, email);
-                    window.showAlert("📧 Email di reset inviata all'operatore!");
-                } catch(e) {
-                    window.showAlert(`❌ Errore invio reset: ${e.message}`);
-                }
-            }
-        };
-
-        window.deleteUserFromAdmin = async function(uid, name) {
-            if (!window.checkAuthGuard()) return;
-            if (confirm(`Sei sicuro di voler eliminare l'operatore ${name}?`)) {
-                await deleteDoc(doc(db, "users", uid));
-                window.showAlert("🗑 Operatore eliminato dal database.");
-                window.loadUsersListForAdmin();
-            }
-        };
-
-        // LISTENERS FIRESTORE IN TEMPO REALE
-        onSnapshot(collection(db, "inventory"), (snapshot) => {
-            window.inventoryData = snapshot.docs.map(doc => doc.data());
-            window.refreshAllViews();
-        });
-
-        onSnapshot(collection(db, "suppliers"), (snapshot) => {
-            if(!snapshot.empty) window.suppliersData = snapshot.docs.map(doc => doc.data());
-            window.populateAllSupplierFilters();
-            window.refreshAllViews();
-        });
-
-        onSnapshot(collection(db, "history"), (snapshot) => {
-            window.orderHistoryData = snapshot.docs.map(doc => doc.data()).sort((a, b) => b.id - a.id);
-            window.refreshAllViews();
-        });
-
-        onSnapshot(collection(db, "bugReports"), (snapshot) => {
-            window.bugReportsData = snapshot.docs.map(doc => doc.data()).sort((a, b) => b.id - a.id);
-            window.refreshAllViews();
-        });
-
-        // HELPERS
-        window.getLocationKey = () => (window.activeLocation && window.activeLocation.includes('Östermalm')) ? 'ostermalm' : 'vasastan';
-        window.getQty = (i) => window.getLocationKey() === 'ostermalm' ? (i.qty_ostermalm ?? 0) : (i.qty_vasastan ?? i.qty ?? 0);
-        window.getOrderQty = (i) => window.getLocationKey() === 'ostermalm' ? (i.orderQty_ostermalm ?? 0) : (i.orderQty_vasastan ?? i.orderQty ?? 0);
-        window.getMin = (i) => window.getLocationKey() === 'ostermalm' ? (i.minQty_ostermalm ?? 2) : (i.minQty_vasastan ?? i.minQty ?? 2);
-        window.getLastUpdateBy = (i) => window.getLocationKey() === 'ostermalm' ? (i.lastUpdateBy_ostermalm ?? '') : (i.lastUpdateBy_vasastan ?? '');
-        window.getLastUpdateDate = (i) => window.getLocationKey() === 'ostermalm' ? (i.lastUpdateDate_ostermalm ?? '') : (i.lastUpdateDate_vasastan ?? '');
-
-        window.getStockUpdatesObj = function(newQty, opName) {
-            const key = window.getLocationKey();
-            const nowStr = new Date().toISOString(); 
-            const displayStr = new Date().toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-            if (key === 'ostermalm') return { qty_ostermalm: newQty, lastUpdateBy_ostermalm: opName, lastUpdateDate_ostermalm: displayStr, lastUpdateRaw_ostermalm: nowStr };
-            return { qty_vasastan: newQty, lastUpdateBy_vasastan: opName, lastUpdateDate_vasastan: displayStr, lastUpdateRaw_vasastan: nowStr };
-        };
-
-        window.translateUnitToSwedish = (unit) => ({ "Bottiglie": "flaskor", "Unità": "st", "Kg": "kg", "Litri": "liter", "Cartoni": "kartonger", "Sacchi": "säckar" }[unit] || unit || "st");
-        window.getCategoryEmoji = (cat) => ({ "Latticini": "🧀", "Farine & Secco": "🌾", "Conserve & Pomodoro": "🍅", "Salumi & Carni": "🥩", "Alcolici": "🍷", "Bevande": "🥤", "Surgelati": "❄", "Ortofrutta": "🥗", "Pulizia & Monouso": "🧹", "Altro": "📦" }[cat] || "📦");
-
-        window.setActiveLocation = function(loc) {
-            window.activeLocation = loc;
-            document.getElementById('location-guard-banner').style.display = 'none';
-            document.getElementById('active-location-text').innerText = `📍 Sede: ${loc}`;
-            document.getElementById('active-location-banner').style.display = 'flex';
-            const bugLocInput = document.getElementById('bug-location-display');
-            if (bugLocInput) bugLocInput.value = loc;
-            if (typeof window.listenToStaffNotice === 'function') window.listenToStaffNotice();
-            window.refreshAllViews();
-        };
-
-        window.promptChangeLocation = () => document.getElementById('location-guard-banner').style.display = 'flex';
-        window.toggleMenu = () => { document.getElementById('drawer').classList.toggle('open'); document.getElementById('overlay').classList.toggle('active'); };
-
-        window.toggleReportPeriodInputs = function() {
-            const type = document.getElementById('report-period-type')?.value;
-            const monthGroup = document.getElementById('report-month-select-group');
-            if (monthGroup) {
-                monthGroup.style.display = (type === 'month') ? 'block' : 'none';
-            }
-        };
-        window.closeAll = () => { 
-            document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); 
-            document.getElementById('overlay').classList.remove('active'); 
-            document.getElementById('drawer').classList.remove('open'); 
-        };
-
-        // NAVIGAZIONE
-        window.navigateTo = function(sec) {
-            const adminProtectedSections = ['magazzino', 'fornitori', 'sprechi', 'impostazioni'];
-            const isAdmin = window.currentUserProfile && window.currentUserProfile.role === 'admin';
-
-            window.closeAll();
-
-            if (adminProtectedSections.includes(sec) && !isAdmin) {
-                window.showAlert("🔒 Sezione Riservata Admin: Effettua il Login.");
-                setTimeout(() => { window.openAuthModal(); }, 150);
-                return;
-            }
-
-            document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
-            document.getElementById(`view-${sec}`).classList.add('active');
-            
-            const titles = { 'ordini': 'Ordini', 'scorte': 'Scorte', 'storico': 'Storico', 'magazzino': 'Magazzino', 'fornitori': 'Fornitori', 'sprechi': 'Report Consumi', 'faq': 'Guida & FAQ', 'bugreport': 'Segnala Bug', 'impostazioni': 'Impostazioni' };
-            document.getElementById('page-title').innerText = titles[sec] || 'Magari';
-            
-            window.scrollTo({ top: 0, behavior: 'instant' });
-
-            if (sec === 'impostazioni' && isAdmin) {
-                window.loadUsersListForAdmin();
-            }
-        };
-
-        // ORDINAMENTO
-        window.sortStockItemsArray = function(items, sortMode) {
-            return [...items].sort((a, b) => {
-                const qtyA = window.getQty(a), qtyB = window.getQty(b), minA = window.getMin(a), minB = window.getMin(b);
-                const isLowA = qtyA < minA ? 1 : 0, isLowB = qtyB < minB ? 1 : 0;
-                if (sortMode === 'name-asc') return a.name.localeCompare(b.name);
-                if (sortMode === 'stock-asc') return qtyA - qtyB;
-                if (sortMode === 'low-stock') { if (isLowA !== isLowB) return isLowB - isLowA; return a.name.localeCompare(b.name); }
-                if (sortMode === 'last-update') {
-                    const key = window.getLocationKey();
-                    const rawA = key === 'ostermalm' ? (a.lastUpdateRaw_ostermalm || '') : (a.lastUpdateRaw_vasastan || '');
-                    const rawB = key === 'ostermalm' ? (b.lastUpdateRaw_ostermalm || '') : (b.lastUpdateRaw_vasastan || '');
-                    if (!rawA && !rawB) return a.name.localeCompare(b.name);
-                    if (!rawA) return 1;
-                    if (!rawB) return -1;
-                    return rawB.localeCompare(rawA); 
-                }
-                return 0;
-            });
-        };
-        window.sortItemsArray = function(items, sortMode) {
-            return [...items].sort((a, b) => {
-                if (sortMode === 'name-asc') return a.name.localeCompare(b.name);
-                const qtyA = window.getQty(a), qtyB = window.getQty(b), minA = window.getMin(a), minB = window.getMin(b);
-                const isLowA = qtyA < minA ? 1 : 0, isLowB = qtyB < minB ? 1 : 0;
-                if (sortMode === 'low-stock') { if (isLowA !== isLowB) return isLowB - isLowA; return a.name.localeCompare(b.name); }
-                return 0;
-            });
-        };
-
-        window.populateAllSupplierFilters = function() {
-            ['filter-order-supplier', 'filter-inventory-supplier', 'filter-stock-supplier', 'new-supplier-select'].forEach(id => {
-                const sel = document.getElementById(id); if (!sel) return;
-                const curr = sel.value; 
-                sel.innerHTML = id === 'new-supplier-select' ? '' : '<option value="">🚚 Tutti i Fornitori</option>';
-                window.suppliersData.forEach(s => { const opt = document.createElement('option'); opt.value = s.id; opt.innerText = s.name; sel.appendChild(opt); });
-                sel.value = curr;
-            });
-        };
-
-        window.refreshAllViews = function() { 
-            try { filterItems(); filterStockItems(); filterOrderItems(); filterSuppliers(); filterHistoryItems(); updateCartBadge(); updateHistoryBadge(); updateBugBadgesAndAdminList(); } catch(e){} 
-        };
-
-        // BADGES E UI
-        window.updateCartBadge = function() {
-            const activeItemsCount = window.inventoryData.filter(i => window.getOrderQty(i) > 0).length;
-            const badge = document.getElementById('cart-badge-drawer');
-            if (badge) { badge.innerText = `${activeItemsCount} da ordinare`; badge.style.display = activeItemsCount > 0 ? 'inline-block' : 'none'; }
-        };
-
-        window.updateHistoryBadge = function() {
-            const activeLocShort = window.activeLocation ? window.activeLocation.split(' ')[0] : '';
-            const uncheckedCount = Array.isArray(window.orderHistoryData) 
-                ? window.orderHistoryData.filter(h => !h.checked && (h.destination && h.destination.includes(activeLocShort))).length 
-                : 0;
-            const badge = document.getElementById('history-badge-drawer');
-            if (badge) { badge.innerText = uncheckedCount; badge.style.display = uncheckedCount > 0 ? 'inline-block' : 'none'; }
-        };
-
-        window.updateBugBadgesAndAdminList = function() {
-            const isResolvedCheck = (b) => (b.resolved === true || b.resolved === "true" || b.status === "resolved");
-            const unresolvedCount = Array.isArray(window.bugReportsData) ? window.bugReportsData.filter(b => !isResolvedCheck(b)).length : 0;
-            
-            const settingsBadge = document.getElementById('bug-badge-settings');
-            if (settingsBadge) { 
-                settingsBadge.innerText = unresolvedCount; 
-                settingsBadge.style.display = unresolvedCount > 0 ? 'inline-block' : 'none'; 
-            }
-
-            const container = document.getElementById('admin-bug-reports-container');
-            if (container) {
-                if (!window.bugReportsData || window.bugReportsData.length === 0) {
-                    container.innerHTML = '<div style="font-size:12px; color:#666; text-align:center; padding:8px;">Nessuna segnalazione presente nel database.</div>';
-                } else {
-                    container.innerHTML = '';
-                    
-                    const sortedBugs = [...window.bugReportsData].sort((a, b) => {
-                        const resA = isResolvedCheck(a) ? 1 : 0;
-                        const resB = isResolvedCheck(b) ? 1 : 0;
-                        if (resA !== resB) return resA - resB;
-                        return b.id - a.id;
-                    });
-
-                    sortedBugs.forEach((b) => {
-                        const isResolved = isResolvedCheck(b);
-                        const bgStyle = isResolved ? 'background:#f8fafc; opacity:0.85;' : 'background:#fff8f0; border-color:#f97316;';
-                        const statusLabel = isResolved 
-                            ? '<span style="color:#2e7d32; font-weight:bold; background:#e8f5e9; padding:2px 6px; border-radius:4px;">✅ Risolto</span>' 
-                            : '<span style="color:#c2410c; font-weight:bold; background:#ffedd5; padding:2px 6px; border-radius:4px;">⏳ Da Gestire</span>';
-
-                        container.innerHTML += `
-                            <div style="${bgStyle} border:1px solid #cbd5e1; padding:10px; border-radius:8px; font-size:12px; display:flex; flex-direction:column; gap:6px;">
-                                <div style="display:flex; justify-content:space-between; align-items:center; font-weight:bold; color:var(--primary);">
-                                    <span style="font-size:13px;">${b.type || '🐛 Bug'} - 👤 ${b.operator || 'Staff'}</span>
-                                    <span>${statusLabel}</span>
-                                </div>
-                                <div style="display:flex; justify-content:space-between; color:#666; font-size:11px;">
-                                    <span>📍 <b>Sede:</b> ${b.location || 'N/D'}</span>
-                                    <span>🕒 ${b.timestamp || ''}</span>
-                                </div>
-                                <div style="color:#1e293b; background:#ffffff; padding:8px; border-radius:6px; border:1px solid #e2e8f0; font-size:12px; font-weight:500;">
-                                    ${b.description || 'Nessun dettaglio fornito.'}
-                                </div>
-                                <div style="display:flex; justify-content:flex-end; gap:6px; margin-top:2px;">
-                                    <button class="btn-action-edit" onclick="toggleBugStatus('${b.id}')" style="padding:4px 8px; font-size:11px;">
-                                        ${isResolved ? '🔄 Riapri' : '✅ Segna Risolto'}
-                                    </button>
-                                    <button class="btn-action-del" onclick="deleteBugReport('${b.id}')" style="padding:4px 8px; font-size:11px;">
-                                        🗑 Elimina
-                                    </button>
-                                </div>
-                            </div>`;
-                    });
-                }
-            }
-        };
-
-        // SCORTE
-        window.updateStock = async function(id, d) { 
-            if (!window.checkAuthGuard()) return;
-            const opName = window.currentUserProfile.name;
-            const i = window.inventoryData.find(x => x.id === id); 
-            if(i) { 
-                const newQty = Math.max(0, window.getQty(i) + d);
-                await updateDoc(doc(db, "inventory", String(id)), window.getStockUpdatesObj(newQty, opName)); 
-            } 
-        };
-
-        window.setStock = async function(id, v) { 
-            if (!window.checkAuthGuard()) return;
-            const opName = window.currentUserProfile.name;
-            const i = window.inventoryData.find(x => x.id === id); 
-            if(i) { 
-                const newQty = Math.max(0, parseFloat(v) || 0);
-                await updateDoc(doc(db, "inventory", String(id)), window.getStockUpdatesObj(newQty, opName)); 
-            } 
-        };
-
-        window.filterStockItems = function() {
-            const q = (document.getElementById('search-stock-input')?.value || '').toLowerCase();
-            const cat = document.getElementById('filter-stock-category')?.value || '';
-            const sup = document.getElementById('filter-stock-supplier')?.value || '';
-            const sortMode = document.getElementById('sort-stock-select')?.value || 'name-asc';
-
-            let filtered = window.inventoryData.filter(i => {
-                const matchesCat = !cat ? true : (cat === 'FAVORITES' ? i.isFavorite === true : i.category === cat);
-                return i.name.toLowerCase().includes(q) && matchesCat && (!sup || String(i.supplierId) === String(sup));
-            });
-            filtered = window.sortStockItemsArray(filtered, sortMode);
-            
-            const c = document.getElementById('stock-list'); c.innerHTML = '';
-            filtered.forEach(item => {
-                const sup = window.suppliersData.find(s => String(s.id) === String(item.supplierId));
-                const qty = window.getQty(item), min = window.getMin(item), isLow = qty < min;
-                const lastBy = window.getLastUpdateBy(item), lastDate = window.getLastUpdateDate(item);
-                const lastUpdate = lastDate ? `🕒 ${lastDate} (${lastBy || 'N/D'})` : '🕒 Non aggiornato';
-
-                c.innerHTML += `
-                    <div class="card-item ${isLow ? 'low-stock-alert' : ''}">
-                        <div class="item-name-box" style="border-left-color:${sup?.color || '#334155'};">
-                            <div class="item-name"><span>${item.isFavorite ? '⭐ ' : ''}${item.name}</span></div>
-                            <div class="item-subtext" style="font-size:11px; color:#555;">${lastUpdate}</div>
-                            <div class="badges-row"><span class="category-label-tag">${window.getCategoryEmoji(item.category)} ${item.category}</span><span class="supplier-badge" style="background:${sup?.color || '#334155'}">${sup?.name || 'N/D'}</span></div>
-                        </div>
-                        <div class="item-controls">
-                            <div class="stock-label-box"><span class="stock-label-main">Giacenza</span><span class="stock-label-sub" style="color:${isLow?'var(--danger)':'#666'};">(Min: ${min})</span></div>
-                            <button class="qty-btn" onclick="updateStock(${item.id}, -1)">-</button>
-                            <input type="number" class="qty-input" value="${qty}" onchange="setStock(${item.id}, this.value)">
-                            <span class="unit-label">${item.unit}</span>
-                            <button class="qty-btn" onclick="updateStock(${item.id}, 1)">+</button>
-                        </div>
-                    </div>`;
-            });
-        };
-
-        // ORDINI CON VISUALIZZAZIONE ULTIMA MODIFICA SCORTA (INTEGRAZIONE)
-        window.filterOrderItems = function() {
-            const q = (document.getElementById('search-order-input')?.value || '').toLowerCase();
-            const cat = document.getElementById('filter-order-category')?.value || '';
-            const sup = document.getElementById('filter-order-supplier')?.value || '';
-            const sortMode = document.getElementById('sort-order-select')?.value || 'name-asc';
-
-            let filtered = window.inventoryData.filter(i => {
-                const matchesCat = !cat ? true : (cat === 'FAVORITES' ? i.isFavorite === true : i.category === cat);
-                return i.name.toLowerCase().includes(q) && matchesCat && (!sup || String(i.supplierId) === String(sup));
-            });
-            filtered = window.sortItemsArray(filtered, sortMode);
-            
-            const c = document.getElementById('order-list'); c.innerHTML = '';
-            filtered.forEach(item => {
-                const sup = window.suppliersData.find(s => String(s.id) === String(item.supplierId));
-                const qty = window.getQty(item), min = window.getMin(item), isLow = qty < min;
-                const lastBy = window.getLastUpdateBy(item), lastDate = window.getLastUpdateDate(item);
-                const lastUpdateText = lastDate ? `🕒 Ultima modifica scorta: <b>${lastBy || 'Operatore'}</b> (${lastDate})` : '🕒 Scorta non ancora modificata';
-
-                c.innerHTML += `
-                    <div class="card-item ${isLow ? 'low-stock-alert' : ''}">
-                        <div class="item-name-box" style="border-left-color:${sup?.color || '#334155'};">
-                            <div class="item-name"><span>${item.isFavorite ? '⭐ ' : ''}${item.name}</span></div>
-                            <div class="stock-warning-badge ${isLow?'alert':'normal'}">Scorta: ${qty} ${item.unit} (Min: ${min})</div>
-                            <div class="item-subtext" style="font-size:11px; color:#555; background:#f8fafc; padding:4px 8px; border-radius:4px; border:1px solid #e2e8f0; margin-top:4px;">
-                                ${lastUpdateText}
-                            </div>
-                            <div class="badges-row"><span class="category-label-tag">${window.getCategoryEmoji(item.category)} ${item.category}</span><span class="supplier-badge" style="background:${sup?.color || '#334155'}">${sup?.name || 'N/D'}</span></div>
-                        </div>
-                        <div class="item-controls">
-                            <span style="font-size:13px; font-weight:600; margin-right:auto;">Da Ordinare:</span>
-                            <button class="qty-btn" onclick="updateOrder(${item.id}, -1)">-</button>
-                            <input type="number" class="qty-input" value="${window.getOrderQty(item)}" onchange="setOrder(${item.id}, this.value)">
-                            <span class="unit-label">${item.unit}</span>
-                            <button class="qty-btn" onclick="updateOrder(${item.id}, 1)">+</button>
-                        </div>
-                    </div>`;
-            });
-        };
-
-        window.updateOrder = async function(id, d) { 
-            if (!window.checkAuthGuard()) return;
-            const i = window.inventoryData.find(x => x.id === id); 
-            if(i) { 
-                const field = window.getLocationKey() === 'ostermalm' ? 'orderQty_ostermalm' : 'orderQty_vasastan';
-                await updateDoc(doc(db, "inventory", String(id)), { [field]: Math.max(0, window.getOrderQty(i) + d) }); 
-            } 
-        };
-        window.setOrder = async function(id, v) { 
-            if (!window.checkAuthGuard()) return;
-            const i = window.inventoryData.find(x => x.id === id); 
-            if(i) { 
-                const field = window.getLocationKey() === 'ostermalm' ? 'orderQty_ostermalm' : 'orderQty_vasastan';
-                await updateDoc(doc(db, "inventory", String(id)), { [field]: Math.max(0, parseFloat(v) || 0) }); 
-            } 
-        };
-
-        window.generateOrderSummary = function() {
-            if (!window.checkAuthGuard()) return;
-            const op = window.currentUserProfile.name;
-            const dateVal = document.getElementById('order-date-picker').value;
-            if (!dateVal) return window.showAlert("🚚 Seleziona una data di consegna.");
-
-            const items = window.inventoryData.filter(i => window.getOrderQty(i) > 0);
-            if (items.length === 0) return window.showAlert("🛒 Nessun prodotto selezionato.");
-
-            window.renderSummaryModalContent(op, dateVal);
-            document.getElementById('summary-modal').classList.add('active');
-            document.getElementById('overlay').classList.add('active');
-        };
-
-        window.renderSummaryModalContent = function(op, dateVal) {
-            const items = window.inventoryData.filter(i => window.getOrderQty(i) > 0);
-            let groups = {};
-            items.forEach(i => { if(!groups[i.supplierId]) groups[i.supplierId] = []; groups[i.supplierId].push(i); });
-            
-            const c = document.getElementById('summary-content'); c.innerHTML = '';
-            const locNameClean = (window.activeLocation || 'Magari').split(' ')[0].toUpperCase();
-            const todayFormatted = new Date().toLocaleDateString('it-IT');
-
-            for (let sId in groups) {
-                const sup = window.suppliersData.find(s => String(s.id) === String(sId));
-                const supName = sup?.name || 'Fornitore';
-                const emailSubject = `Beställning Magari ${locNameClean} - ${todayFormatted} (Leverans: ${dateVal})`;
-                
-                let emailBody = `BESTÄLLNING MAGARI - ${locNameClean}\n========================================\n👤 BESTÄLLARE: ${op.toUpperCase()}\n🚚 ÖNSKAT LEVERANSDATUM: ${dateVal}\n\nCiao ${supName},\n\nPRODUKTER:\n`;
-                let waTxt = `*BESTÄLLNING MAGARI - ${locNameClean}*\n👤 Beställare: *${op.toUpperCase()}*\n🚚 Önskat leveransdatum: *${dateVal}*\n\nCiao ${supName},\n\n*PRODUKTER:*\n`;
-                
-                groups[sId].forEach(p => { 
-                    const q = window.getOrderQty(p), u = window.translateUnitToSwedish(p.unit).toUpperCase();
-                    emailBody += `• ${p.name.toUpperCase()} -> ${q} ${u}\n`; 
-                    waTxt += `• *${p.name.toUpperCase()}*  ->  *${q} ${u}*\n`; 
-                });
-                emailBody += `\nMed vänliga hälsningar,\nMagari`; waTxt += `\nMed vänliga hälsningar,\nMagari`;
-                
-                const wa = `whatsapp://send?phone=${(sup?.phone || '').replace(/[^0-9]/g,'')}&text=${encodeURIComponent(waTxt)}`;
-                const itemsListHtml = groups[sId].map(p => `• <b>${p.name.toUpperCase()}</b>  ->  <span style="color:var(--primary);">${window.getOrderQty(p)} ${window.translateUnitToSwedish(p.unit).toUpperCase()}</span>`).join('<br>');
-
-                c.innerHTML += `
-                    <div style="background:#f9f9f9; padding:16px; border-radius:10px; margin-bottom:16px; border:1px solid #cbd5e1;">
-                        <div style="font-weight:800; color:var(--primary); font-size:18px; margin-bottom:8px;">🚚 ${supName}</div>
-                        <div style="margin:12px 0; background:#fff; padding:10px; border-radius:6px; border:1px solid #e2e8f0;">${itemsListHtml}</div>
-                        <a href="${wa}" style="background:var(--whatsapp); color:white; padding:12px; display:block; text-align:center; border-radius:8px; text-decoration:none; font-weight:bold; margin-bottom:6px;">💬 Invia via WhatsApp</a>
-                        <a href="mailto:${sup?.email||''}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}" style="background:#2563eb; color:white; padding:12px; display:block; text-align:center; border-radius:8px; text-decoration:none; font-weight:bold; margin-bottom:6px;">✉️ Invia via Email</a>
-                        <button onclick="confirmSingleSupplierOrder('${sId}', '${op}', '${dateVal}')" class="btn-save" style="width:100%; background:#1b5e20;">✅ Conferma Ordine per ${supName}</button>
-                    </div>`;
-            }
-            c.innerHTML += `<button onclick="confirmAndSaveOrderToHistory('${op}')" class="btn-save" style="width:100%; padding:14px; background:#043927;">✅ Conferma TUTTI gli Ordini</button>`;
-        };
-
-        window.confirmSingleSupplierOrder = async function(sId, operator, dateVal) {
-            const items = window.inventoryData.filter(i => String(i.supplierId) === String(sId) && window.getOrderQty(i) > 0);
-            if (items.length === 0) return;
-            const sup = window.suppliersData.find(s => String(s.id) === String(sId));
-            const nowStr = new Date().toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-            const entryId = Date.now() + Math.random();
-
-            const batch = writeBatch(db);
-            batch.set(doc(db, "history", String(entryId)), {
-                id: entryId, timestamp: nowStr, destination: window.activeLocation || 'Sede Non Specifica',
-                operatorName: operator, supplierName: sup?.name || 'Fornitore',
-                items: items.map(i => ({ id: i.id, name: i.name, qty: window.getOrderQty(i), unit: i.unit })),
-                checked: false, verificationDetails: null
-            });
-
-            const field = window.getLocationKey() === 'ostermalm' ? 'orderQty_ostermalm' : 'orderQty_vasastan';
-            items.forEach(i => batch.update(doc(db, "inventory", String(i.id)), { [field]: 0 }));
-            
-            await batch.commit();
-            closeSummaryModal(); window.showAlert("✅ Ordine salvato nello storico!");
-        };
-
-        window.confirmAndSaveOrderToHistory = async function(operator) {
-            const items = window.inventoryData.filter(i => window.getOrderQty(i) > 0);
-            if (items.length === 0) return;
-            let groups = {}; items.forEach(i => { if(!groups[i.supplierId]) groups[i.supplierId] = []; groups[i.supplierId].push(i); });
-            const nowStr = new Date().toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-
-            const batch = writeBatch(db);
-            for (let sId in groups) {
-                const sup = window.suppliersData.find(s => String(s.id) === String(sId));
-                const entryId = Date.now() + Math.random();
-                batch.set(doc(db, "history", String(entryId)), {
-                    id: entryId, timestamp: nowStr, destination: window.activeLocation || 'Sede Non Specifica',
-                    operatorName: operator, supplierName: sup?.name || 'Fornitore',
-                    items: groups[sId].map(i => ({ id: i.id, name: i.name, qty: window.getOrderQty(i), unit: i.unit })),
-                    checked: false, verificationDetails: null
-                });
-            }
-
-            const field = window.getLocationKey() === 'ostermalm' ? 'orderQty_ostermalm' : 'orderQty_vasastan';
-            items.forEach(i => batch.update(doc(db, "inventory", String(i.id)), { [field]: 0 }));
-            
-            await batch.commit();
-            closeSummaryModal(); window.showAlert("🎉 Ordini salvati nello storico!");
-        };
-
-        window.closeSummaryModal = () => { document.getElementById('summary-modal').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); };
-
-        // STORICO E VERIFICA
-        window.openVerifyDeliveryModal = function(historyId) {
-            if (!window.checkAuthGuard()) return;
-            window.activeVerifyHistoryId = historyId;
-            const entry = window.orderHistoryData.find(x => x.id === historyId);
-            if (!entry) return;
-
-            const container = document.getElementById('verify-items-checklist-container');
-            container.innerHTML = '';
-            entry.items.forEach((it, idx) => {
-                container.innerHTML += `
-                    <div style="background:white; padding:8px 10px; border-radius:6px; border:1px solid #cbd5e1; display:flex; flex-direction:column; gap:4px;">
-                        <div style="font-weight:bold; font-size:13px; color:#1e293b;">• ${it.name}</div>
-                        <div style="display:flex; justify-content:space-between; font-size:12px; color:#555;">
-                            <span>Ordinato: <b>${it.qty} ${it.unit}</b></span>
-                            <div style="display:flex; align-items:center; gap:6px;">
-                                <label style="font-size:11px; font-weight:600;">Ricevuti:</label>
-                                <input type="number" id="verify-item-qty-${idx}" class="form-control" value="${it.qty}" style="width:60px; padding:4px; text-align:center; font-weight:bold;" min="0">
-                                <span style="font-size:11px;">${it.unit}</span>
-                            </div>
-                        </div>
-                    </div>`;
-            });
-            document.getElementById('verify-note-input').value = '';
-            document.getElementById('verify-delivery-modal').classList.add('active');
-            document.getElementById('overlay').classList.add('active');
-        };
-
-        window.closeVerifyDeliveryModal = () => { document.getElementById('verify-delivery-modal').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); window.activeVerifyHistoryId = null; };
-
-        window.submitDeliveryVerification = async function() {
-            if (!window.checkAuthGuard()) return;
-            const opName = window.currentUserProfile.name;
-            const customNote = document.getElementById('verify-note-input').value.trim();
-            const entry = window.orderHistoryData.find(x => x.id === window.activeVerifyHistoryId);
-            if (!entry) return;
-
-            let discrepancies = customNote ? [customNote] : [];
-            const batch = writeBatch(db);
-            
-            entry.items.forEach((it, idx) => {
-                const receivedInput = document.getElementById(`verify-item-qty-${idx}`);
-                const receivedQty = receivedInput ? parseFloat(receivedInput.value) || 0 : it.qty;
-                if (receivedQty !== it.qty) discrepancies.push(`${it.name}: attesi ${it.qty}, ricevuti ${receivedQty}`);
-
-                if (receivedQty > 0) {
-                    let invItem = window.inventoryData.find(x => x.id === it.id || x.name.toLowerCase() === it.name.toLowerCase());
-                    if (invItem) {
-                        const newQty = window.getQty(invItem) + receivedQty;
-                        batch.update(doc(db, "inventory", String(invItem.id)), window.getStockUpdatesObj(newQty, opName));
-                    }
-                }
-            });
-
-            const nowStr = new Date().toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-            batch.update(doc(db, "history", String(entry.id)), {
-                checked: true, checkedBy: opName, checkedAt: nowStr,
-                verificationDetails: discrepancies.length > 0 ? discrepancies.join(' | ') : "Merce completa al 100%"
-            });
-
-            await batch.commit();
-            closeVerifyDeliveryModal(); window.showAlert("✅ Merce verificata, stornata e aggiunta alle giacenze!");
-        };
-
-        window.filterHistoryItems = function() {
-            const c = document.getElementById('history-list'); c.innerHTML = '';
-            const query = (document.getElementById('search-history-input')?.value || '').toLowerCase();
-            const activeLocShort = window.activeLocation ? window.activeLocation.split(' ')[0] : '';
-
-            const filtered = window.orderHistoryData.filter(h => {
-                const matchesQuery = (h.supplierName || '').toLowerCase().includes(query) || (h.operatorName || '').toLowerCase().includes(query);
-                const matchesLoc = h.destination && h.destination.includes(activeLocShort);
-                return matchesQuery && matchesLoc;
-            });
-
-            if (filtered.length === 0) return c.innerHTML = '<div style="padding:16px; text-align:center; color:#666;">Nessun ordine nello storico per questa sede.</div>';
-
-            filtered.forEach((h, idx) => {
-                let itemsHtml = Array.isArray(h.items) ? h.items.map(it => `• ${it.name}: <b>${it.qty} ${it.unit}</b>`).join('<br>') : '';
-                const isChecked = h.checked === true;
-                let checkStatusHtml = '';
-
-                if (!isChecked) {
-                    checkStatusHtml = `
-                        <div style="background:#fff3f0; border:1px solid #ffcdd2; padding:8px; border-radius:6px; font-size:12px; color:#c62828; margin-top:8px; display:flex; justify-content:space-between; align-items:center;">
-                            <span>⚠️ <b>Da Controllare</b></span><button class="btn-save" style="padding:6px 10px; font-size:11px; background:#c62828;" onclick="openVerifyDeliveryModal(${h.id})">✍️ Verifica & Storna</button>
-                        </div>`;
-                } else if (h.verificationDetails && !h.verificationDetails.includes("100%")) {
-                    checkStatusHtml = `<div style="background:#fff8e1; border:1px solid #ffe0b2; padding:8px; border-radius:6px; font-size:12px; color:#b45309; margin-top:8px;">⚠ <b>Discrepanze:</b> ${h.verificationDetails}</div>`;
-                } else {
-                    checkStatusHtml = `<div style="background:#e8f5e9; border:1px solid #c8e6c9; padding:8px; border-radius:6px; font-size:12px; color:#2e7d32; margin-top:8px;">✅ <b>Completo</b> (${h.checkedBy} - ${h.checkedAt})</div>`;
-                }
-                
-                c.innerHTML += `
-                    <div class="history-card" style="border-left: 4px solid ${!isChecked ? '#e53935' : (h.verificationDetails && !h.verificationDetails.includes("100%") ? '#ffb300' : '#2e7d32')};">
-                        <div class="history-header"><span>🕒 ${h.timestamp}</span><span>📍 ${h.destination}</span></div>
-                        <div style="font-weight:bold; font-size:14px; margin-bottom:4px;">🚚 ${h.supplierName} <span style="font-size:12px; font-weight:normal; color:#666;">(👤 ${h.operatorName})</span></div>
-                        ${itemsHtml ? `<div style="font-size:12px; margin-top:6px; background:#f8fafc; padding:6px; border-radius:4px;">${itemsHtml}</div>` : ''}
-                        ${checkStatusHtml}
-                        <div style="margin-top:8px; text-align:right;"><button class="btn-action-del" onclick="deleteHistoryItemGuard(${idx})">🗑 Elimina</button></div>
-                    </div>`;
-            });
-        };
-
-        // MAGAZZINO ED EDITOR
-        window.toggleFavorite = async function(itemId) {
-            if (!window.checkAuthGuard()) return;
-            const item = window.inventoryData.find(x => x.id === itemId);
-            if (item) {
-                await updateDoc(doc(db, "inventory", String(itemId)), { isFavorite: !item.isFavorite });
-                window.showAlert(!item.isFavorite ? `⭐ ${item.name} aggiunto ai Preferiti!` : `☆ ${item.name} rimosso dai Preferiti.`);
-            }
-        };
-
-        window.filterItems = function() {
-            const q = (document.getElementById('search-input')?.value || '').toLowerCase();
-            const cat = document.getElementById('filter-inventory-category')?.value || '';
-            const sup = document.getElementById('filter-inventory-supplier')?.value || '';
-            const c = document.getElementById('inventory-list'); c.innerHTML = '';
-
-            window.inventoryData.filter(i => {
-                return i.name.toLowerCase().includes(q) && (!cat || (cat === 'FAVORITES' ? i.isFavorite : i.category === cat)) && (!sup || String(i.supplierId) === String(sup));
-            }).sort((a, b) => a.name.localeCompare(b.name)).forEach(item => {
-                const supObj = window.suppliersData.find(s => String(s.id) === String(item.supplierId));
-                const minVas = (item.minQty_vasastan !== undefined && item.minQty_vasastan !== null) ? item.minQty_vasastan : (item.minQty ?? 2);
-                const minOst = (item.minQty_ostermalm !== undefined && item.minQty_ostermalm !== null) ? item.minQty_ostermalm : 2;
-
-                c.innerHTML += `
-                    <div class="card-item">
-                        <div class="item-name-box" style="border-left-color:${supObj?.color || '#334155'};">
-                            <div class="item-name"><span>${item.name}</span><button class="star-toggle-btn" onclick="toggleFavorite(${item.id})">${item.isFavorite ? '⭐' : '☆'}</button></div>
-                            <div class="item-subtext">Prezzo: ${item.price} SEK | Unità: ${item.unit}</div>
-                            <div class="item-subtext" style="font-weight: 600; color: var(--primary); margin-top: 4px;">
-                                📉 Min: Vasastan ${minVas} ${item.unit} | Östermalm ${minOst} ${item.unit}
-                            </div>
-                        </div>
-                        <div class="action-row-btn">
-                            <button class="btn-action-edit" onclick="openAddModal(${item.id})">✏ Modifica</button>
-                            <button class="btn-action-del" onclick="deleteInventoryItem(${item.id})">🗑 Elimina</button>
-                        </div>
-                    </div>`;
-            });
-        };
-
-        window.openAddModal = function(id = null) {
-            if (!window.checkAuthGuard()) return;
-            window.closeAll();
-            window.populateAllSupplierFilters();
-            document.getElementById('edit-item-id').value = ''; 
-            document.getElementById('new-name').value = ''; 
-            document.getElementById('new-price').value = '0';
-            document.getElementById('new-min-vasastan').value = '2';
-            document.getElementById('new-min-ostermalm').value = '2';
-            
-            if (id) {
-                const item = window.inventoryData.find(x => x.id === id);
-                if (item) {
-                    document.getElementById('edit-item-id').value = item.id; 
-                    document.getElementById('new-name').value = item.name;
-                    document.getElementById('new-category-select').value = item.category; 
-                    document.getElementById('new-supplier-select').value = item.supplierId;
-                    document.getElementById('new-min-vasastan').value = (item.minQty_vasastan !== undefined && item.minQty_vasastan !== null) ? item.minQty_vasastan : (item.minQty ?? 2);
-                    document.getElementById('new-min-ostermalm').value = (item.minQty_ostermalm !== undefined && item.minQty_ostermalm !== null) ? item.minQty_ostermalm : 2;
-                    document.getElementById('new-price').value = item.price || 0; 
-                    document.getElementById('new-unit').value = item.unit || 'Bottiglie';
-                }
-            }
-            document.getElementById('add-modal').classList.add('active'); 
-            document.getElementById('overlay').classList.add('active');
-        };
-        window.closeAddModal = () => { document.getElementById('add-modal').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); };
-
-        window.saveInventoryItem = async function() {
-            if (!window.checkAuthGuard()) return;
-            const idVal = document.getElementById('edit-item-id').value;
-            const name = document.getElementById('new-name').value.trim();
-            if (!name) return window.showAlert("⚠️ Inserisci il nome.");
-            
-            const cat = document.getElementById('new-category-select').value;
-            const supId = parseInt(document.getElementById('new-supplier-select').value);
-            const price = parseFloat(document.getElementById('new-price').value) || 0;
-            const unit = document.getElementById('new-unit').value;
-            const valVas = parseFloat(document.getElementById('new-min-vasastan').value);
-            const minVasastan = isNaN(valVas) ? 2 : valVas;
-            const valOst = parseFloat(document.getElementById('new-min-ostermalm').value);
-            const minOstermalm = isNaN(valOst) ? 2 : valOst;
-
-            if (idVal) {
-                await updateDoc(doc(db, "inventory", String(idVal)), { 
-                    name, category: cat, supplierId: supId, price, unit, minQty_vasastan: minVasastan, minQty_ostermalm: minOstermalm
-                });
-            } else {
-                const newId = Date.now();
-                await setDoc(doc(db, "inventory", String(newId)), { 
-                    id: newId, name, category: cat, supplierId: supId, minQty_vasastan: minVasastan, minQty_ostermalm: minOstermalm, 
-                    orderQty_vasastan: 0, orderQty_ostermalm: 0, unit, price, qty_vasastan: 0, qty_ostermalm: 0, isFavorite: false 
-                });
-            }
-            closeAddModal(); window.showAlert("✅ Prodotto salvato!");
-        };
-        window.deleteInventoryItem = async function(id) { if (window.checkAuthGuard() && confirm("Eliminare prodotto?")) await deleteDoc(doc(db, "inventory", String(id))); };
-
-        // FORNITORI
-        window.filterSuppliers = function() {
-            const q = (document.getElementById('search-supplier-input')?.value || '').toLowerCase();
-            const c = document.getElementById('suppliers-list'); c.innerHTML = '';
-            window.suppliersData.filter(s => s.name.toLowerCase().includes(q)).sort((a, b) => a.name.localeCompare(b.name)).forEach(s => {
-                c.innerHTML += `
-                    <div class="card-item">
-                        <div class="item-name-box" style="border-left-color:${s.color};">
-                            <div class="item-name" style="color:${s.color};">🚚 ${s.name}</div>
-                            <div class="item-subtext">📞 ${s.phone || 'N/D'} | ✉ ${s.email || 'N/D'}</div>
-                        </div>
-                        <div class="action-row-btn">
-                            <button class="btn-action-edit" onclick="openAddSupplierModal('${s.id}')">✏️ Modifica</button>
-                            <button class="btn-action-del" onclick="deleteSupplier('${s.id}')">🗑 Elimina</button>
-                        </div>
-                    </div>`;
-            });
-        };
-
-        window.openAddSupplierModal = function(id = null) {
-            if (!window.checkAuthGuard()) return;
-            window.closeAll();
-            document.getElementById('edit-supplier-id').value = '';
-            document.getElementById('supp-name').value = '';
-            document.getElementById('supp-phone').value = '';
-            document.getElementById('supp-email').value = '';
-            document.getElementById('supp-color-input').value = '#1976d2';
-
-            if (id) {
-                const s = window.suppliersData.find(x => String(x.id) === String(id));
-                if (s) {
-                    document.getElementById('supplier-modal-title').innerText = '✏️ Modifica Fornitore';
-                    document.getElementById('edit-supplier-id').value = s.id;
-                    document.getElementById('supp-name').value = s.name || '';
-                    document.getElementById('supp-phone').value = s.phone || '';
-                    document.getElementById('supp-email').value = s.email || '';
-                    document.getElementById('supp-color-input').value = s.color || '#1976d2';
-                }
-            } else {
-                document.getElementById('supplier-modal-title').innerText = '➕ Nuovo Fornitore';
-            }
-
-            document.getElementById('add-supplier-modal').classList.add('active');
-            document.getElementById('overlay').classList.add('active');
-        };
-
-        window.closeAddSupplierModal = () => { 
-            document.getElementById('add-supplier-modal').classList.remove('active'); 
-            document.getElementById('overlay').classList.remove('active'); 
-        };
-
-        window.saveSupplier = async function() {
-            if (!window.checkAuthGuard()) return;
-            const idVal = document.getElementById('edit-supplier-id').value;
-            const name = document.getElementById('supp-name').value.trim();
-            const phone = document.getElementById('supp-phone').value.trim();
-            const email = document.getElementById('supp-email').value.trim();
-            const color = document.getElementById('supp-color-input').value;
-
-            if (!name) return window.showAlert("⚠️ Inserisci il nome del fornitore.");
-
-            if (idVal) {
-                await updateDoc(doc(db, "suppliers", String(idVal)), { name, phone, email, color });
-                window.showAlert("✅ Fornitore aggiornato!");
-            } else {
-                const newId = Date.now();
-                await setDoc(doc(db, "suppliers", String(newId)), { id: newId, name, phone, email, color });
-                window.showAlert("✅ Nuovo fornitore salvato!");
-            }
-
-            closeAddSupplierModal();
-        };
-
-        window.deleteSupplier = async function(id) {
-            if (!window.checkAuthGuard()) return;
-            if (confirm("Sei sicuro di voler eliminare questo fornitore?")) {
-                await deleteDoc(doc(db, "suppliers", String(id)));
-                window.showAlert("🗑️ Fornitore eliminato.");
-            }
-        };
-
-        // EXPORT EXCEL (ACCESSIBILE A TUTTI GLI UTENTI LOGGATI)
-        window.promptExportExcelModal = () => { 
-            if (!window.checkAuthGuard()) return; 
-            window.closeAll(); 
-            document.getElementById('export-excel-modal').classList.add('active'); 
-            document.getElementById('overlay').classList.add('active'); 
-        };
-        window.closeExportExcelModal = () => { document.getElementById('export-excel-modal').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); };
-        
-        window.generateAndExportExcel = function() {
-            const type = document.getElementById('export-type-select').value;
-            const opName = window.currentUserProfile ? window.currentUserProfile.name : 'Operatore';
-            const locName = window.activeLocation || 'Magari';
-            const todayStr = new Date().toLocaleDateString('it-IT');
-            const isAlcoholCategory = (cat) => (cat === 'Alcolici' || cat === 'Bevande');
-
-            // Foglio Standard (Food & Supplies)
-            const buildStandardSheetData = (itemsList, titleHeader) => {
-                const rows = [
-                    [`MAGARI INVENTORY REPORT - ${titleHeader.toUpperCase()}`],
-                    [`Location: ${locName}`, `Date: ${todayStr}`, `Operator: ${opName}`],
-                    [""],
-                    ["ITEM NAME", "CATEGORY", "SUPPLIER", "PRICE (SEK)", "STOCK QTY", "TOTAL VALUE (SEK)", "UNIT"]
-                ];
-
-                let totalStockSum = 0; let totalValueSum = 0;
-                itemsList.forEach(i => {
-                    const sup = window.suppliersData.find(s => String(s.id) === String(i.supplierId))?.name || 'N/D';
-                    const stock = window.getQty(i); const price = i.price || 0;
-                    const val = parseFloat((stock * price).toFixed(2));
-                    totalStockSum += stock; totalValueSum += val;
-                    rows.push([i.name, i.category, sup, price, stock, val, i.unit]);
-                });
-
-                rows.push([""]);
-                rows.push(["TOTAL FOOD & SUPPLIES", "", "", "", totalStockSum, parseFloat(totalValueSum.toFixed(2)), ""]);
-                const ws = XLSX.utils.aoa_to_sheet(rows);
-
-                const colWidths = rows[3].map((_, colIdx) => {
-                    let maxLen = 12;
-                    rows.forEach(r => { if (r[colIdx] !== undefined && r[colIdx] !== null) { const strLen = String(r[colIdx]).length; if (strLen > maxLen) maxLen = strLen; } });
-                    return { wch: maxLen + 3 };
-                });
-                ws['!cols'] = colWidths;
-                return ws;
-            };
-
-            // Foglio Alcolici & Bevande con Sezioni Separate, 2 Subtotali e Gran Totale
-            const buildAlcoholSheetData = () => {
-                const rows = [
-                    [`MAGARI INVENTORY REPORT - ALCOHOL & BEVERAGES`],
-                    [`Location: ${locName}`, `Date: ${todayStr}`, `Operator: ${opName}`],
-                    [""],
-                    ["ITEM NAME", "CATEGORY", "SUPPLIER", "PRICE (SEK)", "STOCK QTY", "TOTAL VALUE (SEK)", "UNIT"]
-                ];
-
-                const alcoholItems = window.inventoryData.filter(i => i.category === 'Alcolici').sort((a, b) => a.name.localeCompare(b.name));
-                const beverageItems = window.inventoryData.filter(i => i.category === 'Bevande').sort((a, b) => a.name.localeCompare(b.name));
-
-                let alcStockSum = 0, alcValueSum = 0;
-                let bevStockSum = 0, bevValueSum = 0;
-
-                // 1. ALCOLICI
-                rows.push(["--- ALCOHOLIC BEVERAGES ---", "", "", "", "", "", ""]);
-                alcoholItems.forEach(i => {
-                    const sup = window.suppliersData.find(s => String(s.id) === String(i.supplierId))?.name || 'N/D';
-                    const stock = window.getQty(i); const price = i.price || 0;
-                    const val = parseFloat((stock * price).toFixed(2));
-                    alcStockSum += stock; alcValueSum += val;
-                    rows.push([i.name, i.category, sup, price, stock, val, i.unit]);
-                });
-                rows.push(["SUBTOTAL ALCOHOL", "", "", "", alcStockSum, parseFloat(alcValueSum.toFixed(2)), ""]);
-                rows.push([""]);
-
-                // 2. BEVANDE
-                rows.push(["--- NON-ALCOHOLIC BEVERAGES & SOFT DRINKS ---", "", "", "", "", "", ""]);
-                beverageItems.forEach(i => {
-                    const sup = window.suppliersData.find(s => String(s.id) === String(i.supplierId))?.name || 'N/D';
-                    const stock = window.getQty(i); const price = i.price || 0;
-                    const val = parseFloat((stock * price).toFixed(2));
-                    bevStockSum += stock; bevValueSum += val;
-                    rows.push([i.name, i.category, sup, price, stock, val, i.unit]);
-                });
-                rows.push(["SUBTOTAL BEVERAGES", "", "", "", bevStockSum, parseFloat(bevValueSum.toFixed(2)), ""]);
-                rows.push([""]);
-
-                // 3. GRAN TOTALE
-                const grandStock = alcStockSum + bevStockSum;
-                const grandValue = parseFloat((alcValueSum + bevValueSum).toFixed(2));
-                rows.push(["GRAND TOTAL (ALCOHOL + BEVERAGES)", "", "", "", grandStock, grandValue, ""]);
-
-                const ws = XLSX.utils.aoa_to_sheet(rows);
-                const colWidths = rows[3].map((_, colIdx) => {
-                    let maxLen = 12;
-                    rows.forEach(r => { if (r[colIdx] !== undefined && r[colIdx] !== null) { const strLen = String(r[colIdx]).length; if (strLen > maxLen) maxLen = strLen; } });
-                    return { wch: maxLen + 3 };
-                });
-                ws['!cols'] = colWidths;
-                return ws;
-            };
-
-            const wb = XLSX.utils.book_new();
-            const foodItems = window.inventoryData.filter(i => !isAlcoholCategory(i.category)).sort((a, b) => a.name.localeCompare(b.name));
-
-            if (type === 'food') { 
-                XLSX.utils.book_append_sheet(wb, buildStandardSheetData(foodItems, "Food & Supplies"), "Food & Supplies"); 
-            } else if (type === 'alcohol') { 
-                XLSX.utils.book_append_sheet(wb, buildAlcoholSheetData(), "Alcohol & Beverages"); 
-            } else {
-                XLSX.utils.book_append_sheet(wb, buildStandardSheetData(foodItems, "Food & Supplies"), "Food & Supplies");
-                XLSX.utils.book_append_sheet(wb, buildAlcoholSheetData(), "Alcohol & Beverages");
-            }
-
-            const cleanLoc = locName.split(' ')[0];
-            const dateStr = new Date().toISOString().split('T')[0];
-            
-            XLSX.writeFile(wb, `Inventory_Magari_${cleanLoc}_${type}_${dateStr}.xlsx`);
-            closeExportExcelModal(); 
-            window.showAlert("📊 File Excel scaricato con la distinzione Alcolici/Bevande!");
-        };
-
-        // REPORT CONSUMI GENERATION ENGINE
-        window.generateRealReport = function() {
-            if (!window.checkAuthGuard()) return;
-
-            const periodType = document.getElementById('report-period-type').value;
-            const monthVal = document.getElementById('report-month-picker').value;
-            const resultsContainer = document.getElementById('report-results-container');
-            const titleDisplay = document.getElementById('report-title-display');
-            const alcTbody = document.querySelector('#table-alcohol-report tbody');
-            const foodTbody = document.querySelector('#table-food-report tbody');
-            const grandTotalBox = document.getElementById('grand-total-report-box');
-
-            if (periodType === 'month' && !monthVal) {
-                return window.showAlert("⚠️ Seleziona un mese per generare il report.");
-            }
-
-            const isAlcohol = (cat) => (cat === 'Alcolici' || cat === 'Bevande');
-            const activeLocShort = window.activeLocation ? window.activeLocation.split(' ')[0] : '';
-
-            let itemTotals = {}; 
-
-            if (periodType === 'stock') {
-                titleDisplay.innerText = `📊 Report Valore Giacenze Attuali (${window.activeLocation || 'Tutte le sedi'})`;
-                window.inventoryData.forEach(item => {
-                    const qty = window.getQty(item);
-                    if (qty > 0) {
-                        itemTotals[item.name] = {
-                            qty: qty,
-                            price: item.price || 0,
-                            unit: item.unit,
-                            isAlc: isAlcohol(item.category)
-                        };
-                    }
-                });
-            } else {
-                const label = periodType === 'month' ? `Mese: ${monthVal}` : 'Totale Storico';
-                titleDisplay.innerText = `📋 Report Consumi & Ordini (${label} - ${window.activeLocation || 'Tutte le sedi'})`;
-
-                const filteredHistory = window.orderHistoryData.filter(h => {
-                    const matchLoc = !activeLocShort || (h.destination && h.destination.includes(activeLocShort));
-                    if (!matchLoc) return false;
-
-                    if (periodType === 'month') {
-                        if (!h.timestamp) return false;
-                        const parts = h.timestamp.split(',')[0].split('/');
-                        if (parts.length === 3) {
-                            const formattedHistoryMonth = `${parts[2]}-${parts[1].padStart(2, '0')}`;
-                            return formattedHistoryMonth === monthVal;
-                        }
-                        return false;
-                    }
-                    return true;
-                });
-
-                filteredHistory.forEach(h => {
-                    if (Array.isArray(h.items)) {
-                        h.items.forEach(it => {
-                            const invMatch = window.inventoryData.find(x => x.id === it.id || x.name.toLowerCase() === it.name.toLowerCase());
-                            const price = invMatch ? (invMatch.price || 0) : 0;
-                            const isAlc = invMatch ? isAlcohol(invMatch.category) : false;
-
-                            if (!itemTotals[it.name]) {
-                                itemTotals[it.name] = { qty: 0, price: price, unit: it.unit, isAlc: isAlc };
-                            }
-                            itemTotals[it.name].qty += parseFloat(it.qty) || 0;
-                        });
-                    }
-                });
-            }
-
-            // Render Tabelle
-            alcTbody.innerHTML = '';
-            foodTbody.innerHTML = '';
-            let totalAlcCost = 0;
-            let totalFoodCost = 0;
-            let hasAlc = false;
-            let hasFood = false;
-
-            Object.keys(itemTotals).sort().forEach(name => {
-                const data = itemTotals[name];
-                const cost = parseFloat((data.qty * data.price).toFixed(2));
-                const rowHtml = `<tr><td><b>${name}</b></td><td>${data.qty} ${data.unit}</td><td>${cost.toFixed(2)} SEK</td></tr>`;
-
-                if (data.isAlc) {
-                    alcTbody.innerHTML += rowHtml;
-                    totalAlcCost += cost;
-                    hasAlc = true;
-                } else {
-                    foodTbody.innerHTML += rowHtml;
-                    totalFoodCost += cost;
-                    hasFood = true;
-                }
-            });
-
-            if (!hasAlc) alcTbody.innerHTML = '<tr><td colspan="3" style="color:#888; text-align:center;">Nessun dato registrato.</td></tr>';
-            if (!hasFood) foodTbody.innerHTML = '<tr><td colspan="3" style="color:#888; text-align:center;">Nessun dato registrato.</td></tr>';
-
-            const grandTotal = parseFloat((totalAlcCost + totalFoodCost).toFixed(2));
-            grandTotalBox.innerHTML = `💰 COSTO TOTALE ESTIMATO: <span style="font-size:16px;">${grandTotal.toFixed(2)} SEK</span>`;
-
-            resultsContainer.style.display = 'block';
-            window.showAlert("📊 Report generato con successo!");
-        };
-
-        // BUG REPORT & AZIONI RESET
-        window.submitBugReport = async function() {
-            if (!window.checkAuthGuard()) return;
-            const op = window.currentUserProfile.name;
-            const desc = document.getElementById('bug-desc-input').value.trim();
-            if (!desc) return window.showAlert("⚠️ Compila la descrizione.");
-            const nowStr = new Date().toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-            const newId = Date.now();
-
-            await setDoc(doc(db, "bugReports", String(newId)), {
-                id: newId, timestamp: nowStr, operator: op, type: document.getElementById('bug-type-select').value,
-                description: desc, location: document.getElementById('bug-location-display').value || window.activeLocation || 'Sede Non Specifica', resolved: false
-            });
-
-            document.getElementById('bug-desc-input').value = '';
-            window.showAlert("🚀 Segnalazione inviata!"); window.navigateTo('ordini');
-        };
-
-        window.toggleBugStatus = async function(bugId) {
-            if (!window.checkAuthGuard()) return;
-            const bug = window.bugReportsData.find(b => String(b.id) === String(bugId));
-            if (bug) {
-                const currentStatus = (bug.resolved === true || bug.resolved === "true" || bug.status === "resolved");
-                await updateDoc(doc(db, "bugReports", String(bugId)), { resolved: !currentStatus });
-                window.showAlert(!currentStatus ? "✅ Segnalazione contrassegnata come Risolta!" : "🔄 Segnalazione riaperta!");
-            }
-        };
-
-        window.deleteBugReport = async function(bugId) {
-            if (!window.checkAuthGuard()) return;
-            if (confirm("Eliminare definitivamente la segnalazione?")) {
-                await deleteDoc(doc(db, "bugReports", String(bugId)));
-                window.showAlert("🗑️ Segnalazione eliminata.");
-            }
-        };
-
-        window.deleteHistoryItemGuard = async function(idx) {
-            if (!window.checkAuthGuard()) return;
-            if (confirm("Eliminare questa voce dallo storico?")) {
-                const h = window.orderHistoryData[idx];
-                await deleteDoc(doc(db, "history", String(h.id)));
-            }
-        };
-
-        window.executeResetStockGuard = async function() {
-            if (!window.checkAuthGuard()) return;
-            const key = window.getLocationKey();
-            if (confirm(`Azzerare giacenze per la sede attiva (${key})?`)) {
-                const batch = writeBatch(db);
-                window.inventoryData.forEach(i => {
-                    const ref = doc(db, "inventory", String(i.id));
-                    if (key === 'ostermalm') batch.update(ref, { qty_ostermalm: 0 });
-                    else batch.update(ref, { qty_vasastan: 0 });
-                });
-                await batch.commit(); window.showAlert("✅ Giacenze azzerate!");
-            }
-        };
-
-        window.executeClearHistoryGuard = async function() {
-            if (!window.checkAuthGuard()) return;
-            if (confirm("Svuotare lo storico ordini?")) {
-                const batch = writeBatch(db);
-                window.orderHistoryData.forEach(h => batch.delete(doc(db, "history", String(h.id))));
-                await batch.commit(); window.showAlert("🗑️ Storico svuotato!");
-            }
-        };
-
-        window.executeResetSuppliersGuard = async function() {
-            if (!window.checkAuthGuard()) return;
-            if (confirm("Ripristinare i fornitori di default?")) {
-                const batch = writeBatch(db);
-                window.suppliersData.forEach(s => batch.delete(doc(db, "suppliers", String(s.id))));
-                window.defaultSuppliers.forEach(s => batch.set(doc(db, "suppliers", String(s.id)), s));
-                await batch.commit(); window.showAlert("✅ Fornitori ripristinati!");
-            }
-        };
-
-        window.executeResetAllGuard = async function() {
-            if (!window.checkAuthGuard()) return;
-            if (confirm("RESET TOTALE DATABASE? Questa azione elimina tutti i dati sul database.")) {
-                const batch = writeBatch(db);
-                window.inventoryData.forEach(i => batch.delete(doc(db, "inventory", String(i.id))));
-                window.orderHistoryData.forEach(h => batch.delete(doc(db, "history", String(h.id))));
-                window.bugReportsData.forEach(b => batch.delete(doc(db, "bugReports", String(b.id))));
-                window.suppliersData.forEach(s => batch.delete(doc(db, "suppliers", String(s.id))));
-                window.defaultSuppliers.forEach(s => batch.set(doc(db, "suppliers", String(s.id)), s));
-                await batch.commit(); window.showAlert("⚠️ Reset completato.");
-            }
-        };
-
-        const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
-        const datePicker = document.getElementById('order-date-picker');
-        if (datePicker) { datePicker.min = tomorrow; datePicker.value = tomorrow; }
-    </script>
-</body>
-</html>
+                    const uData =
