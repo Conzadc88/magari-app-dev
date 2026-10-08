@@ -4,7 +4,7 @@
 <!--
 ====================================================================
 [MAGARI APP - DEVELOPMENT / TEST ENVIRONMENT]
-- VERSION: v4.1.4-DEV
+- VERSION: v4.1.5-DEV
 - FIREBASE PROJECT: magari-app-dev
 - TARGET: Ambiente isolato di test e sviluppo
 ====================================================================
@@ -25,11 +25,11 @@
     <meta name="apple-mobile-web-app-title" content="Magari DEV">
     
     <!-- Icone Schermata Home & Favicon -->
-    <link rel="manifest" href="manifest.json?v=4.1.4-dev">
-    <link rel="apple-touch-icon" href="logo-square.png?v=4.1.4-dev">
-    <link rel="icon" type="image/png" href="logo-square.png?v=4.1.4-dev">
+    <link rel="manifest" href="manifest.json?v=4.1.5-dev">
+    <link rel="apple-touch-icon" href="logo-square.png?v=4.1.5-dev">
+    <link rel="icon" type="image/png" href="logo-square.png?v=4.1.5-dev">
 
-    <title>Magari v4.1.4 [DEV TEST]</title>
+    <title>Magari v4.1.5 [DEV TEST]</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -39,13 +39,14 @@
 <body>
 
     <div id="toast-notification" class="toast-notification"></div>
-    <div id="realtime-user-toast-container" style="position: fixed; top: 20px; right: 20px; z-index: 99999; display: flex; flex-direction: column; gap: 8px;"></div>
+    <!-- CONTENITORE NOTIFICHE REALTIME IN ALTO A DESTRA -->
+    <div id="realtime-user-toast-container" style="position: fixed; top: 16px; right: 16px; z-index: 99999; display: flex; flex-direction: column; gap: 8px; max-width: 90vw;"></div>
 
     <!-- SELEZIONE SEDE GUARD -->
     <div class="page-lock-banner" id="location-guard-banner" style="display: flex; position: fixed; z-index: 3000; padding-top: 100px;">
         <div class="page-lock-box" style="max-width: 340px;">
             <div style="font-size: 32px; margin-bottom: 8px;">🧪</div>
-            <h3 style="margin-bottom: 6px; color: #b45309;">Seleziona Sede (DEV)</h3>
+            <h3 style="margin-bottom: 6px; color: #b45309;">Seleziona Sede (DEV v4.1.5)</h3>
             <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 14px;">Sei nell'ambiente di test. Seleziona il locale per caricare i dati di prova.</p>
             <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;">
                 <button class="btn-save" style="padding: 12px; font-size: 14px; background-color: #043927;" onclick="setActiveLocation('Vasastan (Sankt Eriksgatan 110)')">📍 Vasastan<br><span style="font-size:10px; opacity:0.8;">Sankt Eriksgatan 110</span></button>
@@ -62,7 +63,7 @@
             <div class="drawer-header" style="text-align: center; background-color: #b45309;">
                 <img src="logo-header.png" alt="Magari Logo" style="max-width: 170px; height: auto; margin-bottom: 4px;" onerror="this.style.display='none'; document.getElementById('drawer-text-fallback').style.display='block';">
                 <div id="drawer-text-fallback" class="brand-title" style="display:none; font-size: 24px;">MAGARI</div>
-                <div class="brand-subtitle" style="font-size: 9px; background:#d97706;">🧪 DEV TEST MODE</div>
+                <div class="brand-subtitle" style="font-size: 9px; background:#d97706; font-weight:800;">🧪 DEV MODE • v4.1.5</div>
             </div>
 
             <!-- USER ACCOUNT BANNER NELLO MENU -->
@@ -98,7 +99,7 @@
             <div class="header-brand-text">
                 <img src="logo-header.png" alt="Magari" style="height: 34px; width: auto;" onerror="this.style.display='none'; document.getElementById('header-text-fallback').style.display='block';">
                 <div id="header-text-fallback" class="brand-title" style="display:none;">MAGARI</div>
-                <div class="brand-subtitle" style="background:#d97706;">🧪 DEV ENVIRONMENT</div>
+                <div class="brand-subtitle" style="background:#d97706; font-weight:800;">🧪 DEV • v4.1.5</div>
             </div>
             <div class="page-badge" id="page-title">Ordini</div>
         </div>
@@ -273,14 +274,14 @@
         <!-- 7. FAQ & GUIDA RAPIDA -->
         <div id="view-faq" class="view-section">
             <div class="top-bar-container">
-                <div style="font-size:16px; font-weight:800; color:#b45309;">❓ Guida Rapida DEV Environment</div>
+                <div style="font-size:16px; font-weight:800; color:#b45309;">❓ Guida Rapida DEV Environment (v4.1.5)</div>
                 <div style="font-size:12px; color:var(--text-secondary);">Manuale ed indicazioni operative per l'ambiente di test.</div>
             </div>
             <div class="content-list">
                 <div class="faq-item-box">
                     <div class="faq-question">🧪 1. Che cos'è questa versione DEV?</div>
                     <div class="faq-answer">
-                        Questa è la copia speculare di test collegata al progetto Firebase <b>magari-app-dev</b>. Qualsiasi modifica effettuata qui non tocca il database dei locali reali.
+                        Questa è la copia speculare di test collegata al progetto Firebase <b>magari-app-dev</b> (Versione corrente: <b>v4.1.5-DEV</b>). Qualsiasi modifica effettuata qui non tocca il database dei locali reali.
                     </div>
                 </div>
 
@@ -320,7 +321,7 @@
                 <div class="page-lock-box"><div style="font-size: 32px; margin-bottom: 8px;">🔒</div><h3 style="margin-bottom: 6px;">Sezione Riservata Admin DEV</h3><p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Effettua il Login con account Admin per accedere.</p><button class="btn-save" onclick="openAuthModal()">Accedi come Admin</button></div>
             </div>
             <div class="settings-card">
-                <h3>⚙️ Gestione Impostazioni (DEV MODE)</h3>
+                <h3>⚙️ Gestione Impostazioni (DEV MODE v4.1.5)</h3>
 
                 <!-- PUBBLICAZIONE AVVISO STAFF -->
                 <div style="background:#fffbe8; border:1px solid #ffe0b2; padding:12px; border-radius:8px; margin-top:8px;">
@@ -356,7 +357,7 @@
 
         <!-- FOOTER FIRMA DEVELOPER -->
         <footer style="background:#b45309; color:#fffbe8; text-align:center; padding:16px 14px; font-size:11px; border-top:1px solid #d97706; margin-top:auto; width:100%; position:relative; z-index:80;">
-            <div>&copy; 2026 <b>Magari Pizzeria DEV</b> - Ambiente di Test Isolato</div>
+            <div>&copy; 2026 <b>Magari Pizzeria DEV</b> - Versione <span style="background:rgba(255,255,255,0.2); padding:2px 6px; border-radius:4px; font-weight:bold;">v4.1.5-DEV</span></div>
             <div style="margin-top:6px; font-size:11px; color:#ffffff;">
                 Sviluppato da <span style="color:#ffffff; font-weight:bold; background:rgba(0,0,0,0.2); padding:2px 6px; border-radius:4px;">Nicolas Cappiello</span>
             </div>
@@ -387,7 +388,7 @@
 
     <!-- MODALE AUTHENTICATION -->
     <div class="modal" id="auth-modal">
-        <div class="modal-title" id="auth-modal-title" style="text-align:center;">🔑 Login - Magari DEV</div>
+        <div class="modal-title" id="auth-modal-title" style="text-align:center;">🔑 Login - Magari DEV v4.1.5</div>
         <div style="display:flex; justify-content:center; gap:10px; margin-bottom:12px;">
             <button id="tab-btn-login" onclick="switchAuthTab('login')" style="flex:1; padding:6px; border-radius:6px; font-weight:bold; border:1px solid #b45309; background:#b45309; color:white;">Login</button>
             <button id="tab-btn-register" onclick="switchAuthTab('register')" style="flex:1; padding:6px; border-radius:6px; font-weight:bold; border:1px solid #cbd5e1; background:#f1f5f9; color:#334155;">Nuovo Account DEV</button>
@@ -851,24 +852,28 @@
                 background-color: #b45309;
                 color: white;
                 padding: 14px 18px;
-                border-radius: 10px;
+                border-radius: 12px;
                 font-size: 13px;
                 font-weight: bold;
-                box-shadow: 0 6px 16px rgba(0,0,0,0.3);
-                border-left: 6px solid #fde68a;
+                box-shadow: 0 8px 20px rgba(180, 83, 9, 0.4);
+                border: 2px solid #fde68a;
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
                 gap: 12px;
-                min-width: 280px;
+                min-width: 290px;
+                animation: slideDown 0.3s ease;
             `;
             
             toast.innerHTML = `
-                <div>
-                    <div style="font-size:11px; text-transform:uppercase; opacity:0.9; color:#fde68a;">🔔 Nuova Registrazione DEV</div>
-                    <div style="margin-top:2px;">Si è registrato <u>${identifier}</u></div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <div style="font-size:22px;">🔔</div>
+                    <div>
+                        <div style="font-size:10px; text-transform:uppercase; opacity:0.9; color:#fde68a; font-weight:800; letter-spacing:0.5px;">Nuova Registrazione DEV</div>
+                        <div style="margin-top:2px; font-size:13px;">Si è registrato <u>${identifier}</u></div>
+                    </div>
                 </div>
-                <button onclick="this.parentElement.remove()" style="background:rgba(255,255,255,0.2); border:none; color:white; width:26px; height:26px; border-radius:50%; font-weight:bold; cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center;">✕</button>
+                <button onclick="this.parentElement.remove()" style="background:rgba(255,255,255,0.25); border:none; color:white; width:26px; height:26px; border-radius:50%; font-weight:bold; cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">✕</button>
             `;
 
             container.appendChild(toast);
