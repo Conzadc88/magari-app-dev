@@ -4,7 +4,7 @@
 <!--
 ====================================================================
 [MAGARI APP - HISTORICAL CHANGELOG REGISTRY & ARCHIVE]
-- v3.9.12 DEVELOPER:
+- v3.9.12 STABLE:
   * Avvisi Staff riprogettati in formato Card Pastello (Opzione A).
   * Menu Laterale e Modali aggiornati con palette pastello riposante.
   * Ripristinato e corretto il motore di calcolo Report Consumi.
@@ -19,14 +19,14 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Magari App DEV">
+    <meta name="apple-mobile-web-app-title" content="Magari App">
     
     <!-- Icone Schermata Home & Favicon -->
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="logo-square.png">
     <link rel="icon" type="image/png" href="logo-square.png">
 
-    <title>Magari v3.9.12 DEV</title>
+    <title>Magari v3.9.12 STABLE</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -41,7 +41,7 @@
     <div class="page-lock-banner" id="location-guard-banner" style="display: flex; position: fixed; z-index: 3000; padding-top: 100px;">
         <div class="page-lock-box" style="max-width: 340px;">
             <div style="font-size: 32px; margin-bottom: 8px;">📍</div>
-            <h3 style="margin-bottom: 6px; color: var(--primary);">Seleziona la Sede (DEV)</h3>
+            <h3 style="margin-bottom: 6px; color: var(--primary);">Seleziona la Sede</h3>
             <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 14px;">Seleziona il locale in cui ti trovi per caricare le giacenze e il carrello corretti.</p>
             <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;">
                 <button class="btn-save" style="padding: 12px; font-size: 14px; background-color: #043927;" onclick="setActiveLocation('Vasastan (Sankt Eriksgatan 110)')">📍 Vasastan<br><span style="font-size:10px; opacity:0.8;">Sankt Eriksgatan 110</span></button>
@@ -58,7 +58,7 @@
             <div class="drawer-header" style="text-align: center;">
                 <img src="logo-header.png" alt="Magari Logo" style="max-width: 170px; height: auto; margin-bottom: 4px;" onerror="this.style.display='none'; document.getElementById('drawer-text-fallback').style.display='block';">
                 <div id="drawer-text-fallback" class="brand-title" style="display:none; font-size: 24px;">MAGARI</div>
-                <div class="brand-subtitle" style="font-size: 9px; background:#b45309;">v3.9.12 DEVELOPER</div>
+                <div class="brand-subtitle" style="font-size: 9px; background:#b45309;">v3.9.12 STABLE</div>
             </div>
 
             <!-- USER ACCOUNT BANNER NELLO MENU -->
@@ -94,7 +94,7 @@
             <div class="header-brand-text">
                 <img src="logo-header.png" alt="Magari" style="height: 34px; width: auto;" onerror="this.style.display='none'; document.getElementById('header-text-fallback').style.display='block';">
                 <div id="header-text-fallback" class="brand-title" style="display:none;">MAGARI</div>
-                <div class="brand-subtitle" style="background:#b45309;">v3.9.12 DEVELOPER</div>
+                <div class="brand-subtitle" style="background:#b45309;">v3.9.12 STABLE</div>
             </div>
             <div class="page-badge" id="page-title">Ordini</div>
         </div>
@@ -390,13 +390,13 @@
                 
                 <hr style="border:0; border-top:1px solid #eee; margin: 12px 0;">
                 <button class="reset-btn" onclick="executeResetSuppliersGuard()">🔒 🔄 Ripristina Fornitori Default</button>
-                <button class="btn-danger" onclick="executeResetAllGuard()" style="width:100%; margin-top: 6px;">🔒 ⚠️ RESET TOTALE DATABASE DEV</button>
+                <button class="btn-danger" onclick="executeResetAllGuard()" style="width:100%; margin-top: 6px;">🔒 ⚠️ RESET TOTALE DATABASE</button>
             </div>
         </div>
 
         <!-- FOOTER FIRMA DEVELOPER -->
         <footer style="background:#043927; color:#c8e6c9; text-align:center; padding:16px 14px; font-size:11px; border-top:1px solid #1b5e20; margin-top:auto; width:100%; position:relative; z-index:80;">
-            <div>&copy; 2026 <b>Magari Pizzeria Stockholm</b> - Ambiente DEV Isolato</div>
+            <div>&copy; 2026 <b>Magari Pizzeria Stockholm</b> - Tutti i diritti riservati</div>
             <div style="margin-top:6px; font-size:11px; color:#ffffff;">
                 App sviluppata da <span style="color:#f59e0b; font-weight:bold; background:rgba(0,0,0,0.3); padding:2px 6px; border-radius:4px; border:1px solid rgba(245,158,11,0.3);">Nicolas Cappiello</span>
             </div>
@@ -427,7 +427,7 @@
 
     <!-- MODALE AUTHENTICATION -->
     <div class="modal" id="auth-modal">
-        <div class="modal-title" id="auth-modal-title" style="text-align:center;">🔑 Accedi a Magari App DEV</div>
+        <div class="modal-title" id="auth-modal-title" style="text-align:center;">🔑 Accedi a Magari App</div>
         <div style="display:flex; justify-content:center; gap:10px; margin-bottom:12px;">
             <button id="tab-btn-login" onclick="switchAuthTab('login')" style="flex:1; padding:6px; border-radius:6px; font-weight:bold; border:1px solid var(--primary); background:var(--primary); color:white;">Login</button>
             <button id="tab-btn-register" onclick="switchAuthTab('register')" style="flex:1; padding:6px; border-radius:6px; font-weight:bold; border:1px solid #cbd5e1; background:#f1f5f9; color:#334155;">Nuovo Account Staff</button>
@@ -646,9 +646,7 @@
             onAuthStateChanged 
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { 
-            initializeFirestore, 
-            persistentLocalCache, 
-            persistentMultipleTabManager,
+            getFirestore,
             doc, 
             setDoc, 
             getDoc,
@@ -660,19 +658,19 @@
             writeBatch 
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // CONFIGURAZIONE FIREBASE AMBIENTE DEV (ISOLATO)
+        // CONFIGURAZIONE FIREBASE AMBIENTE STABLE
         const firebaseConfig = {
-            apiKey: "AIzaSyCv1G_nShEHX3_Yho1sWSK0ceK6gWbEEPU",
-            authDomain: "magari-app-dev.firebaseapp.com",
-            projectId: "magari-app-dev",
-            storageBucket: "magari-app-dev.firebasestorage.app",
-            messagingSenderId: "653540923043",
-            appId: "1:653540923043:web:387815ffd7b79385ff1116"
+            apiKey: "AIzaSyAYog8kDROeE6AgHAStCvfwCpZSHSl8j4",
+            authDomain: "magari-b7f93.firebaseapp.com",
+            projectId: "magari-b7f93",
+            storageBucket: "magari-b7f93.appspot.com",
+            messagingSenderId: "135472598053",
+            appId: "1:135472598053:web:a3fd59a851fe99f51a03cc"
         };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        const db = initializeFirestore(app, { localCache: persistentLocalCache({tabManager: persistentMultipleTabManager()}) });
+        const db = getFirestore(app);
 
         // SERVICE WORKER REGISTRATION (per PWA)
         if ('serviceWorker' in navigator) {
@@ -1118,7 +1116,7 @@
             document.getElementById(`view-${sec}`).classList.add('active');
             
             const titles = { 'ordini': 'Ordini', 'scorte': 'Scorte', 'storico': 'Storico', 'magazzino': 'Magazzino', 'fornitori': 'Fornitori', 'sprechi': 'Report Consumi', 'faq': 'Guida & FAQ', 'bugreport': 'Segnala Bug', 'impostazioni': 'Impostazioni' };
-            document.getElementById('page-title').innerText = titles[sec] || 'Magari DEV';
+            document.getElementById('page-title').innerText = titles[sec] || 'Magari';
             
             window.scrollTo({ top: 0, behavior: 'instant' });
 
@@ -2050,7 +2048,7 @@
 
         window.executeResetAllGuard = async function() {
             if (!window.checkAuthGuard()) return;
-            if (confirm("RESET TOTALE DATABASE DEV? Questa azione elimina tutti i dati sul database di sviluppo.")) {
+            if (confirm("RESET TOTALE DATABASE? Questa azione elimina tutti i dati sul database.")) {
                 const batch = writeBatch(db);
                 window.inventoryData.forEach(i => batch.delete(doc(db, "inventory", String(i.id))));
                 window.orderHistoryData.forEach(h => batch.delete(doc(db, "history", String(h.id))));
