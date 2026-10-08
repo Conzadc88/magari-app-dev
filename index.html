@@ -4,14 +4,14 @@
 <!--
 ====================================================================
 [MAGARI APP - DEVELOPMENT / TEST ENVIRONMENT]
-- VERSION: v4.1.6-DEV
+- VERSION: v4.1.7-DEV
 - FIREBASE PROJECT: magari-app-dev
 - TARGET: Ambiente isolato di test e sviluppo
 ====================================================================
 -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#b45309">
+    <meta name="theme-color" content="#92400e">
     
     <!-- META TAGS NO-CACHE -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -25,11 +25,11 @@
     <meta name="apple-mobile-web-app-title" content="Magari DEV">
     
     <!-- Icone Schermata Home & Favicon -->
-    <link rel="manifest" href="manifest.json?v=4.1.6-dev">
-    <link rel="apple-touch-icon" href="logo-square.png?v=4.1.6-dev">
-    <link rel="icon" type="image/png" href="logo-square.png?v=4.1.6-dev">
+    <link rel="manifest" href="manifest.json?v=4.1.7-dev">
+    <link rel="apple-touch-icon" href="logo-square.png?v=4.1.7-dev">
+    <link rel="icon" type="image/png" href="logo-square.png?v=4.1.7-dev">
 
-    <title>Magari v4.1.6 [DEV TEST]</title>
+    <title>Magari v4.1.7 [DEV TEST]</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -39,18 +39,19 @@
 <body>
 
     <div id="toast-notification" class="toast-notification"></div>
-    <!-- CONTENITORE NOTIFICHE REALTIME POSIZIONATO IN ALTO AL CENTRO -->
-    <div id="realtime-user-toast-container" style="position: fixed; top: 70px; left: 50%; transform: translateX(-50%); z-index: 99999; display: flex; flex-direction: column; gap: 8px; width: 90%; max-width: 400px;"></div>
+    
+    <!-- CONTENITORE NOTIFICHE REALTIME PERSISTENTI (IN ALTO AL CENTRO) -->
+    <div id="realtime-user-toast-container" style="position: fixed; top: 68px; left: 50%; transform: translateX(-50%); z-index: 99999; display: flex; flex-direction: column; gap: 8px; width: 92%; max-width: 410px;"></div>
 
     <!-- SELEZIONE SEDE GUARD -->
     <div class="page-lock-banner" id="location-guard-banner" style="display: flex; position: fixed; z-index: 3000; padding-top: 100px;">
         <div class="page-lock-box" style="max-width: 340px;">
             <div style="font-size: 32px; margin-bottom: 8px;">🧪</div>
-            <h3 style="margin-bottom: 6px; color: #b45309;">Seleziona Sede (DEV v4.1.6)</h3>
+            <h3 style="margin-bottom: 6px; color: #92400e;">Seleziona Sede (DEV v4.1.7)</h3>
             <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 14px;">Sei nell'ambiente di test. Seleziona il locale per caricare i dati di prova.</p>
             <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;">
-                <button class="btn-save" style="padding: 12px; font-size: 14px; background-color: #043927;" onclick="setActiveLocation('Vasastan (Sankt Eriksgatan 110)')">📍 Vasastan<br><span style="font-size:10px; opacity:0.8;">Sankt Eriksgatan 110</span></button>
-                <button class="btn-save" style="padding: 12px; font-size: 14px; background-color: #1b5e20;" onclick="setActiveLocation('Östermalm (Styrmansgatan 52)')">📍 Östermalm<br><span style="font-size:10px; opacity:0.8;">Styrmansgatan 52</span></button>
+                <button class="btn-save" style="padding: 12px; font-size: 14px; background: linear-gradient(135deg, #064e3b, #043927);" onclick="setActiveLocation('Vasastan (Sankt Eriksgatan 110)')">📍 Vasastan<br><span style="font-size:10px; opacity:0.8;">Sankt Eriksgatan 110</span></button>
+                <button class="btn-save" style="padding: 12px; font-size: 14px; background: linear-gradient(135deg, #166534, #14532d);" onclick="setActiveLocation('Östermalm (Styrmansgatan 52)')">📍 Östermalm<br><span style="font-size:10px; opacity:0.8;">Styrmansgatan 52</span></button>
             </div>
         </div>
     </div>
@@ -60,16 +61,16 @@
 
         <!-- DRAWER MENU -->
         <div class="drawer" id="drawer">
-            <div class="drawer-header" style="text-align: center; background-color: #b45309;">
+            <div class="drawer-header" style="text-align: center;">
                 <img src="logo-header.png" alt="Magari Logo" style="max-width: 170px; height: auto; margin-bottom: 4px;" onerror="this.style.display='none'; document.getElementById('drawer-text-fallback').style.display='block';">
                 <div id="drawer-text-fallback" class="brand-title" style="display:none; font-size: 24px;">MAGARI</div>
-                <div class="brand-subtitle" style="font-size: 9px; background:#d97706; font-weight:800;">🧪 DEV MODE • v4.1.6</div>
+                <div class="brand-subtitle" style="font-size: 9px; background: rgba(255,255,255,0.2); font-weight:800;">🧪 DEV MODE • v4.1.7</div>
             </div>
 
             <!-- USER ACCOUNT BANNER NELLO MENU -->
-            <div id="drawer-user-box" style="background:#fffbe8; padding:10px; border-radius:8px; margin-bottom:12px; text-align:center; border:1px solid #fde68a;">
-                <div id="user-status-text" style="font-size:12px; font-weight:bold; color:#b45309;">👁️ Modalità Lettura (Guest)</div>
-                <button id="btn-auth-action" onclick="openAuthModal()" class="btn-save" style="width:100%; margin-top:6px; padding:6px; font-size:12px; background:#2563eb;">🔑 Accedi / Registrati</button>
+            <div id="drawer-user-box" style="background:#fefbf3; padding:10px; border-radius:10px; margin-bottom:12px; text-align:center; border:1px solid #f3e8d2; box-shadow: 0 2px 4px rgba(0,0,0,0.03);">
+                <div id="user-status-text" style="font-size:12px; font-weight:bold; color:#92400e;">👁️ Modalità Lettura (Guest)</div>
+                <button id="btn-auth-action" onclick="openAuthModal()" class="btn-save" style="width:100%; margin-top:6px; padding:6px; font-size:12px; background: linear-gradient(135deg, #2563eb, #1d4ed8);">🔑 Accedi / Registrati</button>
             </div>
 
             <ul class="drawer-menu">
@@ -80,7 +81,7 @@
                 <li onclick="navigateTo('scorte')">📦 Scorte (Giacenze)</li>
                 <li onclick="navigateTo('storico')">
                     <span>📜 Storico Ordini</span>
-                    <span id="history-badge-drawer" class="badge-notification" style="display:none; background:#e53935;">0</span>
+                    <span id="history-badge-drawer" class="badge-notification" style="display:none; background:#dc2626;">0</span>
                 </li>
                 <li onclick="navigateTo('magazzino')">🛠️ Magazzino <span id="lock-icon-magazzino">🔒</span></li>
                 <li onclick="navigateTo('fornitori')">🚚 Fornitori <span id="lock-icon-fornitori">🔒</span></li>
@@ -94,31 +95,31 @@
             </ul>
         </div>
 
-        <div class="header" style="background-color: #b45309;">
+        <div class="header">
             <button class="menu-btn" onclick="toggleMenu()">☰</button>
             <div class="header-brand-text">
                 <img src="logo-header.png" alt="Magari" style="height: 34px; width: auto;" onerror="this.style.display='none'; document.getElementById('header-text-fallback').style.display='block';">
                 <div id="header-text-fallback" class="brand-title" style="display:none;">MAGARI</div>
-                <div class="brand-subtitle" style="background:#d97706; font-weight:800;">🧪 DEV • v4.1.6</div>
+                <div class="brand-subtitle" style="background: rgba(255,255,255,0.2); font-weight:800;">🧪 DEV • v4.1.7</div>
             </div>
             <div class="page-badge" id="page-title">Ordini</div>
         </div>
 
         <!-- BANNER AVVISI STAFF -->
-        <div id="staff-notice-banner" style="display:none; background:#fffbeb; border-left:5px solid #f59e0b; border-bottom:1px solid #fef3c7; padding:12px 16px; margin:10px 12px; border-radius:8px; box-shadow:0 2px 5px rgba(0,0,0,0.04);">
+        <div id="staff-notice-banner" style="display:none; background: linear-gradient(135deg, #fffcf5, #fef3c7); border-left:4px solid #f59e0b; border-bottom:1px solid #fde68a; padding:12px 16px; margin:10px 12px; border-radius:10px; box-shadow:0 3px 8px rgba(0,0,0,0.04);">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
                 <div style="display:flex; align-items:center; gap:6px;">
-                    <span style="font-size:11px; font-weight:800; background:#fef3c7; color:#b45309; padding:2px 8px; border-radius:12px; border:1px solid #fde68a;">📢 COMUNICAZIONE DEV</span>
+                    <span style="font-size:11px; font-weight:800; background:#fef3c7; color:#92400e; padding:2px 8px; border-radius:12px; border:1px solid #fde68a;">📢 COMUNICAZIONE DEV</span>
                 </div>
                 <button id="btn-delete-notice" onclick="deleteNoticeFromDb()" style="display:none; background:#fee2e2; border:1px solid #fca5a5; color:#991b1b; font-size:10px; font-weight:bold; padding:3px 8px; border-radius:12px; cursor:pointer;">🗑️ Rimuovi</button>
             </div>
-            <div id="staff-notice-text" style="font-size:15px; font-weight:800; color:#1e293b; line-height:1.3; margin-top:4px;"></div>
+            <div id="staff-notice-text" style="font-size:14px; font-weight:800; color:#1e293b; line-height:1.35; margin-top:4px;"></div>
             <div id="staff-notice-meta" style="font-size:11px; color:#78350f; margin-top:6px; font-weight:500;"></div>
         </div>
 
-        <div class="location-active-banner" id="active-location-banner" style="display: none; background:#fffbe8; border-color:#fde68a; color:#b45309;">
+        <div class="location-active-banner" id="active-location-banner" style="display: none;">
             <span id="active-location-text">📍 Sede DEV: Non selezionata</span>
-            <button onclick="promptChangeLocation()" style="background: white; border: 1px solid #b45309; color: #b45309; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer;">Cambia Sede</button>
+            <button onclick="promptChangeLocation()" style="background: white; border: 1px solid #b45309; color: #b45309; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">Cambia Sede</button>
         </div>
 
         <!-- 1. ORDINI -->
@@ -157,7 +158,7 @@
                 <div class="search-row"><input type="text" id="search-order-input" class="search-input" placeholder="Cerca prodotto DEV..." oninput="filterOrderItems()"></div>
             </div>
             <div class="content-list" id="order-list"></div>
-            <div class="sticky-checkout-container"><button class="btn-checkout" style="background:#b45309;" onclick="generateOrderSummary()">📋 Genera Riepilogo Ordine (DEV)</button></div>
+            <div class="sticky-checkout-container"><button class="btn-checkout" onclick="generateOrderSummary()">📋 Genera Riepilogo Ordine (DEV)</button></div>
         </div>
 
         <!-- 2. SCORTE -->
@@ -204,7 +205,7 @@
         <div id="view-storico" class="view-section">
             <div class="top-bar-container">
                 <button class="reset-btn" onclick="executeClearHistoryGuard()">🔒 🗑️ Svuota Tutto lo Storico Ordini (DEV)</button>
-                <div style="font-size:12px; font-weight:700; color:#b45309; background:#fffbe8; padding:6px 10px; border-radius:6px; border:1px solid #fde68a;">
+                <div style="font-size:12px; font-weight:700; color:#92400e; background:#fefbf3; padding:8px 12px; border-radius:8px; border:1px solid #f3e8d2;">
                     📍 Ordini visualizzati per la Sede Attiva (Database DEV)
                 </div>
                 <input type="text" id="search-history-input" class="search-input" placeholder="Cerca nello storico DEV..." oninput="filterHistoryItems()">
@@ -217,7 +218,7 @@
                 <div class="page-lock-box"><div style="font-size: 32px; margin-bottom: 8px;">🔒</div><h3 style="margin-bottom: 6px;">Sezione Riservata Admin DEV</h3><p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Effettua il Login con account Admin per accedere.</p><button class="btn-save" onclick="openAuthModal()">Accedi come Admin</button></div>
             </div>
             <div class="top-bar-container">
-                <div style="font-size:11px; background:#fff3cd; color:#856404; padding:6px 10px; border-radius:6px; font-weight:600;">
+                <div style="font-size:11px; background:#fef3c7; color:#92400e; padding:6px 10px; border-radius:6px; font-weight:600; border:1px solid #fde68a;">
                     ⭐ <b>Gestione Preferiti:</b> Clicca sulla stellina accanto ai prodotti.
                 </div>
                 <div style="display: flex; gap: 8px; width: 100%;">
@@ -261,7 +262,7 @@
                 <div class="form-group" id="report-month-select-group" style="display:none;"><label>Mese:</label><input type="month" id="report-month-picker" class="form-control"></div>
                 <button class="btn-save" onclick="generateRealReport()" style="width:100%; padding:10px; background:#b45309;">📋 Genera Report (DEV)</button>
             </div>
-            <div id="report-results-container" style="display:none; background:white; padding:16px; border-radius:8px; margin:16px;">
+            <div id="report-results-container" style="display:none; background:white; padding:16px; border-radius:10px; margin:16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border:1px solid var(--border);">
                 <h3 id="report-title-display" style="font-size:14px; margin-bottom:10px; color:#b45309;"></h3>
                 <div style="font-weight:bold; font-size:12px; color:#1e293b;">🍷 Alcolici & Bevande</div>
                 <table class="report-table" id="table-alcohol-report"><thead><tr><th>Prodotto</th><th>Qtà</th><th>Costo Totale</th></tr></thead><tbody></tbody></table>
@@ -274,14 +275,14 @@
         <!-- 7. FAQ & GUIDA RAPIDA -->
         <div id="view-faq" class="view-section">
             <div class="top-bar-container">
-                <div style="font-size:16px; font-weight:800; color:#b45309;">❓ Guida Rapida DEV Environment (v4.1.6)</div>
+                <div style="font-size:16px; font-weight:800; color:#b45309;">❓ Guida Rapida DEV Environment (v4.1.7)</div>
                 <div style="font-size:12px; color:var(--text-secondary);">Manuale ed indicazioni operative per l'ambiente di test.</div>
             </div>
             <div class="content-list">
                 <div class="faq-item-box">
                     <div class="faq-question">🧪 1. Che cos'è questa versione DEV?</div>
                     <div class="faq-answer">
-                        Questa è la copia speculare di test collegata al progetto Firebase <b>magari-app-dev</b> (Versione corrente: <b>v4.1.6-DEV</b>). Qualsiasi modifica effettuata qui non tocca il database dei locali reali.
+                        Questa è la copia speculare di test collegata al progetto Firebase <b>magari-app-dev</b> (Versione corrente: <b>v4.1.7-DEV</b>). Qualsiasi modifica effettuata qui non tocca il database dei locali reali.
                     </div>
                 </div>
 
@@ -311,7 +312,7 @@
                 <div class="form-group"><label>Operatore</label><input type="text" id="bug-operator-input" class="form-control" readonly style="background:#f1f5f9; font-weight:bold;"></div>
                 <div class="form-group"><label>Tipo di Segnalazione</label><select id="bug-type-select" class="form-control"><option value="🐛 Errore Tecnico / Bug App">🐛 Errore Tecnico / Bug App</option><option value="🧀 Errore Dati">🧀 Errore Dati</option><option value="💡 Suggerimento">💡 Suggerimento</option></select></div>
                 <div class="form-group"><label>Descrizione</label><textarea id="bug-desc-input" class="form-control" rows="4" placeholder="Descrivi il test o il problema..."></textarea></div>
-                <button class="btn-save" onclick="submitBugReport()" style="width:100%; padding:12px; background:#d97706;">🚀 Invia Segnalazione DEV</button>
+                <button class="btn-save" onclick="submitBugReport()" style="width:100%; padding:12px; background: linear-gradient(135deg, #d97706, #b45309);">🚀 Invia Segnalazione DEV</button>
             </div>
         </div>
 
@@ -321,19 +322,19 @@
                 <div class="page-lock-box"><div style="font-size: 32px; margin-bottom: 8px;">🔒</div><h3 style="margin-bottom: 6px;">Sezione Riservata Admin DEV</h3><p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Effettua il Login con account Admin per accedere.</p><button class="btn-save" onclick="openAuthModal()">Accedi come Admin</button></div>
             </div>
             <div class="settings-card">
-                <h3>⚙️ Gestione Impostazioni (DEV MODE v4.1.6)</h3>
+                <h3>⚙️ Gestione Impostazioni (DEV MODE v4.1.7)</h3>
 
                 <!-- PUBBLICAZIONE AVVISO STAFF -->
-                <div style="background:#fffbe8; border:1px solid #ffe0b2; padding:12px; border-radius:8px; margin-top:8px;">
-                    <h4 style="font-size:14px; color:#b45309; margin-bottom:6px;">📢 Pubblica Banner Avviso Staff DEV</h4>
+                <div style="background:#fefbf3; border:1px solid #f3e8d2; padding:12px; border-radius:10px; margin-top:8px;">
+                    <h4 style="font-size:14px; color:#92400e; margin-bottom:6px;">📢 Pubblica Banner Avviso Staff DEV</h4>
                     <textarea id="notice-input-field" class="form-control" rows="2" placeholder="Scrivi un avviso di test..."></textarea>
                     <button onclick="publishStaffNotice()" class="btn-save" style="width:100%; margin-top:8px; background:#b45309;">Pubblica Avviso DEV</button>
                 </div>
 
                 <!-- 👥 PANNELLO GESTIONE STAFF -->
-                <div style="background:#f8fafc; padding:12px; border-radius:8px; border:1px solid #cbd5e1; margin-top:8px;">
+                <div style="background:#f8fafc; padding:12px; border-radius:10px; border:1px solid #e2e8f0; margin-top:8px;">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                        <h4 style="font-size:14px; color:#b45309;">👥 Gestione Staff (Database DEV)</h4>
+                        <h4 style="font-size:14px; color:#92400e;">👥 Gestione Staff (Database DEV)</h4>
                         <div style="display:flex; gap:6px;">
                             <button onclick="openUserModal()" class="add-btn" style="padding:4px 8px; font-size:11px; background:#b45309;">+ Nuovo Utente</button>
                             <button onclick="loadUsersListForAdmin()" style="background:none; border:none; color:#2563eb; font-size:12px; font-weight:bold; cursor:pointer;">🔄</button>
@@ -356,10 +357,10 @@
         </div>
 
         <!-- FOOTER FIRMA DEVELOPER -->
-        <footer style="background:#b45309; color:#fffbe8; text-align:center; padding:16px 14px; font-size:11px; border-top:1px solid #d97706; margin-top:auto; width:100%; position:relative; z-index:80;">
-            <div>&copy; 2026 <b>Magari Pizzeria DEV</b> - Versione <span style="background:rgba(255,255,255,0.2); padding:2px 6px; border-radius:4px; font-weight:bold;">v4.1.6-DEV</span></div>
+        <footer style="background: linear-gradient(135deg, #78350f, #451a03); color:#fffbe8; text-align:center; padding:16px 14px; font-size:11px; border-top:1px solid #92400e; margin-top:auto; width:100%; position:relative; z-index:80;">
+            <div>&copy; 2026 <b>Magari Pizzeria DEV</b> - Versione <span style="background:rgba(255,255,255,0.15); padding:2px 6px; border-radius:4px; font-weight:bold;">v4.1.7-DEV</span></div>
             <div style="margin-top:6px; font-size:11px; color:#ffffff;">
-                Sviluppato da <span style="color:#ffffff; font-weight:bold; background:rgba(0,0,0,0.2); padding:2px 6px; border-radius:4px;">Nicolas Cappiello</span>
+                Sviluppato da <span style="color:#ffffff; font-weight:bold; background:rgba(0,0,0,0.25); padding:2px 6px; border-radius:4px;">Nicolas Cappiello</span>
             </div>
         </footer>
 
@@ -388,7 +389,7 @@
 
     <!-- MODALE AUTHENTICATION -->
     <div class="modal" id="auth-modal">
-        <div class="modal-title" id="auth-modal-title" style="text-align:center;">🔑 Login - Magari DEV v4.1.6</div>
+        <div class="modal-title" id="auth-modal-title" style="text-align:center;">🔑 Login - Magari DEV v4.1.7</div>
         <div style="display:flex; justify-content:center; gap:10px; margin-bottom:12px;">
             <button id="tab-btn-login" onclick="switchAuthTab('login')" style="flex:1; padding:6px; border-radius:6px; font-weight:bold; border:1px solid #b45309; background:#b45309; color:white;">Login</button>
             <button id="tab-btn-register" onclick="switchAuthTab('register')" style="flex:1; padding:6px; border-radius:6px; font-weight:bold; border:1px solid #cbd5e1; background:#f1f5f9; color:#334155;">Nuovo Account DEV</button>
@@ -412,7 +413,7 @@
                 </div>
             </div>
 
-            <button class="btn-save" onclick="handleLoginSubmit()" style="width:100%; padding:10px; margin-top:4px; background:#b45309;">Entra in DEV</button>
+            <button class="btn-save" onclick="handleLoginSubmit()" style="width:100%; padding:10px; margin-top:4px; background: linear-gradient(135deg, #b45309, #92400e);">Entra in DEV</button>
         </div>
 
         <div id="auth-form-register" style="display:none;">
@@ -428,7 +429,7 @@
                 <label for="show-reg-password" style="font-size:12px; font-weight:600; color:#334155; cursor:pointer; user-select:none;">Mostra Password</label>
             </div>
 
-            <button class="btn-save" onclick="handleRegisterSubmit()" style="width:100%; padding:10px; background:#1b5e20; margin-top:4px;">Crea Account DEV</button>
+            <button class="btn-save" onclick="handleRegisterSubmit()" style="width:100%; padding:10px; background: linear-gradient(135deg, #166534, #14532d); margin-top:4px;">Crea Account DEV</button>
         </div>
 
         <div class="modal-actions" style="margin-top:12px;"><button class="btn-cancel" onclick="closeAuthModal()" style="width:100%;">Annulla</button></div>
@@ -483,132 +484,143 @@
 
     <style>
         :root {
-            --primary: #b45309; --bg: #fef3c7; --card-bg: #fffbeb; --text: #1c1c1a;
-            --text-secondary: #78350f; --border: #fde68a; --warning: #ff9800; --danger: #e53935; --whatsapp: #25d366;
-            --excel-green: #107c41; --star-gold: #ffb300;
+            --primary: #b45309; 
+            --primary-dark: #78350f;
+            --bg: #f7f4ec; 
+            --card-bg: #ffffff; 
+            --text: #1c1917;
+            --text-secondary: #78350f; 
+            --border: #e7dfd3; 
+            --warning: #f59e0b; 
+            --danger: #dc2626; 
+            --whatsapp: #25d366;
+            --excel-green: #107c41; 
+            --star-gold: #f59e0b;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
         html, body { width: 100%; overflow-x: hidden; background-color: var(--bg); color: var(--text); }
         body { display: flex; justify-content: center; min-height: 100vh; }
 
-        .app-container { width: 100%; max-width: 430px; min-height: 100vh; background-color: var(--bg); position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.1); display: flex; flex-direction: column; transition: max-width 0.3s ease; overflow-x: hidden; }
+        .app-container { width: 100%; max-width: 430px; min-height: 100vh; background-color: var(--bg); position: relative; box-shadow: 0 0 25px rgba(0,0,0,0.06); display: flex; flex-direction: column; transition: max-width 0.3s ease; overflow-x: hidden; }
         
-        .header { background-color: var(--primary); color: white; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 4px rgba(0,0,0,0.15); }
+        .header { background: linear-gradient(135deg, #b45309, #78350f); color: white; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: 0 3px 6px rgba(0,0,0,0.12); }
         .menu-btn { background: none; border: none; color: white; font-size: 24px; cursor: pointer; }
         .header-brand-text { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
         .brand-title { font-family: 'Cinzel', 'Times New Roman', serif; font-size: 20px; font-weight: 700; color: #ffffff; letter-spacing: 2px; line-height: 1; text-transform: uppercase; }
         .brand-subtitle { font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 8px; font-weight: 700; color: #ffffff; letter-spacing: 1px; margin-top: 3px; text-transform: uppercase; padding: 2px 6px; border-radius: 4px; }
-        .page-badge { font-size: 11px; background: rgba(0, 0, 0, 0.25); color: #fff; padding: 4px 8px; border-radius: 6px; font-weight: 600; }
+        .page-badge { font-size: 11px; background: rgba(0, 0, 0, 0.22); color: #fff; padding: 4px 8px; border-radius: 6px; font-weight: 600; }
 
-        .top-bar-container { padding: 12px 16px; background-color: rgba(255, 255, 255, 0.92); backdrop-filter: blur(5px); border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; width: 100%; }
+        .top-bar-container { padding: 12px 16px; background: linear-gradient(180deg, #ffffff, #fcfbfa); border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; width: 100%; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
         .top-bar-container div { min-width: 0; }
 
         .search-row { display: flex; gap: 8px; width: 100%; }
-        .search-input { flex: 1; min-width: 0; padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; outline: none; width: 100%; }
-        .filter-select, .location-select, .date-picker, .operator-input { flex: 1; min-width: 0; padding: 8px 10px; border: 1px solid var(--primary); border-radius: 8px; font-size: 13px; font-weight: 600; background-color: #fffbe8; color: var(--primary); outline: none; width: 100%; text-overflow: ellipsis; }
+        .search-input { flex: 1; min-width: 0; padding: 9px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; outline: none; width: 100%; background: #ffffff; transition: border-color 0.2s; }
+        .search-input:focus { border-color: var(--primary); }
         
-        .add-btn { background-color: var(--primary); color: white; border: none; padding: 8px 12px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
-        .btn-excel { background-color: var(--excel-green); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; box-shadow: 0 2px 6px rgba(16, 124, 65, 0.3); }
-        .reset-btn { background-color: #fff3f0; color: var(--danger); border: 1px solid var(--danger); padding: 8px 12px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; width: 100%; }
+        .filter-select, .location-select, .date-picker, .operator-input { flex: 1; min-width: 0; padding: 8px 10px; border: 1px solid #ebd5b3; border-radius: 8px; font-size: 13px; font-weight: 600; background-color: #fefcf6; color: var(--primary-dark); outline: none; width: 100%; text-overflow: ellipsis; }
+        
+        .add-btn { background: linear-gradient(135deg, #b45309, #92400e); color: white; border: none; padding: 8px 12px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; white-space: nowrap; flex-shrink: 0; box-shadow: 0 2px 4px rgba(180,83,9,0.2); }
+        .btn-excel { background: linear-gradient(135deg, #107c41, #0c5e31); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; box-shadow: 0 2px 6px rgba(16, 124, 65, 0.25); }
+        .reset-btn { background-color: #fef2f2; color: var(--danger); border: 1px solid #fecaca; padding: 8px 12px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; width: 100%; }
 
         .star-toggle-btn { background: none; border: none; font-size: 20px; cursor: pointer; transition: transform 0.15s ease; padding: 2px 4px; }
 
-        .location-active-banner { background: #fffbe8; border-bottom: 1px solid #fde68a; padding: 8px 16px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: bold; color: #b45309; }
+        .location-active-banner { background: linear-gradient(135deg, #fefbf3, #fdf4e3); border-bottom: 1px solid #f5e6cd; padding: 8px 16px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: bold; color: #92400e; }
 
         .view-section { display: none; flex-direction: column; flex: 1; padding-bottom: 20px; position: relative; width: 100%; }
         .view-section.active { display: flex; }
         #view-ordini { padding-bottom: 140px; }
 
-        .page-lock-banner { position: absolute; top: 0; left: 0; width: 100%; height: 100%; min-height: 100vh; background-color: rgba(254, 243, 199, 0.98); backdrop-filter: blur(8px); z-index: 500; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 80px 20px 20px 20px; text-align: center; }
-        .page-lock-box { background: white; padding: 24px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); width: 100%; max-width: 320px; border: 1px solid var(--border); }
+        .page-lock-banner { position: absolute; top: 0; left: 0; width: 100%; height: 100%; min-height: 100vh; background-color: rgba(247, 244, 236, 0.96); backdrop-filter: blur(8px); z-index: 500; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 80px 20px 20px 20px; text-align: center; }
+        .page-lock-box { background: white; padding: 24px; border-radius: 14px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); width: 100%; max-width: 320px; border: 1px solid var(--border); }
 
         .content-list { padding: 12px 16px; display: flex; flex-direction: column; gap: 12px; flex: 1; width: 100%; }
-        .card-item { background-color: var(--card-bg); border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); border: 1px solid var(--border); overflow: hidden; width: 100%; }
+        .card-item { background: linear-gradient(180deg, #ffffff, #faf8f5); border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); border: 1px solid var(--border); overflow: hidden; width: 100%; transition: transform 0.1s ease; }
         
         @keyframes pulseBorder {
-            0% { border-color: var(--danger); box-shadow: 0 0 0 0 rgba(229, 57, 53, 0.4); }
-            50% { border-color: #ff8a80; box-shadow: 0 0 8px 2px rgba(229, 57, 53, 0.6); }
-            100% { border-color: var(--danger); box-shadow: 0 0 0 0 rgba(229, 57, 53, 0.4); }
+            0% { border-color: var(--danger); box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.3); }
+            50% { border-color: #fca5a5; box-shadow: 0 0 8px 2px rgba(220, 38, 38, 0.4); }
+            100% { border-color: var(--danger); box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.3); }
         }
-        .card-item.low-stock-alert { border: 2px solid var(--danger); background-color: #fff8f8; animation: pulseBorder 1.5s infinite; }
+        .card-item.low-stock-alert { border: 2px solid var(--danger); background: linear-gradient(180deg, #ffffff, #fff5f5); animation: pulseBorder 1.5s infinite; }
 
-        .item-name-box { padding: 10px 12px; border-radius: 6px; display: flex; flex-direction: column; gap: 4px; border-left-width: 4px; border-left-style: solid; }
-        .item-name { font-size: 18px; font-weight: 800; color: #111111; line-height: 1.25; display: flex; align-items: center; justify-content: space-between; width: 100%; }
-        .item-subtext { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+        .item-name-box { padding: 10px 12px; border-radius: 8px; display: flex; flex-direction: column; gap: 4px; border-left-width: 4px; border-left-style: solid; background: #faf8f5; }
+        .item-name { font-size: 17px; font-weight: 800; color: #1c1917; line-height: 1.25; display: flex; align-items: center; justify-content: space-between; width: 100%; }
+        .item-subtext { font-size: 12px; color: #78350f; margin-top: 2px; }
 
-        .stock-warning-badge { display: inline-flex; align-items: center; font-size: 13px; font-weight: 800; padding: 4px 8px; border-radius: 6px; margin-top: 6px; line-height: 1.3; }
-        .stock-warning-badge.alert { background-color: #ffebee; color: #c62828; border: 1px solid #ef9a9a; }
-        .stock-warning-badge.normal { background-color: #fffbe8; color: #b45309; border: 1px solid #fde68a; }
+        .stock-warning-badge { display: inline-flex; align-items: center; font-size: 12px; font-weight: 800; padding: 4px 8px; border-radius: 6px; margin-top: 6px; line-height: 1.3; }
+        .stock-warning-badge.alert { background-color: #fef2f2; color: #991b1b; border: 1px solid #fca5a5; }
+        .stock-warning-badge.normal { background-color: #fefbf3; color: #92400e; border: 1px solid #f3e8d2; }
 
         .badges-row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-top: 6px; }
-        .category-label-tag { font-size: 11px; font-weight: 700; color: #78350f; text-transform: uppercase; background: #fffbe8; padding: 3px 8px; border-radius: 4px; border: 1px solid #fde68a; }
-        .supplier-badge { font-size: 13px; padding: 4px 10px; border-radius: 6px; display: inline-block; font-weight: 800; color: white; box-shadow: 0 1px 2px rgba(0,0,0,0.15); }
+        .category-label-tag { font-size: 11px; font-weight: 700; color: #78350f; text-transform: uppercase; background: #fefbf3; padding: 3px 8px; border-radius: 6px; border: 1px solid #f3e8d2; }
+        .supplier-badge { font-size: 12px; padding: 3px 8px; border-radius: 6px; display: inline-block; font-weight: 800; color: white; box-shadow: 0 1px 2px rgba(0,0,0,0.12); }
 
-        .item-controls { display: flex; align-items: center; justify-content: flex-end; gap: 6px; flex-wrap: nowrap; margin-top: 4px; border-top: 1px dashed #fde68a; padding-top: 8px; }
-        .qty-btn { width: 36px; height: 36px; min-width: 36px; border-radius: 50%; border: 1px solid var(--border); background-color: #fffbe8; font-weight: bold; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .qty-input { width: 58px; min-width: 58px; text-align: center; padding: 6px 2px; border: 1px solid var(--border); border-radius: 6px; font-size: 15px; font-weight: 700; }
+        .item-controls { display: flex; align-items: center; justify-content: flex-end; gap: 6px; flex-wrap: nowrap; margin-top: 4px; border-top: 1px dashed #e7dfd3; padding-top: 8px; }
+        .qty-btn { width: 36px; height: 36px; min-width: 36px; border-radius: 50%; border: 1px solid #ebd5b3; background: linear-gradient(180deg, #ffffff, #fefcf6); font-weight: bold; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #92400e; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .qty-input { width: 58px; min-width: 58px; text-align: center; padding: 6px 2px; border: 1px solid #ebd5b3; border-radius: 8px; font-size: 15px; font-weight: 700; background: #ffffff; }
         .unit-label { font-size: 13px; color: var(--text-secondary); font-weight: 700; min-width: 38px; }
 
         .stock-label-box { display: flex; flex-direction: column; margin-right: auto; line-height: 1.25; min-width: 0; }
         .stock-label-main { font-size: 13px; font-weight: 600; color: var(--text-secondary); display: flex; align-items: center; }
         .stock-label-sub { font-size: 11px; font-weight: bold; margin-top: 2px; }
 
-        .action-row-btn { display: flex; gap: 8px; margin-top: 6px; border-top: 1px solid #fde68a; padding-top: 8px; }
-        .btn-action-edit { background: #e3f2fd; color: #0d47a1; border: 1px solid #bbdefb; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; }
-        .btn-action-del { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; }
+        .action-row-btn { display: flex; gap: 8px; margin-top: 6px; border-top: 1px solid #e7dfd3; padding-top: 8px; }
+        .btn-action-edit { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; }
+        .btn-action-del { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; }
 
-        .faq-item-box { background: white; border-radius: 8px; border: 1px solid var(--border); padding: 12px; margin-bottom: 10px; }
+        .faq-item-box { background: white; border-radius: 10px; border: 1px solid var(--border); padding: 12px; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
         .faq-question { font-size: 14px; font-weight: 800; color: var(--primary); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
         .faq-answer { font-size: 13px; color: #334155; line-height: 1.4; }
 
-        .drawer { position: absolute; top: 0; left: -280px; width: 280px; height: 100%; min-height: 100vh; background-color: #fffdf5; box-shadow: 4px 0 15px rgba(0,0,0,0.15); transition: left 0.3s ease; z-index: 2000; padding: 20px; overflow-y: auto; border-right: 1px solid #fde68a; }
+        .drawer { position: absolute; top: 0; left: -280px; width: 280px; height: 100%; min-height: 100vh; background-color: #faf7f0; box-shadow: 4px 0 20px rgba(0,0,0,0.12); transition: left 0.3s ease; z-index: 2000; padding: 20px; overflow-y: auto; border-right: 1px solid #e7dfd3; }
         .drawer.open { left: 0; }
-        .drawer-header { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 16px; border-bottom: 1px solid #b45309; background-color: var(--primary); border-radius: 10px; padding: 16px 12px; }
+        .drawer-header { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 16px; background: linear-gradient(135deg, #b45309, #78350f); border-radius: 12px; padding: 16px 12px; }
         .drawer-menu { list-style: none; }
-        .drawer-menu li { padding: 12px 10px; font-size: 14px; font-weight: 600; color: #2d3748; border-bottom: 1px solid #fde68a; cursor: pointer; display: flex; justify-content: space-between; align-items: center; border-radius: 6px; transition: background 0.15s ease; }
-        .drawer-menu li:active { background-color: #fffbe8; color: #b45309; }
+        .drawer-menu li { padding: 12px 10px; font-size: 14px; font-weight: 600; color: #2d3748; border-bottom: 1px solid #e7dfd3; cursor: pointer; display: flex; justify-content: space-between; align-items: center; border-radius: 6px; transition: background 0.15s ease; }
+        .drawer-menu li:active { background-color: #fefbf3; color: #b45309; }
 
-        .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; min-height: 100vh; background: rgba(0,0,0,0.6); display: none; z-index: 1000; backdrop-filter: blur(4px); }
+        .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; min-height: 100vh; background: rgba(0,0,0,0.5); display: none; z-index: 1000; backdrop-filter: blur(3px); }
         .overlay.active { display: block; }
 
-        .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #fffdf8; padding: 22px; border-radius: 14px; width: 92%; max-width: 480px; max-height: 88vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.2); display: none; z-index: 9999; border: 1px solid #fde68a; }
+        .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #ffffff; padding: 22px; border-radius: 16px; width: 92%; max-width: 480px; max-height: 88vh; overflow-y: auto; box-shadow: 0 15px 30px rgba(0,0,0,0.15); display: none; z-index: 9999; border: 1px solid var(--border); }
         .modal.active { display: block !important; }
         
-        .modal-title { font-size: 17px; font-weight: 800; margin-bottom: 14px; padding: 8px 12px; background: #fffbe8; color: #b45309; border-radius: 8px; border-left: 4px solid #b45309; }
+        .modal-title { font-size: 17px; font-weight: 800; margin-bottom: 14px; padding: 8px 12px; background: #fefbf3; color: #b45309; border-radius: 8px; border-left: 4px solid #b45309; border: 1px solid #f3e8d2; }
         .form-group { margin-bottom: 12px; }
         .form-group label { display: block; font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; }
-        .form-control { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; background-color: white; }
+        .form-control { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; background-color: white; }
         .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
-        .btn-cancel { background: #e5e2d9; color: #4a5568; border: none; padding: 10px 14px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; }
-        .btn-save { background: #b45309; color: white; border: none; padding: 10px 14px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; }
-        .btn-danger { background: var(--danger); color: white; border: none; padding: 10px 14px; border-radius: 6px; cursor: pointer; font-size: 14px; }
+        .btn-cancel { background: #e2e8f0; color: #475569; border: none; padding: 10px 14px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; }
+        .btn-save { background: linear-gradient(135deg, #b45309, #92400e); color: white; border: none; padding: 10px 14px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; }
+        .btn-danger { background: linear-gradient(135deg, #dc2626, #b91c1c); color: white; border: none; padding: 10px 14px; border-radius: 8px; cursor: pointer; font-size: 14px; }
 
         .toast-notification { 
             position: fixed; 
             top: 40%; 
             left: 50%; 
             transform: translate(-50%, -50%); 
-            background-color: rgba(38, 50, 56, 0.95); 
+            background-color: rgba(30, 41, 59, 0.96); 
             color: white; 
-            padding: 18px 24px; 
+            padding: 16px 22px; 
             border-radius: 12px; 
-            font-size: 16px; 
+            font-size: 15px; 
             font-weight: 700; 
-            box-shadow: 0 8px 24px rgba(0,0,0,0.4); 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3); 
             z-index: 99999; 
             display: none; 
             text-align: center; 
             max-width: 85%; 
-            border-left: 6px solid var(--warning); 
+            border-left: 5px solid var(--warning); 
         }
         .toast-notification.show { display: block; }
 
-        .sticky-checkout-container { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; padding: 10px 16px 14px 16px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px); border-top: 1px solid var(--border); z-index: 100; }
-        .btn-checkout { width: 100%; background-color: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; }
+        .sticky-checkout-container { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; padding: 10px 16px 14px 16px; background: rgba(255, 255, 255, 0.94); backdrop-filter: blur(8px); border-top: 1px solid var(--border); z-index: 100; }
+        .btn-checkout { width: 100%; background: linear-gradient(135deg, #b45309, #92400e); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: bold; font-size: 15px; cursor: pointer; box-shadow: 0 3px 8px rgba(180,83,9,0.3); }
 
-        .settings-card { background: white; border-radius: 10px; padding: 16px; margin: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 10px; }
-        .history-card { background: white; border-radius: 8px; border: 1px solid var(--border); padding: 12px; margin-bottom: 10px; position: relative; }
+        .settings-card { background: white; border-radius: 12px; padding: 16px; margin: 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.03); display: flex; flex-direction: column; gap: 10px; border: 1px solid var(--border); }
+        .history-card { background: white; border-radius: 10px; border: 1px solid var(--border); padding: 12px; margin-bottom: 10px; position: relative; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
         .history-header { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; border-bottom: 1px solid #eee; padding-bottom: 4px; }
 
         .report-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; font-size: 12px; }
@@ -650,7 +662,9 @@
             collection, 
             updateDoc, 
             deleteDoc, 
-            writeBatch 
+            writeBatch,
+            query,
+            where
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         // ====================================================================
@@ -817,68 +831,87 @@
                 window.currentUserProfile = null;
             }
             window.updateAuthUIState();
+            window.listenToPersistentUserNotifications();
             window.refreshAllViews();
         });
 
-        // NOTIFICATORE STAFF REALTIME (SOLO PER ADMIN E MASTER ADMIN)
-        let isInitialUsersLoad = true;
-        onSnapshot(collection(db, "users"), (snapshot) => {
-            if (isInitialUsersLoad) {
-                isInitialUsersLoad = false;
-                return;
+        // NOTIFICHE PERSISTENTI NUOVI REGISTRATI (FIRESTORE BACKED)
+        window.activeNotificationsUnsubscribe = null;
+
+        window.listenToPersistentUserNotifications = function() {
+            if (window.activeNotificationsUnsubscribe) {
+                window.activeNotificationsUnsubscribe();
             }
 
-            // CONTROLLO PERMESSI: Visibile SOLO ad Admin o Master Admin
             const currentUser = window.currentUserProfile;
             const isMaster = currentUser && currentUser.email && currentUser.email.toLowerCase() === "nicolas@magaripizza.com";
             const isAdmin = isMaster || (currentUser && currentUser.role === 'admin');
 
-            if (!isAdmin) return; // Blocco per operatori o non autenticati
+            const container = document.getElementById('realtime-user-toast-container');
+            if (!container) return;
 
-            snapshot.docChanges().forEach((change) => {
-                if (change.type === "added") {
-                    const newUser = change.doc.data();
-                    window.showRealtimeUserToast(newUser.name || newUser.email || "Nuovo Operatore DEV");
-                }
+            if (!isAdmin) {
+                container.innerHTML = '';
+                return;
+            }
+
+            const q = query(collection(db, "notifications"), where("status", "==", "unread"));
+            
+            window.activeNotificationsUnsubscribe = onSnapshot(q, (snapshot) => {
+                container.innerHTML = '';
+                snapshot.docs.forEach((docSnap) => {
+                    const notif = docSnap.data();
+                    const notifId = docSnap.id;
+                    window.renderPersistentUserToast(notifId, notif.userName || notif.email || "Nuovo Operatore", notif.timestamp);
+                });
             });
-        });
+        };
 
-        window.showRealtimeUserToast = function(identifier) {
+        window.renderPersistentUserToast = function(notifId, identifier, timestamp) {
             const container = document.getElementById('realtime-user-toast-container');
             if (!container) return;
 
             const toast = document.createElement('div');
+            toast.id = `toast-notif-${notifId}`;
             toast.style.cssText = `
-                background-color: #b45309;
+                background: linear-gradient(135deg, #b45309, #78350f);
                 color: white;
                 padding: 12px 16px;
-                border-radius: 10px;
+                border-radius: 12px;
                 font-size: 13px;
                 font-weight: bold;
-                box-shadow: 0 8px 24px rgba(0,0,0,0.35);
-                border: 2px solid #fde68a;
+                box-shadow: 0 8px 20px rgba(120, 53, 15, 0.35);
+                border: 1px solid #fde68a;
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
                 gap: 10px;
                 width: 100%;
+                animation: slideDown 0.3s ease;
             `;
             
             toast.innerHTML = `
-                <div style="display:flex; align-items:center; gap:8px;">
+                <div style="display:flex; align-items:center; gap:10px;">
                     <span style="font-size:20px;">🔔</span>
                     <div>
-                        <div style="font-size:10px; text-transform:uppercase; opacity:0.9; color:#fde68a; font-weight:800;">Nuova Registrazione DEV</div>
-                        <div style="margin-top:1px; font-size:13px;">Si è registrato <u>${identifier}</u></div>
+                        <div style="font-size:10px; text-transform:uppercase; opacity:0.9; color:#fde68a; font-weight:800;">Nuova Registrazione Staff</div>
+                        <div style="margin-top:2px; font-size:13px;">Si è registrato <u>${identifier}</u></div>
+                        ${timestamp ? `<div style="font-size:10px; opacity:0.8; margin-top:2px; font-weight:normal;">🕒 ${timestamp}</div>` : ''}
                     </div>
                 </div>
-                <button onclick="this.parentElement.remove()" style="background:rgba(255,255,255,0.25); border:none; color:white; width:24px; height:24px; border-radius:50%; font-weight:bold; cursor:pointer; font-size:13px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">✕</button>
+                <button onclick="dismissUserNotification('${notifId}')" title="Segna come letto" style="background:rgba(255,255,255,0.2); border:none; color:white; width:26px; height:26px; border-radius:50%; font-weight:bold; cursor:pointer; font-size:13px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">✕</button>
             `;
 
             container.appendChild(toast);
-            
-            if ('vibrate' in navigator) {
-                navigator.vibrate([200, 100, 200]);
+        };
+
+        window.dismissUserNotification = async function(notifId) {
+            try {
+                await updateDoc(doc(db, "notifications", notifId), { status: "read", dismissedBy: window.currentUserProfile?.name || 'Admin' });
+                const el = document.getElementById(`toast-notif-${notifId}`);
+                if (el) el.remove();
+            } catch(e) {
+                console.error("Errore rimozione notifica:", e);
             }
         };
 
@@ -895,7 +928,7 @@
                 const roleBadge = isAdmin ? '⭐ Admin DEV' : '👤 Operatore DEV';
 
                 if (statusTxt) statusTxt.innerHTML = `${roleBadge}: <b>${window.currentUserProfile.name}</b>`;
-                if (authBtn) { authBtn.innerText = '🚪 Logout DEV'; authBtn.style.background = '#e53935'; authBtn.onclick = window.handleLogoutSubmit; }
+                if (authBtn) { authBtn.innerText = '🚪 Logout DEV'; authBtn.style.background = 'linear-gradient(135deg, #dc2626, #b91c1c)'; authBtn.onclick = window.handleLogoutSubmit; }
                 if (btnDeleteNotice) btnDeleteNotice.style.display = isAdmin ? 'inline-block' : 'none';
                 
                 const opText = window.currentUserProfile.name;
@@ -909,7 +942,7 @@
                 });
             } else {
                 if (statusTxt) statusTxt.innerHTML = '👁️ Modalità Lettura (Guest DEV)';
-                if (authBtn) { authBtn.innerText = '🔑 Accedi / Registrati'; authBtn.style.background = '#2563eb'; authBtn.onclick = window.openAuthModal; }
+                if (authBtn) { authBtn.innerText = '🔑 Accedi / Registrati'; authBtn.style.background = 'linear-gradient(135deg, #2563eb, #1d4ed8)'; authBtn.onclick = window.openAuthModal; }
                 if (btnDeleteNotice) btnDeleteNotice.style.display = 'none';
                 
                 if (opOrderInput) opOrderInput.value = '👁 Nessun Operatore DEV';
@@ -1052,6 +1085,18 @@
                 };
                 
                 await setDoc(doc(db, "users", res.user.uid), newUser);
+
+                // CREAZIONE NOTIFICA PERSISTENTE IN FIRESTORE PER L'ADMIN
+                const notifId = `reg_${Date.now()}`;
+                const nowDisplay = new Date().toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+                await setDoc(doc(db, "notifications", notifId), {
+                    id: notifId,
+                    type: "new_registration",
+                    userName: name,
+                    email: email,
+                    status: "unread",
+                    timestamp: nowDisplay
+                });
 
                 closeAuthModal(); 
                 window.showAlert("🎉 Account DEV registrato ed attivo!");
@@ -1345,13 +1390,13 @@
 
                 c.innerHTML += `
                     <div class="card-item ${isLow ? 'low-stock-alert' : ''}">
-                        <div class="item-name-box" style="border-left-color:${sup?.color || '#334155'};">
+                        <div class="item-name-box" style="border-left-color:${sup?.color || '#78350f'};">
                             <div class="item-name"><span>${item.isFavorite ? '⭐ ' : ''}${item.name}</span></div>
-                            <div class="item-subtext" style="font-size:11px; color:#555;">${lastUpdate}</div>
-                            <div class="badges-row"><span class="category-label-tag">${window.getCategoryEmoji(item.category)} ${item.category}</span><span class="supplier-badge" style="background:${sup?.color || '#334155'}">${sup?.name || 'N/D'}</span></div>
+                            <div class="item-subtext" style="font-size:11px; color:#78350f;">${lastUpdate}</div>
+                            <div class="badges-row"><span class="category-label-tag">${window.getCategoryEmoji(item.category)} ${item.category}</span><span class="supplier-badge" style="background:${sup?.color || '#78350f'}">${sup?.name || 'N/D'}</span></div>
                         </div>
                         <div class="item-controls">
-                            <div class="stock-label-box"><span class="stock-label-main">Giacenza</span><span class="stock-label-sub" style="color:${isLow?'var(--danger)':'#666'};">(Min: ${min})</span></div>
+                            <div class="stock-label-box"><span class="stock-label-main">Giacenza</span><span class="stock-label-sub" style="color:${isLow?'var(--danger)':'#78350f'};">(Min: ${min})</span></div>
                             <button class="qty-btn" onclick="updateStock(${item.id}, -1)">-</button>
                             <input type="number" class="qty-input" value="${qty}" onchange="setStock(${item.id}, this.value)">
                             <span class="unit-label">${item.unit}</span>
@@ -1384,13 +1429,13 @@
 
                 c.innerHTML += `
                     <div class="card-item ${isLow ? 'low-stock-alert' : ''}">
-                        <div class="item-name-box" style="border-left-color:${sup?.color || '#334155'};">
+                        <div class="item-name-box" style="border-left-color:${sup?.color || '#78350f'};">
                             <div class="item-name"><span>${item.isFavorite ? '⭐ ' : ''}${item.name}</span></div>
                             <div class="stock-warning-badge ${isLow?'alert':'normal'}">Scorta: ${qty} ${item.unit} (Min: ${min})</div>
-                            <div class="item-subtext" style="font-size:11px; color:#555; background:#fffbe8; padding:4px 8px; border-radius:4px; border:1px solid #fde68a; margin-top:4px;">
+                            <div class="item-subtext" style="font-size:11px; color:#78350f; background:#fefbf3; padding:4px 8px; border-radius:6px; border:1px solid #f3e8d2; margin-top:4px;">
                                 ${lastUpdateText}
                             </div>
-                            <div class="badges-row"><span class="category-label-tag">${window.getCategoryEmoji(item.category)} ${item.category}</span><span class="supplier-badge" style="background:${sup?.color || '#334155'}">${sup?.name || 'N/D'}</span></div>
+                            <div class="badges-row"><span class="category-label-tag">${window.getCategoryEmoji(item.category)} ${item.category}</span><span class="supplier-badge" style="background:${sup?.color || '#78350f'}">${sup?.name || 'N/D'}</span></div>
                         </div>
                         <div class="item-controls">
                             <span style="font-size:13px; font-weight:600; margin-right:auto;">Da Ordinare:</span>
@@ -1466,11 +1511,11 @@
                         <div style="font-weight:800; color:#b45309; font-size:18px; margin-bottom:8px;">🚚 ${supName}</div>
                         <div style="margin:12px 0; background:#fff; padding:10px; border-radius:6px; border:1px solid #e2e8f0;">${itemsListHtml}</div>
                         <a href="${wa}" style="background:var(--whatsapp); color:white; padding:12px; display:block; text-align:center; border-radius:8px; text-decoration:none; font-weight:bold; margin-bottom:6px;">💬 Invia via WhatsApp</a>
-                        <a href="mailto:${sup?.email||''}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}" style="background:#2563eb; color:white; padding:12px; display:block; text-align:center; border-radius:8px; text-decoration:none; font-weight:bold; margin-bottom:6px;">✉️ Invia via Email</a>
-                        <button onclick="confirmSingleSupplierOrder('${sId}', '${op}', '${dateVal}')" class="btn-save" style="width:100%; background:#1b5e20;">✅ Conferma Ordine DEV per ${supName}</button>
+                        <a href="mailto:${sup?.email||''}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}" style="background: linear-gradient(135deg, #2563eb, #1d4ed8); color:white; padding:12px; display:block; text-align:center; border-radius:8px; text-decoration:none; font-weight:bold; margin-bottom:6px;">✉️ Invia via Email</a>
+                        <button onclick="confirmSingleSupplierOrder('${sId}', '${op}', '${dateVal}')" class="btn-save" style="width:100%; background: linear-gradient(135deg, #166534, #14532d);">✅ Conferma Ordine DEV per ${supName}</button>
                     </div>`;
             }
-            c.innerHTML += `<button onclick="confirmAndSaveOrderToHistory('${op}')" class="btn-save" style="width:100%; padding:14px; background:#b45309;">✅ Conferma TUTTI gli Ordini DEV</button>`;
+            c.innerHTML += `<button onclick="confirmAndSaveOrderToHistory('${op}')" class="btn-save" style="width:100%; padding:14px; background: linear-gradient(135deg, #b45309, #92400e);">✅ Conferma TUTTI gli Ordini DEV</button>`;
         };
 
         window.confirmSingleSupplierOrder = async function(sId, operator, dateVal) {
@@ -1608,20 +1653,20 @@
 
                 if (!isChecked) {
                     checkStatusHtml = `
-                        <div style="background:#fff3f0; border:1px solid #ffcdd2; padding:8px; border-radius:6px; font-size:12px; color:#c62828; margin-top:8px; display:flex; justify-content:space-between; align-items:center;">
-                            <span>⚠️ <b>Da Controllare</b></span><button class="btn-save" style="padding:6px 10px; font-size:11px; background:#c62828;" onclick="openVerifyDeliveryModal(${h.id})">✍️ Verifica DEV</button>
+                        <div style="background:#fef2f2; border:1px solid #fecaca; padding:8px; border-radius:6px; font-size:12px; color:#dc2626; margin-top:8px; display:flex; justify-content:space-between; align-items:center;">
+                            <span>⚠️ <b>Da Controllare</b></span><button class="btn-save" style="padding:6px 10px; font-size:11px; background:#dc2626;" onclick="openVerifyDeliveryModal(${h.id})">✍️ Verifica DEV</button>
                         </div>`;
                 } else if (h.verificationDetails && !h.verificationDetails.includes("100%")) {
-                    checkStatusHtml = `<div style="background:#fff8e1; border:1px solid #ffe0b2; padding:8px; border-radius:6px; font-size:12px; color:#b45309; margin-top:8px;">⚠ <b>Discrepanze:</b> ${h.verificationDetails}</div>`;
+                    checkStatusHtml = `<div style="background:#fffbe8; border:1px solid #fde68a; padding:8px; border-radius:6px; font-size:12px; color:#b45309; margin-top:8px;">⚠ <b>Discrepanze:</b> ${h.verificationDetails}</div>`;
                 } else {
-                    checkStatusHtml = `<div style="background:#e8f5e9; border:1px solid #c8e6c9; padding:8px; border-radius:6px; font-size:12px; color:#2e7d32; margin-top:8px;">✅ <b>Completo</b> (${h.checkedBy} - ${h.checkedAt})</div>`;
+                    checkStatusHtml = `<div style="background:#f0fdf4; border:1px solid #bbf7d0; padding:8px; border-radius:6px; font-size:12px; color:#166534; margin-top:8px;">✅ <b>Completo</b> (${h.checkedBy} - ${h.checkedAt})</div>`;
                 }
                 
                 c.innerHTML += `
-                    <div class="history-card" style="border-left: 4px solid ${!isChecked ? '#e53935' : (h.verificationDetails && !h.verificationDetails.includes("100%") ? '#ffb300' : '#2e7d32')};">
+                    <div class="history-card" style="border-left: 4px solid ${!isChecked ? '#dc2626' : (h.verificationDetails && !h.verificationDetails.includes("100%") ? '#f59e0b' : '#166534')};">
                         <div class="history-header"><span>🕒 ${h.timestamp}</span><span>📍 ${h.destination}</span></div>
                         <div style="font-weight:bold; font-size:14px; margin-bottom:4px;">🚚 ${h.supplierName} <span style="font-size:12px; font-weight:normal; color:#666;">(👤 ${h.operatorName})</span></div>
-                        ${itemsHtml ? `<div style="font-size:12px; margin-top:6px; background:#f8fafc; padding:6px; border-radius:4px;">${itemsHtml}</div>` : ''}
+                        ${itemsHtml ? `<div style="font-size:12px; margin-top:6px; background:#faf8f5; padding:6px; border-radius:4px;">${itemsHtml}</div>` : ''}
                         ${checkStatusHtml}
                         <div style="margin-top:8px; text-align:right;"><button class="btn-action-del" onclick="deleteHistoryItemGuard(${idx})">🗑 Elimina</button></div>
                     </div>`;
@@ -1655,7 +1700,7 @@
 
                 c.innerHTML += `
                     <div class="card-item">
-                        <div class="item-name-box" style="border-left-color:${supObj?.color || '#334155'};">
+                        <div class="item-name-box" style="border-left-color:${supObj?.color || '#78350f'};">
                             <div class="item-name"><span>${item.name}</span><button class="star-toggle-btn" onclick="toggleFavorite(${item.id})">${item.isFavorite ? '⭐' : '☆'}</button></div>
                             <div class="item-subtext">Prezzo: ${item.price} SEK | Unità: ${item.unit}</div>
                             <div class="item-subtext" style="font-weight: 600; color: #b45309; margin-top: 4px;">
