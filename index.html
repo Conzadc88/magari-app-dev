@@ -4,7 +4,7 @@
 <!--
 ====================================================================
 [MAGARI APP - DEVELOPMENT / TEST ENVIRONMENT]
-- VERSION: v4.1.2-DEV
+- VERSION: v4.1.4-DEV
 - FIREBASE PROJECT: magari-app-dev
 - TARGET: Ambiente isolato di test e sviluppo
 ====================================================================
@@ -25,11 +25,11 @@
     <meta name="apple-mobile-web-app-title" content="Magari DEV">
     
     <!-- Icone Schermata Home & Favicon -->
-    <link rel="manifest" href="manifest.json?v=4.1.2-dev">
-    <link rel="apple-touch-icon" href="logo-square.png?v=4.1.2-dev">
-    <link rel="icon" type="image/png" href="logo-square.png?v=4.1.2-dev">
+    <link rel="manifest" href="manifest.json?v=4.1.4-dev">
+    <link rel="apple-touch-icon" href="logo-square.png?v=4.1.4-dev">
+    <link rel="icon" type="image/png" href="logo-square.png?v=4.1.4-dev">
 
-    <title>Magari v4.1.2 [DEV TEST]</title>
+    <title>Magari v4.1.4 [DEV TEST]</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -819,13 +819,21 @@
             window.refreshAllViews();
         });
 
-        // NOTIFICATORE STAFF REALTIME (PERSISTENTE)
+        // NOTIFICATORE STAFF REALTIME (SOLO PER ADMIN E MASTER ADMIN)
         let isInitialUsersLoad = true;
         onSnapshot(collection(db, "users"), (snapshot) => {
             if (isInitialUsersLoad) {
                 isInitialUsersLoad = false;
                 return;
             }
+
+            // CONTROLLO PERMESSI: Visibile SOLO ad Admin o Master Admin
+            const currentUser = window.currentUserProfile;
+            const isMaster = currentUser && currentUser.email && currentUser.email.toLowerCase() === "nicolas@magaripizza.com";
+            const isAdmin = isMaster || (currentUser && currentUser.role === 'admin');
+
+            if (!isAdmin) return; // Blocco per operatori o non autenticati
+
             snapshot.docChanges().forEach((change) => {
                 if (change.type === "added") {
                     const newUser = change.doc.data();
