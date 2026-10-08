@@ -673,7 +673,92 @@
         window.orderHistoryData = [];
         window.bugReportsData = [];
 
-        // MONITORAGGIO STATO AUTENTICAZIONE UTENTE
+        // ESPORTAZIONE FUNZIONI GENERALI SU WINDOW
+        window.getLocationKey = () => (window.activeLocation && window.activeLocation.includes('Östermalm')) ? 'ostermalm' : 'vasastan';
+        window.getQty = (i) => window.getLocationKey() === 'ostermalm' ? (i.qty_ostermalm ?? 0) : (i.qty_vasastan ?? i.qty ?? 0);
+        window.getOrderQty = (i) => window.getLocationKey() === 'ostermalm' ? (i.orderQty_ostermalm ?? 0) : (i.orderQty_vasastan ?? i.orderQty ?? 0);
+        window.getMin = (i) => window.getLocationKey() === 'ostermalm' ? (i.minQty_ostermalm ?? 2) : (i.minQty_vasastan ?? i.minQty ?? 2);
+        window.getLastUpdateBy = (i) => window.getLocationKey() === 'ostermalm' ? (i.lastUpdateBy_ostermalm ?? '') : (i.lastUpdateBy_vasastan ?? '');
+        window.getLastUpdateDate = (i) => window.getLocationKey() === 'ostermalm' ? (i.lastUpdateDate_ostermalm ?? '') : (i.lastUpdateDate_vasastan ?? '');
+
+        window.getStockUpdatesObj = function(newQty, opName) {
+            const key = window.getLocationKey();
+            const nowStr = new Date().toISOString(); 
+            const displayStr = new Date().toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+            if (key === 'ostermalm') return { qty_ostermalm: newQty, lastUpdateBy_ostermalm: opName, lastUpdateDate_ostermalm: displayStr, lastUpdateRaw_ostermalm: nowStr };
+            return { qty_vasastan: newQty, lastUpdateBy_vasastan: opName, lastUpdateDate_vasastan: displayStr, lastUpdateRaw_vasastan: nowStr };
+        };
+
+        window.translateUnitToSwedish = (unit) => ({ "Bottiglie": "flaskor", "Unità": "st", "Kg": "kg", "Litri": "liter", "Cartoni": "kartonger", "Sacchi": "säckar" }[unit] || unit || "st");
+        window.getCategoryEmoji = (cat) => ({ "Latticini": "🧀", "Farine & Secco": "🌾", "Conserve & Pomodoro": "🍅", "Salumi & Carni": "🥩", "Alcolici": "🍷", "Bevande": "🥤", "Surgelati": "❄", "Ortofrutta": "🥗", "Pulizia & Monouso": "🧹", "Altro": "📦" }[cat] || "📦");
+
+        window.setActiveLocation = function(loc) {
+            window.activeLocation = loc;
+            const guardBanner = document.getElementById('location-guard-banner');
+            if (guardBanner) guardBanner.style.display = 'none';
+            
+            const activeTxt = document.getElementById('active-location-text');
+            if (activeTxt) activeTxt.innerText = `📍 Sede DEV: ${loc}`;
+            
+            const activeBanner = document.getElementById('active-location-banner');
+            if (activeBanner) activeBanner.style.display = 'flex';
+            
+            const bugLocInput = document.getElementById('bug-location-display');
+            if (bugLocInput) bugLocInput.value = loc;
+            
+            if (typeof window.listenToStaffNotice === 'function') window.listenToStaffNotice();
+            if (typeof window.refreshAllViews === 'function') window.refreshAllViews();
+        };
+
+        window.promptChangeLocation = () => {
+            const guardBanner = document.getElementById('location-guard-banner');
+            if (guardBanner) guardBanner.style.display = 'flex';
+        };
+
+        window.toggleMenu = () => { 
+            const drawer = document.getElementById('drawer');
+            const overlay = document.getElementById('overlay');
+            if (drawer) drawer.classList.toggle('open'); 
+            if (overlay) overlay.classList.toggle('active'); 
+        };
+
+        window.closeAll = () => { 
+            document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); 
+            const overlay = document.getElementById('overlay');
+            const drawer = document.getElementById('drawer');
+            if (overlay) overlay.classList.remove('active'); 
+            if (drawer) drawer.classList.remove('open'); 
+        };
+
+        // NAVIGAZIONE TRA LE VISTE
+        window.navigateTo = function(sec) {
+            const adminProtectedSections = ['magazzino', 'fornitori', 'sprechi', 'impostazioni'];
+            const isAdmin = window.currentUserProfile && window.currentUserProfile.role === 'admin';
+
+            window.closeAll();
+
+            if (adminProtectedSections.includes(sec) && !isAdmin) {
+                window.showAlert("🔒 Sezione Riservata Admin DEV: Effettua il Login.");
+                setTimeout(() => { window.openAuthModal(); }, 150);
+                return;
+            }
+
+            document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+            const targetSec = document.getElementById(`view-${sec}`);
+            if (targetSec) targetSec.classList.add('active');
+            
+            const titles = { 'ordini': 'Ordini DEV', 'scorte': 'Scorte DEV', 'storico': 'Storico DEV', 'magazzino': 'Magazzino DEV', 'fornitori': 'Fornitori DEV', 'sprechi': 'Report Consumi DEV', 'faq': 'Guida DEV', 'bugreport': 'Segnala Bug DEV', 'impostazioni': 'Impostazioni DEV' };
+            const pageTitle = document.getElementById('page-title');
+            if (pageTitle) pageTitle.innerText = titles[sec] || 'Magari DEV';
+            
+            window.scrollTo({ top: 0, behavior: 'instant' });
+
+            if (sec === 'impostazioni' && isAdmin) {
+                window.loadUsersListForAdmin();
+            }
+        };
+
+        // MONITORAGGIO AUTENTICAZIONE
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 const isMasterAdmin = user.email && user.email.toLowerCase() === "nicolas@magaripizza.com";
@@ -709,7 +794,7 @@
             window.refreshAllViews();
         });
 
-        // NOTIFICATORE POPUP REALTIME PER NUOVE REGISTRAZIONS STAFF DEV
+        // NOTIFICATORE STAFF REALTIME
         let isInitialUsersLoad = true;
         onSnapshot(collection(db, "users"), (snapshot) => {
             if (isInitialUsersLoad) {
@@ -762,7 +847,7 @@
                 const roleBadge = isAdmin ? '⭐ Admin DEV' : '👤 Operatore DEV';
 
                 if (statusTxt) statusTxt.innerHTML = `${roleBadge}: <b>${window.currentUserProfile.name}</b>`;
-                if (authBtn) { authBtn.innerText = '🚪 Logout'; authBtn.style.background = '#e53935'; authBtn.onclick = window.handleLogoutSubmit; }
+                if (authBtn) { authBtn.innerText = '🚪 Logout DEV'; authBtn.style.background = '#e53935'; authBtn.onclick = window.handleLogoutSubmit; }
                 if (btnDeleteNotice) btnDeleteNotice.style.display = isAdmin ? 'inline-block' : 'none';
                 
                 const opText = window.currentUserProfile.name;
@@ -799,13 +884,12 @@
             return true;
         };
 
-        // NOTIFICHE TOAST
         window.showAlert = function(msg) {
             const toast = document.getElementById('toast-notification');
             if (toast) { toast.innerText = msg; toast.classList.add('show'); setTimeout(() => { toast.classList.remove('show'); }, 3500); }
         };
 
-        // LISTENERS AVVISI STAFF SEPARATI PER SEDE DEV
+        // LISTENERS AVVISI STAFF
         window.activeNoticeUnsubscribe = null;
 
         window.listenToStaffNotice = function() {
@@ -860,15 +944,19 @@
             window.showAlert(`🗑️ Avviso rimosso per ${window.activeLocation || locKey}.`);
         };
 
-        // MODALE AUTHENTICATION (LOGIN DEV)
+        // AUTH MODAL LOGIC
         window.openAuthModal = () => { 
             window.closeAll();
-            document.getElementById('auth-modal').classList.add('active'); 
-            document.getElementById('overlay').classList.add('active'); 
+            const modal = document.getElementById('auth-modal');
+            const overlay = document.getElementById('overlay');
+            if (modal) modal.classList.add('active'); 
+            if (overlay) overlay.classList.add('active'); 
         };
         window.closeAuthModal = () => { 
-            document.getElementById('auth-modal').classList.remove('active'); 
-            document.getElementById('overlay').classList.remove('active'); 
+            const modal = document.getElementById('auth-modal');
+            const overlay = document.getElementById('overlay');
+            if (modal) modal.classList.remove('active'); 
+            if (overlay) overlay.classList.remove('active'); 
         };
 
         window.switchAuthTab = function(tab) {
@@ -927,7 +1015,7 @@
             window.showAlert("🚪 Logout DEV effettuato.");
         };
 
-        // PANNELLO GESTIONE STAFF DEV
+        // GESTIONE STAFF IN ADMIN
         window.loadUsersListForAdmin = async function() {
             const container = document.getElementById('admin-users-list-container');
             if (!container) return;
@@ -952,4 +1040,958 @@
 
                 container.innerHTML = '';
                 querySnapshot.forEach((docSnap) => {
-                    const uData =
+                    const uData = docSnap.data();
+                    const uUid = docSnap.id;
+                    const isUserAdmin = uData.role === 'admin';
+                    const isMasterEmail = uData.email && uData.email.toLowerCase() === "nicolas@magaripizza.com";
+
+                    const roleBadge = isMasterEmail ? '⭐ Master Admin DEV' : (isUserAdmin ? '⭐ Admin DEV' : '👤 Operatore DEV');
+
+                    container.innerHTML += `
+                        <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; padding:10px; display:flex; flex-direction:column; gap:6px; box-shadow:0 1px 2px rgba(0,0,0,0.05);">
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <div>
+                                    <div style="font-weight:bold; color:#b45309; font-size:13px;">${uData.name || 'Senza Nome'}</div>
+                                    <div style="font-size:11px; color:#64748b;">${uData.email || 'N/D'}</div>
+                                </div>
+                                <div style="font-size:11px; font-weight:600; background:#f1f5f9; padding:2px 8px; border-radius:12px; color:#334155;">${roleBadge}</div>
+                            </div>
+                            
+                            <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:4px; border-top:1px dashed #e2e8f0; padding-top:6px;">
+                                ${!isMasterEmail ? `
+                                    <button onclick="openUserModal('${uUid}')" style="background:#e3f2fd; color:#0d47a1; border:1px solid #bbdefb; padding:4px 8px; border-radius:4px; font-size:11px; font-weight:600; cursor:pointer;">✏️ Modifica</button>
+                                    <button onclick="deleteUserFromAdmin('${uUid}', '${(uData.name || '').replace(/'/g, "\\'")}')" style="background:#ffebee; color:#c62828; border:1px solid #ffcdd2; padding:4px 8px; border-radius:4px; font-size:11px; font-weight:600; cursor:pointer;">🗑️ Elimina</button>
+                                ` : '<span style="font-size:10px; color:#94a3b8; font-style:italic;">Account Principale</span>'}
+                            </div>
+                        </div>`;
+                });
+            } catch(e) {
+                console.error("Errore lettura utenti DEV:", e);
+                container.innerHTML = `<div style="font-size:12px; color:#c62828; text-align:center; padding:10px;">⚠️ Impossibile caricare la lista utenti DEV (${e.message}).</div>`;
+            }
+        };
+
+        window.openUserModal = async function(uid = null) {
+            if (!window.checkAuthGuard()) return;
+            window.closeAll();
+            document.getElementById('edit-user-uid').value = '';
+            document.getElementById('user-field-name').value = '';
+            document.getElementById('user-field-email').value = '';
+            document.getElementById('user-field-pass').value = '';
+            document.getElementById('user-field-role').value = 'operator';
+
+            const passGroup = document.getElementById('user-field-pass-group');
+
+            if (uid) {
+                document.getElementById('user-modal-title').innerText = '✏️ Modifica Profilo DEV';
+                passGroup.style.display = 'none';
+                const userDoc = await getDoc(doc(db, "users", uid));
+                if (userDoc.exists()) {
+                    const data = userDoc.data();
+                    document.getElementById('edit-user-uid').value = uid;
+                    document.getElementById('user-field-name').value = data.name || '';
+                    document.getElementById('user-field-email').value = data.email || '';
+                    document.getElementById('user-field-role').value = data.role || 'operator';
+                }
+            } else {
+                document.getElementById('user-modal-title').innerText = '➕ Nuovo Operatore DEV';
+                passGroup.style.display = 'block';
+            }
+
+            document.getElementById('user-edit-modal').classList.add('active');
+            document.getElementById('overlay').classList.add('active');
+        };
+
+        window.closeUserModal = () => {
+            document.getElementById('user-edit-modal').classList.remove('active');
+            document.getElementById('overlay').classList.remove('active');
+        };
+
+        window.saveUserFromAdmin = async function() {
+            if (!window.checkAuthGuard()) return;
+            const uid = document.getElementById('edit-user-uid').value;
+            const name = document.getElementById('user-field-name').value.trim();
+            const email = document.getElementById('user-field-email').value.trim();
+            const role = document.getElementById('user-field-role').value;
+            const pass = document.getElementById('user-field-pass').value.trim();
+
+            if (!name || !email) return window.showAlert("⚠️ Inserisci Nome ed Email.");
+
+            if (uid) {
+                await updateDoc(doc(db, "users", uid), { name, email, role });
+                window.showAlert("✅ Operatore DEV aggiornato!");
+            } else {
+                if (!pass || pass.length < 6) return window.showAlert("⚠️ Password di almeno 6 caratteri.");
+                try {
+                    const res = await createUserWithEmailAndPassword(auth, email, pass);
+                    await setDoc(doc(db, "users", res.user.uid), { uid: res.user.uid, name, email, role });
+                    window.showAlert("🎉 Nuovo operatore DEV creato!");
+                } catch(e) {
+                    return window.showAlert(`❌ Errore Creazione: ${e.message}`);
+                }
+            }
+
+            closeUserModal();
+            window.loadUsersListForAdmin();
+        };
+
+        window.deleteUserFromAdmin = async function(uid, name) {
+            if (!window.checkAuthGuard()) return;
+            if (confirm(`Eliminare il profilo DEV dell'operatore "${name}"?`)) {
+                await deleteDoc(doc(db, "users", uid));
+                window.showAlert("🗑 Profilo eliminato dal database DEV.");
+                window.loadUsersListForAdmin();
+            }
+        };
+
+        // LISTENERS FIRESTORE REALTIME
+        onSnapshot(collection(db, "inventory"), (snapshot) => {
+            window.inventoryData = snapshot.docs.map(doc => doc.data());
+            window.refreshAllViews();
+        });
+
+        onSnapshot(collection(db, "suppliers"), (snapshot) => {
+            if(!snapshot.empty) window.suppliersData = snapshot.docs.map(doc => doc.data());
+            window.populateAllSupplierFilters();
+            window.refreshAllViews();
+        });
+
+        onSnapshot(collection(db, "history"), (snapshot) => {
+            window.orderHistoryData = snapshot.docs.map(doc => doc.data()).sort((a, b) => b.id - a.id);
+            window.refreshAllViews();
+        });
+
+        onSnapshot(collection(db, "bugReports"), (snapshot) => {
+            window.bugReportsData = snapshot.docs.map(doc => doc.data()).sort((a, b) => b.id - a.id);
+            window.refreshAllViews();
+        });
+
+        window.populateAllSupplierFilters = function() {
+            ['filter-order-supplier', 'filter-inventory-supplier', 'filter-stock-supplier', 'new-supplier-select'].forEach(id => {
+                const sel = document.getElementById(id); if (!sel) return;
+                const curr = sel.value; 
+                sel.innerHTML = id === 'new-supplier-select' ? '' : '<option value="">🚚 Tutti i Fornitori</option>';
+                window.suppliersData.forEach(s => { const opt = document.createElement('option'); opt.value = s.id; opt.innerText = s.name; sel.appendChild(opt); });
+                sel.value = curr;
+            });
+        };
+
+        window.refreshAllViews = function() { 
+            try { filterItems(); filterStockItems(); filterOrderItems(); filterSuppliers(); filterHistoryItems(); updateCartBadge(); updateHistoryBadge(); updateBugBadgesAndAdminList(); } catch(e){} 
+        };
+
+        window.updateCartBadge = function() {
+            const activeItemsCount = window.inventoryData.filter(i => window.getOrderQty(i) > 0).length;
+            const badge = document.getElementById('cart-badge-drawer');
+            if (badge) { badge.innerText = `${activeItemsCount} da ordinare`; badge.style.display = activeItemsCount > 0 ? 'inline-block' : 'none'; }
+        };
+
+        window.updateHistoryBadge = function() {
+            const activeLocShort = window.activeLocation ? window.activeLocation.split(' ')[0] : '';
+            const uncheckedCount = Array.isArray(window.orderHistoryData) 
+                ? window.orderHistoryData.filter(h => !h.checked && (h.destination && h.destination.includes(activeLocShort))).length 
+                : 0;
+            const badge = document.getElementById('history-badge-drawer');
+            if (badge) { badge.innerText = uncheckedCount; badge.style.display = uncheckedCount > 0 ? 'inline-block' : 'none'; }
+        };
+
+        window.updateBugBadgesAndAdminList = function() {
+            const isResolvedCheck = (b) => (b.resolved === true || b.resolved === "true" || b.status === "resolved");
+            const unresolvedCount = Array.isArray(window.bugReportsData) ? window.bugReportsData.filter(b => !isResolvedCheck(b)).length : 0;
+            
+            const settingsBadge = document.getElementById('bug-badge-settings');
+            if (settingsBadge) { 
+                settingsBadge.innerText = unresolvedCount; 
+                settingsBadge.style.display = unresolvedCount > 0 ? 'inline-block' : 'none'; 
+            }
+
+            const container = document.getElementById('admin-bug-reports-container');
+            if (container) {
+                if (!window.bugReportsData || window.bugReportsData.length === 0) {
+                    container.innerHTML = '<div style="font-size:12px; color:#666; text-align:center; padding:8px;">Nessuna segnalazione presente nel DB DEV.</div>';
+                } else {
+                    container.innerHTML = '';
+                    const sortedBugs = [...window.bugReportsData].sort((a, b) => {
+                        const resA = isResolvedCheck(a) ? 1 : 0;
+                        const resB = isResolvedCheck(b) ? 1 : 0;
+                        if (resA !== resB) return resA - resB;
+                        return b.id - a.id;
+                    });
+
+                    sortedBugs.forEach((b) => {
+                        const isResolved = isResolvedCheck(b);
+                        const bgStyle = isResolved ? 'background:#f8fafc; opacity:0.85;' : 'background:#fff8f0; border-color:#f97316;';
+                        const statusLabel = isResolved 
+                            ? '<span style="color:#2e7d32; font-weight:bold; background:#e8f5e9; padding:2px 6px; border-radius:4px;">✅ Risolto</span>' 
+                            : '<span style="color:#c2410c; font-weight:bold; background:#ffedd5; padding:2px 6px; border-radius:4px;">⏳ Da Gestire</span>';
+
+                        container.innerHTML += `
+                            <div style="${bgStyle} border:1px solid #cbd5e1; padding:10px; border-radius:8px; font-size:12px; display:flex; flex-direction:column; gap:6px;">
+                                <div style="display:flex; justify-content:space-between; align-items:center; font-weight:bold; color:#b45309;">
+                                    <span style="font-size:13px;">${b.type || '🐛 Bug'} - 👤 ${b.operator || 'Staff'}</span>
+                                    <span>${statusLabel}</span>
+                                </div>
+                                <div style="display:flex; justify-content:space-between; color:#666; font-size:11px;">
+                                    <span>📍 <b>Sede:</b> ${b.location || 'N/D'}</span>
+                                    <span>🕒 ${b.timestamp || ''}</span>
+                                </div>
+                                <div style="color:#1e293b; background:#ffffff; padding:8px; border-radius:6px; border:1px solid #e2e8f0; font-size:12px; font-weight:500;">
+                                    ${b.description || 'Nessun dettaglio fornito.'}
+                                </div>
+                                <div style="display:flex; justify-content:flex-end; gap:6px; margin-top:2px;">
+                                    <button class="btn-action-edit" onclick="toggleBugStatus('${b.id}')" style="padding:4px 8px; font-size:11px;">
+                                        ${isResolved ? '🔄 Riapri' : '✅ Segna Risolto'}
+                                    </button>
+                                    <button class="btn-action-del" onclick="deleteBugReport('${b.id}')" style="padding:4px 8px; font-size:11px;">
+                                        🗑 Elimina
+                                    </button>
+                                </div>
+                            </div>`;
+                    });
+                }
+            }
+        };
+
+        // SCORTE
+        window.updateStock = async function(id, d) { 
+            if (!window.checkAuthGuard()) return;
+            const opName = window.currentUserProfile.name;
+            const i = window.inventoryData.find(x => x.id === id); 
+            if(i) { 
+                const newQty = Math.max(0, window.getQty(i) + d);
+                await updateDoc(doc(db, "inventory", String(id)), window.getStockUpdatesObj(newQty, opName)); 
+            } 
+        };
+
+        window.setStock = async function(id, v) { 
+            if (!window.checkAuthGuard()) return;
+            const opName = window.currentUserProfile.name;
+            const i = window.inventoryData.find(x => x.id === id); 
+            if(i) { 
+                const newQty = Math.max(0, parseFloat(v) || 0);
+                await updateDoc(doc(db, "inventory", String(id)), window.getStockUpdatesObj(newQty, opName)); 
+            } 
+        };
+
+        window.filterStockItems = function() {
+            const q = (document.getElementById('search-stock-input')?.value || '').toLowerCase();
+            const cat = document.getElementById('filter-stock-category')?.value || '';
+            const sup = document.getElementById('filter-stock-supplier')?.value || '';
+            const sortMode = document.getElementById('sort-stock-select')?.value || 'name-asc';
+
+            let filtered = window.inventoryData.filter(i => {
+                const matchesCat = !cat ? true : (cat === 'FAVORITES' ? i.isFavorite === true : i.category === cat);
+                return i.name.toLowerCase().includes(q) && matchesCat && (!sup || String(i.supplierId) === String(sup));
+            });
+
+            filtered.sort((a, b) => a.name.localeCompare(b.name));
+            
+            const c = document.getElementById('stock-list'); 
+            if (!c) return;
+            c.innerHTML = '';
+            filtered.forEach(item => {
+                const sup = window.suppliersData.find(s => String(s.id) === String(item.supplierId));
+                const qty = window.getQty(item), min = window.getMin(item), isLow = qty < min;
+                const lastBy = window.getLastUpdateBy(item), lastDate = window.getLastUpdateDate(item);
+                const lastUpdate = lastDate ? `🕒 ${lastDate} (${lastBy || 'N/D'})` : '🕒 Non aggiornato';
+
+                c.innerHTML += `
+                    <div class="card-item ${isLow ? 'low-stock-alert' : ''}">
+                        <div class="item-name-box" style="border-left-color:${sup?.color || '#334155'};">
+                            <div class="item-name"><span>${item.isFavorite ? '⭐ ' : ''}${item.name}</span></div>
+                            <div class="item-subtext" style="font-size:11px; color:#555;">${lastUpdate}</div>
+                            <div class="badges-row"><span class="category-label-tag">${window.getCategoryEmoji(item.category)} ${item.category}</span><span class="supplier-badge" style="background:${sup?.color || '#334155'}">${sup?.name || 'N/D'}</span></div>
+                        </div>
+                        <div class="item-controls">
+                            <div class="stock-label-box"><span class="stock-label-main">Giacenza</span><span class="stock-label-sub" style="color:${isLow?'var(--danger)':'#666'};">(Min: ${min})</span></div>
+                            <button class="qty-btn" onclick="updateStock(${item.id}, -1)">-</button>
+                            <input type="number" class="qty-input" value="${qty}" onchange="setStock(${item.id}, this.value)">
+                            <span class="unit-label">${item.unit}</span>
+                            <button class="qty-btn" onclick="updateStock(${item.id}, 1)">+</button>
+                        </div>
+                    </div>`;
+            });
+        };
+
+        // ORDINI
+        window.filterOrderItems = function() {
+            const q = (document.getElementById('search-order-input')?.value || '').toLowerCase();
+            const cat = document.getElementById('filter-order-category')?.value || '';
+            const sup = document.getElementById('filter-order-supplier')?.value || '';
+
+            let filtered = window.inventoryData.filter(i => {
+                const matchesCat = !cat ? true : (cat === 'FAVORITES' ? i.isFavorite === true : i.category === cat);
+                return i.name.toLowerCase().includes(q) && matchesCat && (!sup || String(i.supplierId) === String(sup));
+            });
+            filtered.sort((a, b) => a.name.localeCompare(b.name));
+            
+            const c = document.getElementById('order-list'); 
+            if (!c) return;
+            c.innerHTML = '';
+            filtered.forEach(item => {
+                const sup = window.suppliersData.find(s => String(s.id) === String(item.supplierId));
+                const qty = window.getQty(item), min = window.getMin(item), isLow = qty < min;
+                const lastBy = window.getLastUpdateBy(item), lastDate = window.getLastUpdateDate(item);
+                const lastUpdateText = lastDate ? `🕒 Ultima modifica scorta: <b>${lastBy || 'Operatore'}</b> (${lastDate})` : '🕒 Scorta non ancora modificata';
+
+                c.innerHTML += `
+                    <div class="card-item ${isLow ? 'low-stock-alert' : ''}">
+                        <div class="item-name-box" style="border-left-color:${sup?.color || '#334155'};">
+                            <div class="item-name"><span>${item.isFavorite ? '⭐ ' : ''}${item.name}</span></div>
+                            <div class="stock-warning-badge ${isLow?'alert':'normal'}">Scorta: ${qty} ${item.unit} (Min: ${min})</div>
+                            <div class="item-subtext" style="font-size:11px; color:#555; background:#fffbe8; padding:4px 8px; border-radius:4px; border:1px solid #fde68a; margin-top:4px;">
+                                ${lastUpdateText}
+                            </div>
+                            <div class="badges-row"><span class="category-label-tag">${window.getCategoryEmoji(item.category)} ${item.category}</span><span class="supplier-badge" style="background:${sup?.color || '#334155'}">${sup?.name || 'N/D'}</span></div>
+                        </div>
+                        <div class="item-controls">
+                            <span style="font-size:13px; font-weight:600; margin-right:auto;">Da Ordinare:</span>
+                            <button class="qty-btn" onclick="updateOrder(${item.id}, -1)">-</button>
+                            <input type="number" class="qty-input" value="${window.getOrderQty(item)}" onchange="setOrder(${item.id}, this.value)">
+                            <span class="unit-label">${item.unit}</span>
+                            <button class="qty-btn" onclick="updateOrder(${item.id}, 1)">+</button>
+                        </div>
+                    </div>`;
+            });
+        };
+
+        window.updateOrder = async function(id, d) { 
+            if (!window.checkAuthGuard()) return;
+            const i = window.inventoryData.find(x => x.id === id); 
+            if(i) { 
+                const field = window.getLocationKey() === 'ostermalm' ? 'orderQty_ostermalm' : 'orderQty_vasastan';
+                await updateDoc(doc(db, "inventory", String(id)), { [field]: Math.max(0, window.getOrderQty(i) + d) }); 
+            } 
+        };
+        window.setOrder = async function(id, v) { 
+            if (!window.checkAuthGuard()) return;
+            const i = window.inventoryData.find(x => x.id === id); 
+            if(i) { 
+                const field = window.getLocationKey() === 'ostermalm' ? 'orderQty_ostermalm' : 'orderQty_vasastan';
+                await updateDoc(doc(db, "inventory", String(id)), { [field]: Math.max(0, parseFloat(v) || 0) }); 
+            } 
+        };
+
+        window.generateOrderSummary = function() {
+            if (!window.checkAuthGuard()) return;
+            const op = window.currentUserProfile.name;
+            const dateVal = document.getElementById('order-date-picker').value;
+            if (!dateVal) return window.showAlert("🚚 Seleziona una data di consegna.");
+
+            const items = window.inventoryData.filter(i => window.getOrderQty(i) > 0);
+            if (items.length === 0) return window.showAlert("🛒 Nessun prodotto selezionato.");
+
+            window.renderSummaryModalContent(op, dateVal);
+            document.getElementById('summary-modal').classList.add('active');
+            document.getElementById('overlay').classList.add('active');
+        };
+
+        window.renderSummaryModalContent = function(op, dateVal) {
+            const items = window.inventoryData.filter(i => window.getOrderQty(i) > 0);
+            let groups = {};
+            items.forEach(i => { if(!groups[i.supplierId]) groups[i.supplierId] = []; groups[i.supplierId].push(i); });
+            
+            const c = document.getElementById('summary-content'); c.innerHTML = '';
+            const locNameClean = (window.activeLocation || 'Magari DEV').split(' ')[0].toUpperCase();
+            const todayFormatted = new Date().toLocaleDateString('it-IT');
+
+            for (let sId in groups) {
+                const sup = window.suppliersData.find(s => String(s.id) === String(sId));
+                const supName = sup?.name || 'Fornitore';
+                const emailSubject = `Beställning Magari DEV ${locNameClean} - ${todayFormatted} (Leverans: ${dateVal})`;
+                
+                let emailBody = `BESTÄLLNING MAGARI DEV - ${locNameClean}\n========================================\n👤 BESTÄLLARE: ${op.toUpperCase()}\n🚚 ÖNSKAT LEVERANSDATUM: ${dateVal}\n\nCiao ${supName},\n\nPRODUKTER:\n`;
+                let waTxt = `*BESTÄLLNING MAGARI DEV - ${locNameClean}*\n👤 Beställare: *${op.toUpperCase()}*\n🚚 Önskat leveransdatum: *${dateVal}*\n\nCiao ${supName},\n\n*PRODUKTER:*\n`;
+                
+                groups[sId].forEach(p => { 
+                    const q = window.getOrderQty(p), u = window.translateUnitToSwedish(p.unit).toUpperCase();
+                    emailBody += `• ${p.name.toUpperCase()} -> ${q} ${u}\n`; 
+                    waTxt += `• *${p.name.toUpperCase()}*  ->  *${q} ${u}*\n`; 
+                });
+                emailBody += `\nMed vänliga hälsningar,\nMagari DEV`; waTxt += `\nMed vänliga hälsningar,\nMagari DEV`;
+                
+                const wa = `whatsapp://send?phone=${(sup?.phone || '').replace(/[^0-9]/g,'')}&text=${encodeURIComponent(waTxt)}`;
+                const itemsListHtml = groups[sId].map(p => `• <b>${p.name.toUpperCase()}</b>  ->  <span style="color:#b45309;">${window.getOrderQty(p)} ${window.translateUnitToSwedish(p.unit).toUpperCase()}</span>`).join('<br>');
+
+                c.innerHTML += `
+                    <div style="background:#fffbe8; padding:16px; border-radius:10px; margin-bottom:16px; border:1px solid #fde68a;">
+                        <div style="font-weight:800; color:#b45309; font-size:18px; margin-bottom:8px;">🚚 ${supName}</div>
+                        <div style="margin:12px 0; background:#fff; padding:10px; border-radius:6px; border:1px solid #e2e8f0;">${itemsListHtml}</div>
+                        <a href="${wa}" style="background:var(--whatsapp); color:white; padding:12px; display:block; text-align:center; border-radius:8px; text-decoration:none; font-weight:bold; margin-bottom:6px;">💬 Invia via WhatsApp</a>
+                        <a href="mailto:${sup?.email||''}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}" style="background:#2563eb; color:white; padding:12px; display:block; text-align:center; border-radius:8px; text-decoration:none; font-weight:bold; margin-bottom:6px;">✉️ Invia via Email</a>
+                        <button onclick="confirmSingleSupplierOrder('${sId}', '${op}', '${dateVal}')" class="btn-save" style="width:100%; background:#1b5e20;">✅ Conferma Ordine DEV per ${supName}</button>
+                    </div>`;
+            }
+            c.innerHTML += `<button onclick="confirmAndSaveOrderToHistory('${op}')" class="btn-save" style="width:100%; padding:14px; background:#b45309;">✅ Conferma TUTTI gli Ordini DEV</button>`;
+        };
+
+        window.confirmSingleSupplierOrder = async function(sId, operator, dateVal) {
+            const items = window.inventoryData.filter(i => String(i.supplierId) === String(sId) && window.getOrderQty(i) > 0);
+            if (items.length === 0) return;
+            const sup = window.suppliersData.find(s => String(s.id) === String(sId));
+            const nowStr = new Date().toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+            const entryId = Date.now() + Math.random();
+
+            const batch = writeBatch(db);
+            batch.set(doc(db, "history", String(entryId)), {
+                id: entryId, timestamp: nowStr, destination: window.activeLocation || 'Sede Non Specifica DEV',
+                operatorName: operator, supplierName: sup?.name || 'Fornitore',
+                items: items.map(i => ({ id: i.id, name: i.name, qty: window.getOrderQty(i), unit: i.unit })),
+                checked: false, verificationDetails: null
+            });
+
+            const field = window.getLocationKey() === 'ostermalm' ? 'orderQty_ostermalm' : 'orderQty_vasastan';
+            items.forEach(i => batch.update(doc(db, "inventory", String(i.id)), { [field]: 0 }));
+            
+            await batch.commit();
+            closeSummaryModal(); window.showAlert("✅ Ordine salvato nello storico DEV!");
+        };
+
+        window.confirmAndSaveOrderToHistory = async function(operator) {
+            const items = window.inventoryData.filter(i => window.getOrderQty(i) > 0);
+            if (items.length === 0) return;
+            let groups = {}; items.forEach(i => { if(!groups[i.supplierId]) groups[i.supplierId] = []; groups[i.supplierId].push(i); });
+            const nowStr = new Date().toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+            const batch = writeBatch(db);
+            for (let sId in groups) {
+                const sup = window.suppliersData.find(s => String(s.id) === String(sId));
+                const entryId = Date.now() + Math.random();
+                batch.set(doc(db, "history", String(entryId)), {
+                    id: entryId, timestamp: nowStr, destination: window.activeLocation || 'Sede Non Specifica DEV',
+                    operatorName: operator, supplierName: sup?.name || 'Fornitore',
+                    items: groups[sId].map(i => ({ id: i.id, name: i.name, qty: window.getOrderQty(i), unit: i.unit })),
+                    checked: false, verificationDetails: null
+                });
+            }
+
+            const field = window.getLocationKey() === 'ostermalm' ? 'orderQty_ostermalm' : 'orderQty_vasastan';
+            items.forEach(i => batch.update(doc(db, "inventory", String(i.id)), { [field]: 0 }));
+            
+            await batch.commit();
+            closeSummaryModal(); window.showAlert("🎉 Ordini salvati nello storico DEV!");
+        };
+
+        window.closeSummaryModal = () => { document.getElementById('summary-modal').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); };
+
+        // STORICO
+        window.openVerifyDeliveryModal = function(historyId) {
+            if (!window.checkAuthGuard()) return;
+            window.activeVerifyHistoryId = historyId;
+            const entry = window.orderHistoryData.find(x => x.id === historyId);
+            if (!entry) return;
+
+            const container = document.getElementById('verify-items-checklist-container');
+            container.innerHTML = '';
+            entry.items.forEach((it, idx) => {
+                container.innerHTML += `
+                    <div style="background:white; padding:8px 10px; border-radius:6px; border:1px solid #cbd5e1; display:flex; flex-direction:column; gap:4px;">
+                        <div style="font-weight:bold; font-size:13px; color:#1e293b;">• ${it.name}</div>
+                        <div style="display:flex; justify-content:space-between; font-size:12px; color:#555;">
+                            <span>Ordinato: <b>${it.qty} ${it.unit}</b></span>
+                            <div style="display:flex; align-items:center; gap:6px;">
+                                <label style="font-size:11px; font-weight:600;">Ricevuti:</label>
+                                <input type="number" id="verify-item-qty-${idx}" class="form-control" value="${it.qty}" style="width:60px; padding:4px; text-align:center; font-weight:bold;" min="0">
+                                <span style="font-size:11px;">${it.unit}</span>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+            document.getElementById('verify-note-input').value = '';
+            document.getElementById('verify-delivery-modal').classList.add('active');
+            document.getElementById('overlay').classList.add('active');
+        };
+
+        window.closeVerifyDeliveryModal = () => { document.getElementById('verify-delivery-modal').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); window.activeVerifyHistoryId = null; };
+
+        window.submitDeliveryVerification = async function() {
+            if (!window.checkAuthGuard()) return;
+            const opName = window.currentUserProfile.name;
+            const customNote = document.getElementById('verify-note-input').value.trim();
+            const entry = window.orderHistoryData.find(x => x.id === window.activeVerifyHistoryId);
+            if (!entry) return;
+
+            let discrepancies = customNote ? [customNote] : [];
+            const batch = writeBatch(db);
+            
+            entry.items.forEach((it, idx) => {
+                const receivedInput = document.getElementById(`verify-item-qty-${idx}`);
+                const receivedQty = receivedInput ? parseFloat(receivedInput.value) || 0 : it.qty;
+                if (receivedQty !== it.qty) discrepancies.push(`${it.name}: attesi ${it.qty}, ricevuti ${receivedQty}`);
+
+                if (receivedQty > 0) {
+                    let invItem = window.inventoryData.find(x => x.id === it.id || x.name.toLowerCase() === it.name.toLowerCase());
+                    if (invItem) {
+                        const newQty = window.getQty(invItem) + receivedQty;
+                        batch.update(doc(db, "inventory", String(invItem.id)), window.getStockUpdatesObj(newQty, opName));
+                    }
+                }
+            });
+
+            const nowStr = new Date().toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+            batch.update(doc(db, "history", String(entry.id)), {
+                checked: true, checkedBy: opName, checkedAt: nowStr,
+                verificationDetails: discrepancies.length > 0 ? discrepancies.join(' | ') : "Merce completa al 100%"
+            });
+
+            await batch.commit();
+            closeVerifyDeliveryModal(); window.showAlert("✅ Merce verificata, stornata e aggiunta alle giacenze DEV!");
+        };
+
+        window.filterHistoryItems = function() {
+            const c = document.getElementById('history-list'); 
+            if (!c) return;
+            c.innerHTML = '';
+            const query = (document.getElementById('search-history-input')?.value || '').toLowerCase();
+            const activeLocShort = window.activeLocation ? window.activeLocation.split(' ')[0] : '';
+
+            const filtered = window.orderHistoryData.filter(h => {
+                const matchesQuery = (h.supplierName || '').toLowerCase().includes(query) || (h.operatorName || '').toLowerCase().includes(query);
+                const matchesLoc = h.destination && h.destination.includes(activeLocShort);
+                return matchesQuery && matchesLoc;
+            });
+
+            if (filtered.length === 0) return c.innerHTML = '<div style="padding:16px; text-align:center; color:#666;">Nessun ordine nello storico DEV.</div>';
+
+            filtered.forEach((h, idx) => {
+                let itemsHtml = Array.isArray(h.items) ? h.items.map(it => `• ${it.name}: <b>${it.qty} ${it.unit}</b>`).join('<br>') : '';
+                const isChecked = h.checked === true;
+                let checkStatusHtml = '';
+
+                if (!isChecked) {
+                    checkStatusHtml = `
+                        <div style="background:#fff3f0; border:1px solid #ffcdd2; padding:8px; border-radius:6px; font-size:12px; color:#c62828; margin-top:8px; display:flex; justify-content:space-between; align-items:center;">
+                            <span>⚠️ <b>Da Controllare</b></span><button class="btn-save" style="padding:6px 10px; font-size:11px; background:#c62828;" onclick="openVerifyDeliveryModal(${h.id})">✍️ Verifica DEV</button>
+                        </div>`;
+                } else if (h.verificationDetails && !h.verificationDetails.includes("100%")) {
+                    checkStatusHtml = `<div style="background:#fff8e1; border:1px solid #ffe0b2; padding:8px; border-radius:6px; font-size:12px; color:#b45309; margin-top:8px;">⚠ <b>Discrepanze:</b> ${h.verificationDetails}</div>`;
+                } else {
+                    checkStatusHtml = `<div style="background:#e8f5e9; border:1px solid #c8e6c9; padding:8px; border-radius:6px; font-size:12px; color:#2e7d32; margin-top:8px;">✅ <b>Completo</b> (${h.checkedBy} - ${h.checkedAt})</div>`;
+                }
+                
+                c.innerHTML += `
+                    <div class="history-card" style="border-left: 4px solid ${!isChecked ? '#e53935' : (h.verificationDetails && !h.verificationDetails.includes("100%") ? '#ffb300' : '#2e7d32')};">
+                        <div class="history-header"><span>🕒 ${h.timestamp}</span><span>📍 ${h.destination}</span></div>
+                        <div style="font-weight:bold; font-size:14px; margin-bottom:4px;">🚚 ${h.supplierName} <span style="font-size:12px; font-weight:normal; color:#666;">(👤 ${h.operatorName})</span></div>
+                        ${itemsHtml ? `<div style="font-size:12px; margin-top:6px; background:#f8fafc; padding:6px; border-radius:4px;">${itemsHtml}</div>` : ''}
+                        ${checkStatusHtml}
+                        <div style="margin-top:8px; text-align:right;"><button class="btn-action-del" onclick="deleteHistoryItemGuard(${idx})">🗑 Elimina</button></div>
+                    </div>`;
+            });
+        };
+
+        // MAGAZZINO ED EDITOR
+        window.toggleFavorite = async function(itemId) {
+            if (!window.checkAuthGuard()) return;
+            const item = window.inventoryData.find(x => x.id === itemId);
+            if (item) {
+                await updateDoc(doc(db, "inventory", String(itemId)), { isFavorite: !item.isFavorite });
+                window.showAlert(!item.isFavorite ? `⭐ ${item.name} aggiunto ai Preferiti!` : `☆ ${item.name} rimosso dai Preferiti.`);
+            }
+        };
+
+        window.filterItems = function() {
+            const q = (document.getElementById('search-input')?.value || '').toLowerCase();
+            const cat = document.getElementById('filter-inventory-category')?.value || '';
+            const sup = document.getElementById('filter-inventory-supplier')?.value || '';
+            const c = document.getElementById('inventory-list'); 
+            if (!c) return;
+            c.innerHTML = '';
+
+            window.inventoryData.filter(i => {
+                return i.name.toLowerCase().includes(q) && (!cat || (cat === 'FAVORITES' ? i.isFavorite : i.category === cat)) && (!sup || String(i.supplierId) === String(sup));
+            }).sort((a, b) => a.name.localeCompare(b.name)).forEach(item => {
+                const supObj = window.suppliersData.find(s => String(s.id) === String(item.supplierId));
+                const minVas = (item.minQty_vasastan !== undefined && item.minQty_vasastan !== null) ? item.minQty_vasastan : (item.minQty ?? 2);
+                const minOst = (item.minQty_ostermalm !== undefined && item.minQty_ostermalm !== null) ? item.minQty_ostermalm : 2;
+
+                c.innerHTML += `
+                    <div class="card-item">
+                        <div class="item-name-box" style="border-left-color:${supObj?.color || '#334155'};">
+                            <div class="item-name"><span>${item.name}</span><button class="star-toggle-btn" onclick="toggleFavorite(${item.id})">${item.isFavorite ? '⭐' : '☆'}</button></div>
+                            <div class="item-subtext">Prezzo: ${item.price} SEK | Unità: ${item.unit}</div>
+                            <div class="item-subtext" style="font-weight: 600; color: #b45309; margin-top: 4px;">
+                                📉 Min: Vasastan ${minVas} ${item.unit} | Östermalm ${minOst} ${item.unit}
+                            </div>
+                        </div>
+                        <div class="action-row-btn">
+                            <button class="btn-action-edit" onclick="openAddModal(${item.id})">✏ Modifica</button>
+                            <button class="btn-action-del" onclick="deleteInventoryItem(${item.id})">🗑 Elimina</button>
+                        </div>
+                    </div>`;
+            });
+        };
+
+        window.openAddModal = function(id = null) {
+            if (!window.checkAuthGuard()) return;
+            window.closeAll();
+            window.populateAllSupplierFilters();
+            document.getElementById('edit-item-id').value = ''; 
+            document.getElementById('new-name').value = ''; 
+            document.getElementById('new-price').value = '0';
+            document.getElementById('new-min-vasastan').value = '2';
+            document.getElementById('new-min-ostermalm').value = '2';
+            
+            if (id) {
+                const item = window.inventoryData.find(x => x.id === id);
+                if (item) {
+                    document.getElementById('edit-item-id').value = item.id; 
+                    document.getElementById('new-name').value = item.name;
+                    document.getElementById('new-category-select').value = item.category; 
+                    document.getElementById('new-supplier-select').value = item.supplierId;
+                    document.getElementById('new-min-vasastan').value = (item.minQty_vasastan !== undefined && item.minQty_vasastan !== null) ? item.minQty_vasastan : (item.minQty ?? 2);
+                    document.getElementById('new-min-ostermalm').value = (item.minQty_ostermalm !== undefined && item.minQty_ostermalm !== null) ? item.minQty_ostermalm : 2;
+                    document.getElementById('new-price').value = item.price || 0; 
+                    document.getElementById('new-unit').value = item.unit || 'Bottiglie';
+                }
+            }
+            document.getElementById('add-modal').classList.add('active'); 
+            document.getElementById('overlay').classList.add('active');
+        };
+        window.closeAddModal = () => { document.getElementById('add-modal').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); };
+
+        window.saveInventoryItem = async function() {
+            if (!window.checkAuthGuard()) return;
+            const idVal = document.getElementById('edit-item-id').value;
+            const name = document.getElementById('new-name').value.trim();
+            if (!name) return window.showAlert("⚠️ Inserisci il nome.");
+            
+            const cat = document.getElementById('new-category-select').value;
+            const supId = parseInt(document.getElementById('new-supplier-select').value);
+            const price = parseFloat(document.getElementById('new-price').value) || 0;
+            const unit = document.getElementById('new-unit').value;
+            const valVas = parseFloat(document.getElementById('new-min-vasastan').value);
+            const minVasastan = isNaN(valVas) ? 2 : valVas;
+            const valOst = parseFloat(document.getElementById('new-min-ostermalm').value);
+            const minOstermalm = isNaN(valOst) ? 2 : valOst;
+
+            if (idVal) {
+                await updateDoc(doc(db, "inventory", String(idVal)), { 
+                    name, category: cat, supplierId: supId, price, unit, minQty_vasastan: minVasastan, minQty_ostermalm: minOstermalm
+                });
+            } else {
+                const newId = Date.now();
+                await setDoc(doc(db, "inventory", String(newId)), { 
+                    id: newId, name, category: cat, supplierId: supId, minQty_vasastan: minVasastan, minQty_ostermalm: minOstermalm, 
+                    orderQty_vasastan: 0, orderQty_ostermalm: 0, unit, price, qty_vasastan: 0, qty_ostermalm: 0, isFavorite: false 
+                });
+            }
+            closeAddModal(); window.showAlert("✅ Prodotto salvato in DEV!");
+        };
+        window.deleteInventoryItem = async function(id) { if (window.checkAuthGuard() && confirm("Eliminare prodotto DEV?")) await deleteDoc(doc(db, "inventory", String(id))); };
+
+        // FORNITORI
+        window.filterSuppliers = function() {
+            const q = (document.getElementById('search-supplier-input')?.value || '').toLowerCase();
+            const c = document.getElementById('suppliers-list'); 
+            if (!c) return;
+            c.innerHTML = '';
+            window.suppliersData.filter(s => s.name.toLowerCase().includes(q)).sort((a, b) => a.name.localeCompare(b.name)).forEach(s => {
+                c.innerHTML += `
+                    <div class="card-item">
+                        <div class="item-name-box" style="border-left-color:${s.color};">
+                            <div class="item-name" style="color:${s.color};">🚚 ${s.name}</div>
+                            <div class="item-subtext">📞 ${s.phone || 'N/D'} | ✉ ${s.email || 'N/D'}</div>
+                        </div>
+                        <div class="action-row-btn">
+                            <button class="btn-action-edit" onclick="openAddSupplierModal('${s.id}')">✏️ Modifica</button>
+                            <button class="btn-action-del" onclick="deleteSupplier('${s.id}')">🗑 Elimina</button>
+                        </div>
+                    </div>`;
+            });
+        };
+
+        window.openAddSupplierModal = function(id = null) {
+            if (!window.checkAuthGuard()) return;
+            window.closeAll();
+            document.getElementById('edit-supplier-id').value = '';
+            document.getElementById('supp-name').value = '';
+            document.getElementById('supp-phone').value = '';
+            document.getElementById('supp-email').value = '';
+            document.getElementById('supp-color-input').value = '#1976d2';
+
+            if (id) {
+                const s = window.suppliersData.find(x => String(x.id) === String(id));
+                if (s) {
+                    document.getElementById('supplier-modal-title').innerText = '✏️ Modifica Fornitore DEV';
+                    document.getElementById('edit-supplier-id').value = s.id;
+                    document.getElementById('supp-name').value = s.name || '';
+                    document.getElementById('supp-phone').value = s.phone || '';
+                    document.getElementById('supp-email').value = s.email || '';
+                    document.getElementById('supp-color-input').value = s.color || '#1976d2';
+                }
+            } else {
+                document.getElementById('supplier-modal-title').innerText = '➕ Nuovo Fornitore DEV';
+            }
+
+            document.getElementById('add-supplier-modal').classList.add('active');
+            document.getElementById('overlay').classList.add('active');
+        };
+
+        window.closeAddSupplierModal = () => { 
+            document.getElementById('add-supplier-modal').classList.remove('active'); 
+            document.getElementById('overlay').classList.remove('active'); 
+        };
+
+        window.saveSupplier = async function() {
+            if (!window.checkAuthGuard()) return;
+            const idVal = document.getElementById('edit-supplier-id').value;
+            const name = document.getElementById('supp-name').value.trim();
+            const phone = document.getElementById('supp-phone').value.trim();
+            const email = document.getElementById('supp-email').value.trim();
+            const color = document.getElementById('supp-color-input').value;
+
+            if (!name) return window.showAlert("⚠️ Inserisci il nome del fornitore.");
+
+            if (idVal) {
+                await updateDoc(doc(db, "suppliers", String(idVal)), { name, phone, email, color });
+                window.showAlert("✅ Fornitore DEV aggiornato!");
+            } else {
+                const newId = Date.now();
+                await setDoc(doc(db, "suppliers", String(newId)), { id: newId, name, phone, email, color });
+                window.showAlert("✅ Nuovo fornitore DEV salvato!");
+            }
+
+            closeAddSupplierModal();
+        };
+
+        window.deleteSupplier = async function(id) {
+            if (!window.checkAuthGuard()) return;
+            if (confirm("Eliminare fornitore DEV?")) {
+                await deleteDoc(doc(db, "suppliers", String(id)));
+                window.showAlert("🗑️ Fornitore eliminato.");
+            }
+        };
+
+        // EXPORT EXCEL
+        window.promptExportExcelModal = () => { 
+            if (!window.checkAuthGuard()) return; 
+            window.closeAll(); 
+            document.getElementById('export-excel-modal').classList.add('active'); 
+            document.getElementById('overlay').classList.add('active'); 
+        };
+        window.closeExportExcelModal = () => { document.getElementById('export-excel-modal').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); };
+
+        window.generateAndExportExcel = function() {
+            const type = document.getElementById('export-type-select').value;
+            const opName = window.currentUserProfile ? window.currentUserProfile.name : 'Operatore';
+            const locName = window.activeLocation || 'Magari DEV';
+            const todayStr = new Date().toLocaleDateString('it-IT');
+            const isAlcoholCategory = (cat) => (cat === 'Alcolici' || cat === 'Bevande');
+
+            const buildStandardSheetData = (itemsList, titleHeader) => {
+                const rows = [
+                    [`MAGARI DEV INVENTORY REPORT - ${titleHeader.toUpperCase()}`],
+                    [`Location: ${locName}`, `Date: ${todayStr}`, `Operator: ${opName}`],
+                    [""],
+                    ["ITEM NAME", "CATEGORY", "SUPPLIER", "PRICE (SEK)", "STOCK QTY", "TOTAL VALUE (SEK)", "UNIT"]
+                ];
+
+                let totalStockSum = 0; let totalValueSum = 0;
+                itemsList.forEach(i => {
+                    const sup = window.suppliersData.find(s => String(s.id) === String(i.supplierId))?.name || 'N/D';
+                    const stock = window.getQty(i); const price = i.price || 0;
+                    const val = parseFloat((stock * price).toFixed(2));
+                    totalStockSum += stock; totalValueSum += val;
+                    rows.push([i.name, i.category, sup, price, stock, val, i.unit]);
+                });
+
+                rows.push([""]);
+                rows.push(["TOTAL FOOD & SUPPLIES", "", "", "", totalStockSum, parseFloat(totalValueSum.toFixed(2)), ""]);
+                const ws = XLSX.utils.aoa_to_sheet(rows);
+                return ws;
+            };
+
+            const wb = XLSX.utils.book_new();
+            const foodItems = window.inventoryData.filter(i => !isAlcoholCategory(i.category)).sort((a, b) => a.name.localeCompare(b.name));
+
+            XLSX.utils.book_append_sheet(wb, buildStandardSheetData(foodItems, "Food & Supplies DEV"), "Food & Supplies");
+
+            const cleanLoc = locName.split(' ')[0];
+            const dateStr = new Date().toISOString().split('T')[0];
+            
+            XLSX.writeFile(wb, `Inventory_Magari_DEV_${cleanLoc}_${dateStr}.xlsx`);
+            closeExportExcelModal(); 
+            window.showAlert("📊 File Excel DEV scaricato!");
+        };
+
+        // REPORT CONSUMI
+        window.generateRealReport = function() {
+            if (!window.checkAuthGuard()) return;
+
+            const periodType = document.getElementById('report-period-type').value;
+            const monthVal = document.getElementById('report-month-picker').value;
+            const resultsContainer = document.getElementById('report-results-container');
+            const titleDisplay = document.getElementById('report-title-display');
+            const alcTbody = document.querySelector('#table-alcohol-report tbody');
+            const foodTbody = document.querySelector('#table-food-report tbody');
+            const grandTotalBox = document.getElementById('grand-total-report-box');
+
+            if (periodType === 'month' && !monthVal) {
+                return window.showAlert("⚠️ Seleziona un mese per generare il report.");
+            }
+
+            const isAlcohol = (cat) => (cat === 'Alcolici' || cat === 'Bevande');
+            const activeLocShort = window.activeLocation ? window.activeLocation.split(' ')[0] : '';
+
+            let itemTotals = {}; 
+
+            if (periodType === 'stock') {
+                titleDisplay.innerText = `📊 Report Valore Giacenze DEV (${window.activeLocation || 'Tutte le sedi'})`;
+                window.inventoryData.forEach(item => {
+                    const qty = window.getQty(item);
+                    if (qty > 0) {
+                        itemTotals[item.name] = {
+                            qty: qty,
+                            price: item.price || 0,
+                            unit: item.unit,
+                            isAlc: isAlcohol(item.category)
+                        };
+                    }
+                });
+            } else {
+                const label = periodType === 'month' ? `Mese: ${monthVal}` : 'Totale Storico DEV';
+                titleDisplay.innerText = `📋 Report Consumi DEV (${label} - ${window.activeLocation || 'Tutte le sedi'})`;
+
+                const filteredHistory = window.orderHistoryData.filter(h => {
+                    return !activeLocShort || (h.destination && h.destination.includes(activeLocShort));
+                });
+
+                filteredHistory.forEach(h => {
+                    if (Array.isArray(h.items)) {
+                        h.items.forEach(it => {
+                            const invMatch = window.inventoryData.find(x => x.id === it.id || x.name.toLowerCase() === it.name.toLowerCase());
+                            const price = invMatch ? (invMatch.price || 0) : 0;
+                            const isAlc = invMatch ? isAlcohol(invMatch.category) : false;
+
+                            if (!itemTotals[it.name]) {
+                                itemTotals[it.name] = { qty: 0, price: price, unit: it.unit, isAlc: isAlc };
+                            }
+                            itemTotals[it.name].qty += parseFloat(it.qty) || 0;
+                        });
+                    }
+                });
+            }
+
+            alcTbody.innerHTML = '';
+            foodTbody.innerHTML = '';
+            let totalAlcCost = 0;
+            let totalFoodCost = 0;
+
+            Object.keys(itemTotals).sort().forEach(name => {
+                const data = itemTotals[name];
+                const cost = parseFloat((data.qty * data.price).toFixed(2));
+                const rowHtml = `<tr><td><b>${name}</b></td><td>${data.qty} ${data.unit}</td><td>${cost.toFixed(2)} SEK</td></tr>`;
+
+                if (data.isAlc) {
+                    alcTbody.innerHTML += rowHtml;
+                    totalAlcCost += cost;
+                } else {
+                    foodTbody.innerHTML += rowHtml;
+                    totalFoodCost += cost;
+                }
+            });
+
+            const grandTotal = parseFloat((totalAlcCost + totalFoodCost).toFixed(2));
+            grandTotalBox.innerHTML = `💰 COSTO TOTALE DEV: <span style="font-size:16px;">${grandTotal.toFixed(2)} SEK</span>`;
+
+            resultsContainer.style.display = 'block';
+            window.showAlert("📊 Report DEV generato!");
+        };
+
+        // BUG & RESETS
+        window.submitBugReport = async function() {
+            if (!window.checkAuthGuard()) return;
+            const op = window.currentUserProfile.name;
+            const desc = document.getElementById('bug-desc-input').value.trim();
+            if (!desc) return window.showAlert("⚠️ Compila la descrizione.");
+            const nowStr = new Date().toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+            const newId = Date.now();
+
+            await setDoc(doc(db, "bugReports", String(newId)), {
+                id: newId, timestamp: nowStr, operator: op, type: document.getElementById('bug-type-select').value,
+                description: desc, location: document.getElementById('bug-location-display').value || window.activeLocation || 'Sede Non Specifica DEV', resolved: false
+            });
+
+            document.getElementById('bug-desc-input').value = '';
+            window.showAlert("🚀 Segnalazione DEV inviata!"); window.navigateTo('ordini');
+        };
+
+        window.toggleBugStatus = async function(bugId) {
+            if (!window.checkAuthGuard()) return;
+            const bug = window.bugReportsData.find(b => String(b.id) === String(bugId));
+            if (bug) {
+                const currentStatus = (bug.resolved === true || bug.resolved === "true" || bug.status === "resolved");
+                await updateDoc(doc(db, "bugReports", String(bugId)), { resolved: !currentStatus });
+                window.showAlert(!currentStatus ? "✅ Segnalazione DEV Risolta!" : "🔄 Segnalazione DEV riaperta!");
+            }
+        };
+
+        window.deleteBugReport = async function(bugId) {
+            if (!window.checkAuthGuard()) return;
+            if (confirm("Eliminare la segnalazione DEV?")) {
+                await deleteDoc(doc(db, "bugReports", String(bugId)));
+                window.showAlert("🗑️ Segnalazione eliminata.");
+            }
+        };
+
+        window.deleteHistoryItemGuard = async function(idx) {
+            if (!window.checkAuthGuard()) return;
+            if (confirm("Eliminare dalla storico DEV?")) {
+                const h = window.orderHistoryData[idx];
+                await deleteDoc(doc(db, "history", String(h.id)));
+            }
+        };
+
+        window.executeResetStockGuard = async function() {
+            if (!window.checkAuthGuard()) return;
+            const key = window.getLocationKey();
+            if (confirm(`Azzerare giacenze per la sede attiva DEV (${key})?`)) {
+                const batch = writeBatch(db);
+                window.inventoryData.forEach(i => {
+                    const ref = doc(db, "inventory", String(i.id));
+                    if (key === 'ostermalm') batch.update(ref, { qty_ostermalm: 0 });
+                    else batch.update(ref, { qty_vasastan: 0 });
+                });
+                await batch.commit(); window.showAlert("✅ Giacenze DEV azzerate!");
+            }
+        };
+
+        window.executeClearHistoryGuard = async function() {
+            if (!window.checkAuthGuard()) return;
+            if (confirm("Svuotare lo storico ordini DEV?")) {
+                const batch = writeBatch(db);
+                window.orderHistoryData.forEach(h => batch.delete(doc(db, "history", String(h.id))));
+                await batch.commit(); window.showAlert("🗑️ Storico DEV svuotato!");
+            }
+        };
+
+        window.executeResetSuppliersGuard = async function() {
+            if (!window.checkAuthGuard()) return;
+            if (confirm("Ripristinare i fornitori DEV?")) {
+                const batch = writeBatch(db);
+                window.suppliersData.forEach(s => batch.delete(doc(db, "suppliers", String(s.id))));
+                window.defaultSuppliers.forEach(s => batch.set(doc(db, "suppliers", String(s.id)), s));
+                await batch.commit(); window.showAlert("✅ Fornitori DEV ripristinati!");
+            }
+        };
+
+        window.executeResetAllGuard = async function() {
+            if (!window.checkAuthGuard()) return;
+            if (confirm("RESET TOTALE DATABASE DEV TEST?")) {
+                const batch = writeBatch(db);
+                window.inventoryData.forEach(i => batch.delete(doc(db, "inventory", String(i.id))));
+                window.orderHistoryData.forEach(h => batch.delete(doc(db, "history", String(h.id))));
+                window.bugReportsData.forEach(b => batch.delete(doc(db, "bugReports", String(b.id))));
+                window.suppliersData.forEach(s => batch.delete(doc(db, "suppliers", String(s.id))));
+                window.defaultSuppliers.forEach(s => batch.set(doc(db, "suppliers", String(s.id)), s));
+                await batch.commit(); window.showAlert("⚠️ Reset DEV completato.");
+            }
+        };
+
+        const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
+        const datePicker = document.getElementById('order-date-picker');
+        if (datePicker) { datePicker.min = tomorrow; datePicker.value = tomorrow; }
+    </script>
+</body>
+</html>
