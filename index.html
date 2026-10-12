@@ -3,23 +3,20 @@
 <head>
 <!--
 ====================================================================
-[MAGARI APP - HISTORICAL CHANGELOG REGISTRY & ARCHIVE]
-
-- v4.2.0 STABLE (12/10/2026 - FIX REPORT MONTH PICKER, EXCEL ALCOHOL/BEVERAGES & ADMIN FAVORITES):
-  1. Risolto il bug di selezione del mese nel Report Consumi con pre-compilazione automatica del mese corrente (YYYY-MM).
-  2. Ripristinato l'export Excel completo per Alcolici & Bevande con subtotali separati e gran totale.
-  3. Applicato l'auto-sizing delle colonne (!cols) in Excel per evitare il troncamento dei testi.
-  4. Riservata la modifica dei Preferiti agli utenti Admin dal Magazzino, con badge fisso di sola lettura ("⭐ Preferito" / "☆ Preferito") per gli operatori in Ordini e Scorte.
-  5. Sincronizzato con il database di Produzione Ufficiale (magari-b7f93).
-
-- v4.1.2 STABLE (08/10/2026 - FIX CACHE BUSTING, AUTH PERSISTENCE & REALTIME NOTIFICATIONS):
-  6. Deregistrazione automatica Service Worker per invalidare la vecchia cache PWA.
-  7. Sincronizzazione chiave API attiva (magari-b7f93).
+[MAGARI APP - DEVELOPMENT / TEST ENVIRONMENT]
+- VERSION: v4.2.0-DEV (OFFLINE STOCK SYNC & STABLE SYNC)
+- FIREBASE PROJECT: magari-app-dev
+- TARGET: Ambiente isolato di test e sviluppo
+- NEW FEATURES IN v4.2.0-DEV:
+  1. Abilitata la persistenza locale IndexedDB di Firestore per aggiornare le scorte offline.
+  2. Banner dinamico di stato rete (Online/Offline) con sync automatica al riconnessione.
+  3. Service Worker PWA abilitato per avvio applicazione offline.
+  4. Sincronizzati tutti i correttivi v4.2.0 STABLE (Report mese, Excel auto-cols, Preferiti Admin/Operator).
 ====================================================================
 -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#043927">
+    <meta name="theme-color" content="#92400e">
     
     <!-- META TAGS NO-CACHE -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -30,14 +27,14 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Magari Pizzeria">
+    <meta name="apple-mobile-web-app-title" content="Magari DEV">
     
     <!-- Icone Schermata Home & Favicon -->
-    <link rel="manifest" href="manifest.json?v=4.2.0">
-    <link rel="apple-touch-icon" href="logo-square.png?v=4.2.0">
-    <link rel="icon" type="image/png" href="logo-square.png?v=4.2.0">
+    <link rel="manifest" href="manifest.json?v=4.2.0-dev">
+    <link rel="apple-touch-icon" href="logo-square.png?v=4.2.0-dev">
+    <link rel="icon" type="image/png" href="logo-square.png?v=4.2.0-dev">
 
-    <title>Magari v4.2.0 STABLE</title>
+    <title>Magari v4.2.0-DEV [OFFLINE TEST]</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -47,17 +44,24 @@
 <body>
 
     <div id="toast-notification" class="toast-notification"></div>
-    <div id="realtime-user-toast-container" style="position: fixed; top: 20px; right: 20px; z-index: 99999; display: flex; flex-direction: column; gap: 8px;"></div>
+    
+    <!-- BANNER STATO RETE OFFLINE / ONLINE -->
+    <div id="network-status-banner" style="display:none; position:fixed; top:0; left:0; width:100%; background:#d97706; color:white; font-size:12px; font-weight:bold; text-align:center; padding:6px 10px; z-index:99999; box-shadow:0 2px 6px rgba(0,0,0,0.2);">
+        📡 MODALITÀ OFFLINE ATTIVA — Le modifiche alle scorte sono salvate in locale e verranno sincronizzate in automatico appena torna la connessione.
+    </div>
+
+    <!-- CONTENITORE NOTIFICHE REALTIME PERSISTENTI (IN ALTO AL CENTRO) -->
+    <div id="realtime-user-toast-container" style="position: fixed; top: 68px; left: 50%; transform: translateX(-50%); z-index: 99999; display: flex; flex-direction: column; gap: 8px; width: 92%; max-width: 410px;"></div>
 
     <!-- SELEZIONE SEDE GUARD -->
     <div class="page-lock-banner" id="location-guard-banner" style="display: flex; position: fixed; z-index: 3000; padding-top: 100px;">
         <div class="page-lock-box" style="max-width: 340px;">
-            <div style="font-size: 32px; margin-bottom: 8px;">📍</div>
-            <h3 style="margin-bottom: 6px; color: var(--primary);">Seleziona la Sede</h3>
-            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 14px;">Seleziona il locale in cui ti trovi per caricare le giacenze e il carrello corretti.</p>
+            <div style="font-size: 32px; margin-bottom: 8px;">🧪</div>
+            <h3 style="margin-bottom: 6px; color: #92400e;">Seleziona Sede (DEV v4.2.0)</h3>
+            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 14px;">Sei nell'ambiente di test con supporto Offline. Seleziona il locale per caricare i dati di prova.</p>
             <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;">
-                <button class="btn-save" style="padding: 12px; font-size: 14px; background-color: #043927;" onclick="setActiveLocation('Vasastan (Sankt Eriksgatan 110)')">📍 Vasastan<br><span style="font-size:10px; opacity:0.8;">Sankt Eriksgatan 110</span></button>
-                <button class="btn-save" style="padding: 12px; font-size: 14px; background-color: #1b5e20;" onclick="setActiveLocation('Östermalm (Styrmansgatan 52)')">📍 Östermalm<br><span style="font-size:10px; opacity:0.8;">Styrmansgatan 52</span></button>
+                <button class="btn-save" style="padding: 12px; font-size: 14px; background: linear-gradient(135deg, #064e3b, #043927);" onclick="setActiveLocation('Vasastan (Sankt Eriksgatan 110)')">📍 Vasastan<br><span style="font-size:10px; opacity:0.8;">Sankt Eriksgatan 110</span></button>
+                <button class="btn-save" style="padding: 12px; font-size: 14px; background: linear-gradient(135deg, #166534, #14532d);" onclick="setActiveLocation('Östermalm (Styrmansgatan 52)')">📍 Östermalm<br><span style="font-size:10px; opacity:0.8;">Styrmansgatan 52</span></button>
             </div>
         </div>
     </div>
@@ -70,13 +74,13 @@
             <div class="drawer-header" style="text-align: center;">
                 <img src="logo-header.png" alt="Magari Logo" style="max-width: 170px; height: auto; margin-bottom: 4px;" onerror="this.style.display='none'; document.getElementById('drawer-text-fallback').style.display='block';">
                 <div id="drawer-text-fallback" class="brand-title" style="display:none; font-size: 24px;">MAGARI</div>
-                <div class="brand-subtitle" style="font-size: 9px; background:#2e7d32;">v4.2.0 STABLE</div>
+                <div class="brand-subtitle" style="font-size: 9px; background: rgba(255,255,255,0.2); font-weight:800;">🧪 DEV MODE • v4.2.0 (OFFLINE)</div>
             </div>
 
             <!-- USER ACCOUNT BANNER NELLO MENU -->
-            <div id="drawer-user-box" style="background:#f1f5f9; padding:10px; border-radius:8px; margin-bottom:12px; text-align:center; border:1px solid #cbd5e1;">
-                <div id="user-status-text" style="font-size:12px; font-weight:bold; color:var(--primary);">👁️ Modalità Lettura (Guest)</div>
-                <button id="btn-auth-action" onclick="openAuthModal()" class="btn-save" style="width:100%; margin-top:6px; padding:6px; font-size:12px; background:#2563eb;">🔑 Accedi / Registrati</button>
+            <div id="drawer-user-box" style="background:#fefbf3; padding:10px; border-radius:10px; margin-bottom:12px; text-align:center; border:1px solid #f3e8d2; box-shadow: 0 2px 4px rgba(0,0,0,0.03);">
+                <div id="user-status-text" style="font-size:12px; font-weight:bold; color:#92400e;">👁️ Modalità Lettura (Guest)</div>
+                <button id="btn-auth-action" onclick="openAuthModal()" class="btn-save" style="width:100%; margin-top:6px; padding:6px; font-size:12px; background: linear-gradient(135deg, #2563eb, #1d4ed8);">🔑 Accedi / Registrati</button>
             </div>
 
             <ul class="drawer-menu">
@@ -87,7 +91,7 @@
                 <li onclick="navigateTo('scorte')">📦 Scorte (Giacenze)</li>
                 <li onclick="navigateTo('storico')">
                     <span>📜 Storico Ordini</span>
-                    <span id="history-badge-drawer" class="badge-notification" style="display:none; background:#e53935;">0</span>
+                    <span id="history-badge-drawer" class="badge-notification" style="display:none; background:#dc2626;">0</span>
                 </li>
                 <li onclick="navigateTo('magazzino')">🛠️ Magazzino <span id="lock-icon-magazzino">🔒</span></li>
                 <li onclick="navigateTo('fornitori')">🚚 Fornitori <span id="lock-icon-fornitori">🔒</span></li>
@@ -106,26 +110,26 @@
             <div class="header-brand-text">
                 <img src="logo-header.png" alt="Magari" style="height: 34px; width: auto;" onerror="this.style.display='none'; document.getElementById('header-text-fallback').style.display='block';">
                 <div id="header-text-fallback" class="brand-title" style="display:none;">MAGARI</div>
-                <div class="brand-subtitle" style="background:#2e7d32;">v4.2.0 STABLE</div>
+                <div class="brand-subtitle" style="background: rgba(255,255,255,0.2); font-weight:800;">🧪 DEV • v4.2.0 (OFFLINE)</div>
             </div>
             <div class="page-badge" id="page-title">Ordini</div>
         </div>
 
         <!-- BANNER AVVISI STAFF -->
-        <div id="staff-notice-banner" style="display:none; background:#fffbeb; border-left:5px solid #f59e0b; border-bottom:1px solid #fef3c7; padding:12px 16px; margin:10px 12px; border-radius:8px; box-shadow:0 2px 5px rgba(0,0,0,0.04);">
+        <div id="staff-notice-banner" style="display:none; background: linear-gradient(135deg, #fffcf5, #fef3c7); border-left:4px solid #f59e0b; border-bottom:1px solid #fde68a; padding:12px 16px; margin:10px 12px; border-radius:10px; box-shadow:0 3px 8px rgba(0,0,0,0.04);">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
                 <div style="display:flex; align-items:center; gap:6px;">
-                    <span style="font-size:11px; font-weight:800; background:#fef3c7; color:#b45309; padding:2px 8px; border-radius:12px; border:1px solid #fde68a;">📢 COMUNICAZIONE STAFF</span>
+                    <span style="font-size:11px; font-weight:800; background:#fef3c7; color:#92400e; padding:2px 8px; border-radius:12px; border:1px solid #fde68a;">📢 COMUNICAZIONE DEV</span>
                 </div>
                 <button id="btn-delete-notice" onclick="deleteNoticeFromDb()" style="display:none; background:#fee2e2; border:1px solid #fca5a5; color:#991b1b; font-size:10px; font-weight:bold; padding:3px 8px; border-radius:12px; cursor:pointer;">🗑️ Rimuovi</button>
             </div>
-            <div id="staff-notice-text" style="font-size:15px; font-weight:800; color:#1e293b; line-height:1.3; margin-top:4px;"></div>
+            <div id="staff-notice-text" style="font-size:14px; font-weight:800; color:#1e293b; line-height:1.35; margin-top:4px;"></div>
             <div id="staff-notice-meta" style="font-size:11px; color:#78350f; margin-top:6px; font-weight:500;"></div>
         </div>
 
         <div class="location-active-banner" id="active-location-banner" style="display: none;">
-            <span id="active-location-text">📍 Sede: Non selezionata</span>
-            <button onclick="promptChangeLocation()" style="background: white; border: 1px solid #2e7d32; color: #2e7d32; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer;">Cambia Sede</button>
+            <span id="active-location-text">📍 Sede DEV: Non selezionata</span>
+            <button onclick="promptChangeLocation()" style="background: white; border: 1px solid #b45309; color: #b45309; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">Cambia Sede</button>
         </div>
 
         <!-- 1. ORDINI -->
@@ -161,10 +165,10 @@
                         <option value="low-stock">🚨 Prima Scorte Basse</option>
                     </select>
                 </div>
-                <div class="search-row"><input type="text" id="search-order-input" class="search-input" placeholder="Cerca prodotto da ordinare..." oninput="filterOrderItems()"></div>
+                <div class="search-row"><input type="text" id="search-order-input" class="search-input" placeholder="Cerca prodotto DEV..." oninput="filterOrderItems()"></div>
             </div>
             <div class="content-list" id="order-list"></div>
-            <div class="sticky-checkout-container"><button class="btn-checkout" onclick="generateOrderSummary()">📋 Genera Riepilogo Ordine</button></div>
+            <div class="sticky-checkout-container"><button class="btn-checkout" onclick="generateOrderSummary()">📋 Genera Riepilogo Ordine (DEV)</button></div>
         </div>
 
         <!-- 2. SCORTE -->
@@ -176,7 +180,7 @@
                 <div style="display:flex; gap:8px; align-items:center; width: 100%;">
                     <button class="btn-excel" onclick="promptExportExcelModal()">📊 Export Inventory (Excel)</button>
                 </div>
-                <button class="reset-btn" onclick="executeResetStockGuard()">🔒 🔄 Azzera Giacenze Sede Attiva</button>
+                <button class="reset-btn" onclick="executeResetStockGuard()">🔒 🔄 Azzera Giacenze Sede Attiva (DEV)</button>
                 <div style="display: flex; gap: 8px; width: 100%;">
                     <select id="filter-stock-category" class="filter-select" onchange="filterStockItems()">
                         <option value="">📂 Categorie</option>
@@ -202,7 +206,7 @@
                         <option value="last-update">🕒 Ultima Modifica (Recenti)</option>
                     </select>
                 </div>
-                <div class="search-row"><input type="text" id="search-stock-input" class="search-input" placeholder="Cerca alimento in scorta..." oninput="filterStockItems()"></div>
+                <div class="search-row"><input type="text" id="search-stock-input" class="search-input" placeholder="Cerca alimento in scorta DEV..." oninput="filterStockItems()"></div>
             </div>
             <div class="content-list" id="stock-list"></div>
         </div>
@@ -210,22 +214,22 @@
         <!-- 3. STORICO ORDINI -->
         <div id="view-storico" class="view-section">
             <div class="top-bar-container">
-                <button class="reset-btn" onclick="executeClearHistoryGuard()">🔒 🗑️ Svuota Tutto lo Storico Ordini</button>
-                <div style="font-size:12px; font-weight:700; color:var(--primary); background:#e8f5e9; padding:6px 10px; border-radius:6px; border:1px solid #c8e6c9;">
-                    📍 Ordini visualizzati per la Sede Attiva
+                <button class="reset-btn" onclick="executeClearHistoryGuard()">🔒 🗑️ Svuota Tutto lo Storico Ordini (DEV)</button>
+                <div style="font-size:12px; font-weight:700; color:#92400e; background:#fefbf3; padding:8px 12px; border-radius:8px; border:1px solid #f3e8d2;">
+                    📍 Ordini visualizzati per la Sede Attiva (Database DEV)
                 </div>
-                <input type="text" id="search-history-input" class="search-input" placeholder="Cerca nello storico..." oninput="filterHistoryItems()">
+                <input type="text" id="search-history-input" class="search-input" placeholder="Cerca nello storico DEV..." oninput="filterHistoryItems()">
             </div>
             <div class="content-list" id="history-list"></div>
         </div>
         <!-- 4. MAGAZZINO (SOLO ADMIN) -->
         <div id="view-magazzino" class="view-section">
             <div class="page-lock-banner" id="lock-banner-magazzino">
-                <div class="page-lock-box"><div style="font-size: 32px; margin-bottom: 8px;">🔒</div><h3 style="margin-bottom: 6px;">Sezione Riservata Admin</h3><p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Effettua il Login con account Admin per accedere.</p><button class="btn-save" onclick="openAuthModal()">Accedi come Admin</button></div>
+                <div class="page-lock-box"><div style="font-size: 32px; margin-bottom: 8px;">🔒</div><h3 style="margin-bottom: 6px;">Sezione Riservata Admin DEV</h3><p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Effettua il Login con account Admin per accedere.</p><button class="btn-save" onclick="openAuthModal()">Accedi come Admin</button></div>
             </div>
             <div class="top-bar-container">
-                <div style="font-size:11px; background:#fff3cd; color:#856404; padding:6px 10px; border-radius:6px; font-weight:600;">
-                    ⭐ <b>Gestione Preferiti:</b> Clicca su <b>"⭐ Preferito"</b> a destra del prodotto per cambiarne lo stato per gli operatori.
+                <div style="font-size:11px; background:#fef3c7; color:#92400e; padding:6px 10px; border-radius:6px; font-weight:600; border:1px solid #fde68a;">
+                    ⭐ <b>Gestione Preferiti:</b> Clicca su <b>"⭐ Preferito"</b> a destra del nome prodotto per cambiare lo stato per gli operatori.
                 </div>
                 <div style="display: flex; gap: 8px; width: 100%;">
                     <select id="filter-inventory-category" class="filter-select" onchange="filterItems()">
@@ -244,7 +248,7 @@
                     </select>
                     <select id="filter-inventory-supplier" class="filter-select" onchange="filterItems()"><option value="">🚚 Tutti i Fornitori</option></select>
                 </div>
-                <div class="search-row"><input type="text" id="search-input" class="search-input" placeholder="Cerca in anagrafica..." oninput="filterItems()"><button class="add-btn" onclick="openAddModal()">+ Nuovo</button></div>
+                <div class="search-row"><input type="text" id="search-input" class="search-input" placeholder="Cerca in anagrafica DEV..." oninput="filterItems()"><button class="add-btn" style="background:#b45309;" onclick="openAddModal()">+ Nuovo</button></div>
             </div>
             <div class="content-list" id="inventory-list"></div>
         </div>
@@ -252,13 +256,13 @@
         <!-- 5. FORNITORI (SOLO ADMIN) -->
         <div id="view-fornitori" class="view-section">
             <div class="page-lock-banner" id="lock-banner-fornitori">
-                <div class="page-lock-box"><div style="font-size: 32px; margin-bottom: 8px;">🔒</div><h3 style="margin-bottom: 6px;">Sezione Riservata Admin</h3><p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Effettua il Login con account Admin per accedere.</p><button class="btn-save" onclick="openAuthModal()">Accedi come Admin</button></div>
+                <div class="page-lock-box"><div style="font-size: 32px; margin-bottom: 8px;">🔒</div><h3 style="margin-bottom: 6px;">Sezione Riservata Admin DEV</h3><p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Effettua il Login con account Admin per accedere.</p><button class="btn-save" onclick="openAuthModal()">Accedi come Admin</button></div>
             </div>
             <div class="top-bar-container">
                 <div style="font-size:11px; background:#e0f2fe; color:#0369a1; padding:6px 10px; border-radius:6px; font-weight:600; border:1px solid #bae6fd;">
                     ↕️ <b>Ordinamento Fornitori:</b> Usa le frecce ⬆️ ⬇️ per riposizionare i fornitori in alto nei menu.
                 </div>
-                <div class="search-row"><input type="text" id="search-supplier-input" class="search-input" placeholder="Cerca fornitore..." oninput="filterSuppliers()"><button class="add-btn" onclick="openAddSupplierModal()">+ Fornitore</button></div>
+                <div class="search-row"><input type="text" id="search-supplier-input" class="search-input" placeholder="Cerca fornitore DEV..." oninput="filterSuppliers()"><button class="add-btn" style="background:#b45309;" onclick="openAddSupplierModal()">+ Fornitore</button></div>
             </div>
             <div class="content-list" id="suppliers-list"></div>
         </div>
@@ -266,121 +270,48 @@
         <!-- 6. REPORT CONSUMI (SOLO ADMIN) -->
         <div id="view-sprechi" class="view-section">
             <div class="page-lock-banner" id="lock-banner-sprechi">
-                <div class="page-lock-box"><div style="font-size: 32px; margin-bottom: 8px;">🔒</div><h3 style="margin-bottom: 6px;">Sezione Riservata Admin</h3><p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Effettua il Login con account Admin per accedere.</p><button class="btn-save" onclick="openAuthModal()">Accedi come Admin</button></div>
+                <div class="page-lock-box"><div style="font-size: 32px; margin-bottom: 8px;">🔒</div><h3 style="margin-bottom: 6px;">Sezione Riservata Admin DEV</h3><p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Effettua il Login con account Admin per accedere.</p><button class="btn-save" onclick="openAuthModal()">Accedi come Admin</button></div>
             </div>
             <div class="top-bar-container">
                 <div class="form-group"><label>Periodo Report:</label><select id="report-period-type" class="form-control" onchange="toggleReportPeriodInputs()"><option value="total">Totale Storico Ordini</option><option value="month">Mese Specifico</option><option value="stock">Giacenze Attuali</option></select></div>
                 <div class="form-group" id="report-month-select-group" style="display:none;"><label>Mese:</label><input type="month" id="report-month-picker" class="form-control"></div>
-                <button class="btn-save" onclick="generateRealReport()" style="width:100%; padding:10px;">📋 Genera Report</button>
+                <button class="btn-save" onclick="generateRealReport()" style="width:100%; padding:10px; background:#b45309;">📋 Genera Report (DEV)</button>
             </div>
-            <div id="report-results-container" style="display:none; background:white; padding:16px; border-radius:8px; margin:16px;">
-                <h3 id="report-title-display" style="font-size:14px; margin-bottom:10px; color:var(--primary);"></h3>
+            <div id="report-results-container" style="display:none; background:white; padding:16px; border-radius:10px; margin:16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border:1px solid var(--border);">
+                <h3 id="report-title-display" style="font-size:14px; margin-bottom:10px; color:#b45309;"></h3>
                 <div style="font-weight:bold; font-size:12px; color:#1e293b;">🍷 Alcolici & Bevande</div>
                 <table class="report-table" id="table-alcohol-report"><thead><tr><th>Prodotto</th><th>Qtà</th><th>Costo Totale</th></tr></thead><tbody></tbody></table>
                 <div style="font-weight:bold; font-size:12px; color:#1e293b; margin-top:10px;">🍕 Cibo & Consumabili</div>
                 <table class="report-table" id="table-food-report"><thead><tr><th>Prodotto</th><th>Qtà</th><th>Costo Totale</th></tr></thead><tbody></tbody></table>
-                <div id="grand-total-report-box" style="margin-top:14px; padding:10px; background:#e8f5e9; border:1px solid #c8e6c9; border-radius:6px; font-weight:800; font-size:14px; color:#2e7d32; text-align:right;"></div>
+                <div id="grand-total-report-box" style="margin-top:14px; padding:10px; background:#fffbe8; border:1px solid #fde68a; border-radius:6px; font-weight:800; font-size:14px; color:#b45309; text-align:right;"></div>
             </div>
         </div>
 
         <!-- 7. FAQ & GUIDA RAPIDA -->
         <div id="view-faq" class="view-section">
             <div class="top-bar-container">
-                <div style="font-size:16px; font-weight:800; color:var(--primary);">❓ Guida Rapida & FAQ Staff</div>
-                <div style="font-size:12px; color:var(--text-secondary);">Manuale operativo completo per lo staff di Vasastan e Östermalm.</div>
+                <div style="font-size:16px; font-weight:800; color:#b45309;">❓ Guida Rapida DEV Environment (v4.2.0 OFFLINE)</div>
+                <div style="font-size:12px; color:var(--text-secondary);">Manuale ed indicazioni operative per l'ambiente di test ed aggiornamenti offline.</div>
             </div>
             <div class="content-list">
                 <div class="faq-item-box">
-                    <div class="faq-question">📍 1. Come cambiare la Sede attiva?</div>
+                    <div class="faq-question">📡 1. Come funziona l'aggiornamento scorte OFFLINE?</div>
                     <div class="faq-answer">
-                        In cima alla schermata o nel banner verde in alto è indicato il locale attivo (<b>Vasastan</b> o <b>Östermalm</b>). Clicca su <b>"Cambia Sede"</b> per switchare. Le giacenze, i minimi scorta e il carrello sono <b>isolati per ciascun locale</b>.
+                        Se ti trovi in una cella frigorifera o in uno scantinato senza segnale Wi-Fi/4G, puoi continuare a modificare le scorte normalmente. Le modifiche vengono salvate nella memoria locale del dispositivo e inviate al server non appena torna internet.
                     </div>
                 </div>
 
                 <div class="faq-item-box">
-                    <div class="faq-question">🔑 2. Come effettuare il Login o la Registrazione?</div>
+                    <div class="faq-question">🧪 2. Che cos'è questa versione DEV?</div>
                     <div class="faq-answer">
-                        Apri il menu laterale (☰) e clicca sul pulsante blu <b>"🔑 Accedi / Registrati"</b>.<br>
-                        • Inserisci email e password per accedere.<br>
-                        • Spunta <b>"Rimani collegato"</b> se vuoi che l'app ricordi le tue credenziali sul dispositivo.<br>
-                        • Se sei un nuovo operatore, passa alla scheda <i>"Nuovo Account Staff"</i> per creare il tuo profilo.
+                        Questa è la copia speculare di test collegata al progetto Firebase <b>magari-app-dev</b>. Qualsiasi modifica effettuata qui non altera i dati reali delle pizzerie.
                     </div>
                 </div>
 
                 <div class="faq-item-box">
-                    <div class="faq-question">🛒 3. Come creare ed inviare un Ordine Fornitori?</div>
+                    <div class="faq-question">📊 3. Export Excel ed Auto-Fit Colonne</div>
                     <div class="faq-answer">
-                        1. Seleziona la data di consegna prevista in alto alla pagina <b>Ordini</b>.<br>
-                        2. Regola le quantità dei prodotti da ordinare usando i tasti <b>+</b> / <b>-</b>.<br>
-                        3. Clicca in basso su <b>"📋 Genera Riepilogo Ordine"</b>.<br>
-                        4. Dalla finestra potrai inviare la lista via <b>WhatsApp</b> o <b>Email</b> al singolo fornitore, oppure confermare l'ordine per salvarlo nello storico.
-                    </div>
-                </div>
-
-                <div class="faq-item-box">
-                    <div class="faq-question">✍️ 4. Come verificare una Consegna arrivata e stornare la Scorta?</div>
-                    <div class="faq-answer">
-                        Quando la merce arriva in pizzeria:<br>
-                        1. Vai nella sezione <b>📜 Storico Ordini</b>.<br>
-                        2. Trova l'ordine con il bollino rosso ⚠️ <i>Da Controllare</i>.<br>
-                        3. Clicca su <b>"✍️ Verifica & Storna"</b>.<br>
-                        4. Controlla le unità arrivate, modifica la quantità se ci sono ammanchi o merci danneggiate e conferma. L'app accrediterà in automatico le quantità nelle giacenze del locale.
-                    </div>
-                </div>
-
-                <div class="faq-item-box">
-                    <div class="faq-question">📦 5. Come aggiornare le Giacenze in Magazzino?</div>
-                    <div class="faq-answer">
-                        Nella sezione <b>📦 Scorte (Giacenze)</b> puoi modificare manualmente la quantità disponibile in frigo/magazzino. L'app registrerà in automatico <b>chi ha effettuato la modifica e a che ora</b>, mostrando il dato nella scheda del prodotto.
-                    </div>
-                </div>
-
-                <div class="faq-item-box">
-                    <div class="faq-question">🚨 6. Cosa indicano i prodotti evidenziati in rosso?</div>
-                    <div class="faq-answer">
-                        I prodotti bordati di rosso lampeggiante hanno raggiunto o superato il <b>limite minimo di scorta</b> impostato per la sede corrente. Ordinali al più presto per evitare rotture di stock durante il servizio.
-                    </div>
-                </div>
-
-                <div class="faq-item-box">
-                    <div class="faq-question">📊 7. Come scaricare il Report Inventory in Excel?</div>
-                    <div class="faq-answer">
-                        Dalla pagina <b>📦 Scorte</b>, clicca sul pulsante verde <b>"📊 Export Inventory (Excel)"</b>. Potrai scegliere se scaricare il foglio <i>Food & Supplies</i>, il foglio <i>Alcohol & Beverages</i> (con i subtotali separati per alcolici e bibite), oppure l'intero inventario.
-                    </div>
-                </div>
-
-                <div class="faq-item-box">
-                    <div class="faq-question">🐛 8. Come segnalare un bug o un errore nei prezzi/dati?</div>
-                    <div class="faq-answer">
-                        Apri la voce del menu <b>🐛 Segnala Bug & Feedback</b>, seleziona la tipologia di problema, scrivi una breve spiegazione e premi <b>"🚀 Invia Segnalazione"</b>.
-                    </div>
-                </div>
-
-                <div class="faq-item-box">
-                    <div class="faq-question">📢 9. Come funziona la Bacheca Avvisi Staff?</div>
-                    <div class="faq-answer">
-                        Gli avvisi importanti pubblicati dall'Amministratore appaiono in cima alla schermata principale dentro una card evidenziata. Gli avvisi sono <b>specifici per la sede attiva</b> (Vasastan o Östermalm).
-                    </div>
-                </div>
-
-                <div class="faq-item-box">
-                    <div class="faq-question">⭐ 10. Come funziona la gestione dei Prodotti Preferiti?</div>
-                    <div class="faq-answer">
-                        Gli Admin impostano i prodotti preferiti nella sezione Magazzino. Gli operatori visualizzano l'indicatore <b>"⭐ Preferito"</b> o <b>"☆ Preferito"</b> nelle schede prodotto e possono filtrare la lista al volo selezionando <b>"⭐ Solo Preferiti"</b>.
-                    </div>
-                </div>
-
-                <div class="faq-item-box">
-                    <div class="faq-question">🍷 11. Come funziona la distinzione Alcolici / Bevande negli Excel e Report?</div>
-                    <div class="faq-answer">
-                        Gli alcolici e le bevande analcoliche vengono gestiti con due subtotali separati ed un gran totale unificato, permettendo un controllo contabile e di licenza preciso per ogni sede.
-                    </div>
-                </div>
-
-                <div class="faq-item-box">
-                    <div class="faq-question">🔄 12. Come recuperare o modificare le credenziali dell'account?</div>
-                    <div class="faq-answer">
-                        Gli amministratori possono aggiornare ruoli e nomi dal pannello <b>⚙️ Impostazioni</b>.
+                        L'export Excel calcola automaticamente la larghezza ideale delle colonne ed include sia il foglio <i>Food & Supplies</i> che il foglio <i>Alcohol & Beverages</i> con subtotali separati.
                     </div>
                 </div>
             </div>
@@ -389,62 +320,62 @@
         <!-- 8. SEGNALA BUG -->
         <div id="view-bugreport" class="view-section">
             <div class="top-bar-container">
-                <div style="font-size:16px; font-weight:800; color:#d97706;">🐛 Segnala Bug o Invia Feedback</div>
+                <div style="font-size:16px; font-weight:800; color:#d97706;">🐛 Segnala Bug o Feedback (DEV)</div>
             </div>
             <div style="padding:16px;">
                 <div class="form-group"><label>Sede Rilevata</label><input type="text" id="bug-location-display" class="form-control" readonly style="background:#f1f5f9; font-weight:bold;"></div>
                 <div class="form-group"><label>Operatore</label><input type="text" id="bug-operator-input" class="form-control" readonly style="background:#f1f5f9; font-weight:bold;"></div>
                 <div class="form-group"><label>Tipo di Segnalazione</label><select id="bug-type-select" class="form-control"><option value="🐛 Errore Tecnico / Bug App">🐛 Errore Tecnico / Bug App</option><option value="🧀 Errore Dati">🧀 Errore Dati</option><option value="💡 Suggerimento">💡 Suggerimento</option></select></div>
-                <div class="form-group"><label>Descrizione</label><textarea id="bug-desc-input" class="form-control" rows="4" placeholder="Descrivi il problema o il suggerimento..."></textarea></div>
-                <button class="btn-save" onclick="submitBugReport()" style="width:100%; padding:12px; background:#d97706;">🚀 Invia Segnalazione</button>
+                <div class="form-group"><label>Descrizione</label><textarea id="bug-desc-input" class="form-control" rows="4" placeholder="Descrivi il test o il problema..."></textarea></div>
+                <button class="btn-save" onclick="submitBugReport()" style="width:100%; padding:12px; background: linear-gradient(135deg, #d97706, #b45309);">🚀 Invia Segnalazione DEV</button>
             </div>
         </div>
 
         <!-- 9. IMPOSTAZIONI -->
         <div id="view-impostazioni" class="view-section">
             <div class="page-lock-banner" id="lock-banner-impostazioni">
-                <div class="page-lock-box"><div style="font-size: 32px; margin-bottom: 8px;">🔒</div><h3 style="margin-bottom: 6px;">Sezione Riservata Admin</h3><p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Effettua il Login con account Admin per accedere.</p><button class="btn-save" onclick="openAuthModal()">Accedi come Admin</button></div>
+                <div class="page-lock-box"><div style="font-size: 32px; margin-bottom: 8px;">🔒</div><h3 style="margin-bottom: 6px;">Sezione Riservata Admin DEV</h3><p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Effettua il Login con account Admin per accedere.</p><button class="btn-save" onclick="openAuthModal()">Accedi come Admin</button></div>
             </div>
             <div class="settings-card">
-                <h3>⚙️ Gestione Avanzata Impostazioni</h3>
+                <h3>⚙️ Gestione Impostazioni (DEV MODE v4.2.0)</h3>
 
                 <!-- PUBBLICAZIONE AVVISO STAFF -->
-                <div style="background:#fffbe8; border:1px solid #ffe0b2; padding:12px; border-radius:8px; margin-top:8px;">
-                    <h4 style="font-size:14px; color:#b45309; margin-bottom:6px;">📢 Pubblica Banner Avviso Staff</h4>
-                    <textarea id="notice-input-field" class="form-control" rows="2" placeholder="Scrivi un avviso per la bacheca staff..."></textarea>
-                    <button onclick="publishStaffNotice()" class="btn-save" style="width:100%; margin-top:8px; background:#b45309;">Pubblica Avviso</button>
+                <div style="background:#fefbf3; border:1px solid #f3e8d2; padding:12px; border-radius:10px; margin-top:8px;">
+                    <h4 style="font-size:14px; color:#92400e; margin-bottom:6px;">📢 Pubblica Banner Avviso Staff DEV</h4>
+                    <textarea id="notice-input-field" class="form-control" rows="2" placeholder="Scrivi un avviso di test..."></textarea>
+                    <button onclick="publishStaffNotice()" class="btn-save" style="width:100%; margin-top:8px; background:#b45309;">Pubblica Avviso DEV</button>
                 </div>
 
                 <!-- 👥 PANNELLO GESTIONE STAFF -->
-                <div style="background:#f8fafc; padding:12px; border-radius:8px; border:1px solid #cbd5e1; margin-top:8px;">
+                <div style="background:#f8fafc; padding:12px; border-radius:10px; border:1px solid #e2e8f0; margin-top:8px;">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                        <h4 style="font-size:14px; color:var(--primary);">👥 Gestione Operatori Staff</h4>
+                        <h4 style="font-size:14px; color:#92400e;">👥 Gestione Staff (Database DEV)</h4>
                         <div style="display:flex; gap:6px;">
-                            <button onclick="openUserModal()" class="add-btn" style="padding:4px 8px; font-size:11px;">+ Nuovo Utente</button>
+                            <button onclick="openUserModal()" class="add-btn" style="padding:4px 8px; font-size:11px; background:#b45309;">+ Nuovo Utente</button>
                             <button onclick="loadUsersListForAdmin()" style="background:none; border:none; color:#2563eb; font-size:12px; font-weight:bold; cursor:pointer;">🔄</button>
                         </div>
                     </div>
                     <div id="admin-users-list-container" style="display:flex; flex-direction:column; gap:8px; max-height:280px; overflow-y:auto; background:white; padding:8px; border-radius:6px; border:1px solid #e2e8f0;">
-                        <div style="font-size:12px; color:#666; text-align:center;">Caricamento utenti...</div>
+                        <div style="font-size:12px; color:#666; text-align:center;">Caricamento utenti test...</div>
                     </div>
                 </div>
 
                 <hr style="border:0; border-top:1px solid #eee; margin: 12px 0;">
                 
-                <h4 style="font-size:14px; color:#d97706;">🐛 Segnalazioni Staff Rilevate</h4>
+                <h4 style="font-size:14px; color:#d97706;">🐛 Segnalazioni Staff Rilevate (DEV)</h4>
                 <div id="admin-bug-reports-container" style="display:flex; flex-direction:column; gap:8px; max-height:300px; overflow-y:auto; margin-top:6px; background:#fafafa; padding:8px; border-radius:6px; border:1px solid #e2e8f0;"></div>
                 
                 <hr style="border:0; border-top:1px solid #eee; margin: 12px 0;">
-                <button class="reset-btn" onclick="executeResetSuppliersGuard()">🔒 🔄 Ripristina Fornitori Default</button>
-                <button class="btn-danger" onclick="executeResetAllGuard()" style="width:100%; margin-top: 6px;">🔒 ⚠️ RESET TOTALE DATABASE PRODUZIONE</button>
+                <button class="reset-btn" onclick="executeResetSuppliersGuard()">🔒 🔄 Ripristina Fornitori Default (DEV)</button>
+                <button class="btn-danger" onclick="executeResetAllGuard()" style="width:100%; margin-top: 6px;">🔒 ⚠️ RESET TOTALE DATABASE DEV TEST</button>
             </div>
         </div>
 
         <!-- FOOTER FIRMA DEVELOPER -->
-        <footer style="background:#043927; color:#c8e6c9; text-align:center; padding:16px 14px; font-size:11px; border-top:1px solid #1b5e20; margin-top:auto; width:100%; position:relative; z-index:80;">
-            <div>&copy; 2026 <b>Magari Pizzeria Stockholm</b> - Versione Ufficiale Stabile</div>
+        <footer style="background: linear-gradient(135deg, #78350f, #451a03); color:#fffbe8; text-align:center; padding:16px 14px; font-size:11px; border-top:1px solid #92400e; margin-top:auto; width:100%; position:relative; z-index:80;">
+            <div>&copy; 2026 <b>Magari Pizzeria DEV</b> - Versione <span style="background:rgba(255,255,255,0.15); padding:2px 6px; border-radius:4px; font-weight:bold;">v4.2.0-DEV (OFFLINE)</span></div>
             <div style="margin-top:6px; font-size:11px; color:#ffffff;">
-                App sviluppata da <span style="color:#f59e0b; font-weight:bold; background:rgba(0,0,0,0.3); padding:2px 6px; border-radius:4px; border:1px solid rgba(245,158,11,0.3);">Nicolas Cappiello</span>
+                Sviluppato da <span style="color:#ffffff; font-weight:bold; background:rgba(0,0,0,0.25); padding:2px 6px; border-radius:4px;">Nicolas Cappiello</span>
             </div>
         </footer>
 
@@ -452,11 +383,11 @@
 
     <!-- MODALI UTILITY -->
     <div class="modal" id="user-edit-modal">
-        <div class="modal-title" id="user-modal-title">👤 Operatore</div>
+        <div class="modal-title" id="user-modal-title">👤 Operatore DEV</div>
         <input type="hidden" id="edit-user-uid">
         
-        <div class="form-group"><label>Nome e Cognome</label><input type="text" id="user-field-name" class="form-control" placeholder="es. Marco Rossi"></div>
-        <div class="form-group"><label>Email</label><input type="email" id="user-field-email" class="form-control" placeholder="es. marco@magaripizza.com"></div>
+        <div class="form-group"><label>Nome e Cognome</label><input type="text" id="user-field-name" class="form-control" placeholder="es. Tester Marco"></div>
+        <div class="form-group"><label>Email</label><input type="email" id="user-field-email" class="form-control" placeholder="es. test@magaripizza.com"></div>
         <div class="form-group" id="user-field-pass-group"><label>Password (Min. 6 caratteri)</label><input type="password" id="user-field-pass" class="form-control" placeholder="••••••••"></div>
         <div class="form-group"><label>Ruolo</label>
             <select id="user-field-role" class="form-control">
@@ -467,62 +398,80 @@
 
         <div class="modal-actions" style="margin-top:16px;">
             <button class="btn-cancel" onclick="closeUserModal()">Annulla</button>
-            <button class="btn-save" onclick="saveUserFromAdmin()">Salva Utente</button>
+            <button class="btn-save" style="background:#b45309;" onclick="saveUserFromAdmin()">Salva Utente DEV</button>
         </div>
     </div>
 
     <!-- MODALE AUTHENTICATION -->
     <div class="modal" id="auth-modal">
-        <div class="modal-title" id="auth-modal-title" style="text-align:center;">🔑 Accedi a Magari Pizzeria</div>
+        <div class="modal-title" id="auth-modal-title" style="text-align:center;">🔑 Login - Magari DEV v4.2.0</div>
         <div style="display:flex; justify-content:center; gap:10px; margin-bottom:12px;">
-            <button id="tab-btn-login" onclick="switchAuthTab('login')" style="flex:1; padding:6px; border-radius:6px; font-weight:bold; border:1px solid var(--primary); background:var(--primary); color:white;">Login</button>
-            <button id="tab-btn-register" onclick="switchAuthTab('register')" style="flex:1; padding:6px; border-radius:6px; font-weight:bold; border:1px solid #cbd5e1; background:#f1f5f9; color:#334155;">Nuovo Account Staff</button>
+            <button id="tab-btn-login" onclick="switchAuthTab('login')" style="flex:1; padding:6px; border-radius:6px; font-weight:bold; border:1px solid #b45309; background:#b45309; color:white;">Login</button>
+            <button id="tab-btn-register" onclick="switchAuthTab('register')" style="flex:1; padding:6px; border-radius:6px; font-weight:bold; border:1px solid #cbd5e1; background:#f1f5f9; color:#334155;">Nuovo Account DEV</button>
         </div>
 
         <div id="auth-form-login">
-            <div class="form-group"><label>Email</label><input type="email" id="login-email" class="form-control" placeholder="es. marco@magaripizza.com"></div>
-            <div class="form-group"><label>Password</label><input type="password" id="login-password" class="form-control" placeholder="••••••••"></div>
+            <div class="form-group"><label>Email</label><input type="email" id="login-email" class="form-control" placeholder="es. test@magaripizza.com"></div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="login-password" class="form-control" placeholder="••••••••">
+            </div>
             
-            <div style="display:flex; align-items:center; gap:8px; margin:10px 0 4px 0;">
-                <input type="checkbox" id="remember-me-checkbox" checked style="width:18px; height:18px; accent-color:var(--primary); cursor:pointer;">
-                <label for="remember-me-checkbox" style="font-size:13px; font-weight:600; color:#334155; cursor:pointer; user-select:none;">Rimani collegato su questo dispositivo</label>
+            <div style="display:flex; align-items:center; justify-content:space-between; margin:8px 0 10px 0;">
+                <div style="display:flex; align-items:center; gap:6px;">
+                    <input type="checkbox" id="show-login-password" onclick="togglePasswordVisibility('login-password')" style="width:16px; height:16px; accent-color:#b45309; cursor:pointer;">
+                    <label for="show-login-password" style="font-size:12px; font-weight:600; color:#334155; cursor:pointer; user-select:none;">Mostra Password</label>
+                </div>
+                <div style="display:flex; align-items:center; gap:6px;">
+                    <input type="checkbox" id="remember-me-checkbox" checked style="width:16px; height:16px; accent-color:#b45309; cursor:pointer;">
+                    <label for="remember-me-checkbox" style="font-size:12px; font-weight:600; color:#334155; cursor:pointer; user-select:none;">Rimani collegato</label>
+                </div>
             </div>
 
-            <button class="btn-save" onclick="handleLoginSubmit()" style="width:100%; padding:10px; margin-top:8px;">Entra</button>
+            <button class="btn-save" onclick="handleLoginSubmit()" style="width:100%; padding:10px; margin-top:4px; background: linear-gradient(135deg, #b45309, #92400e);">Entra in DEV</button>
         </div>
 
         <div id="auth-form-register" style="display:none;">
-            <div class="form-group"><label>Nome e Cognome (Firma Operatore)</label><input type="text" id="reg-name" class="form-control" placeholder="es. Marco Rossi"></div>
-            <div class="form-group"><label>Email</label><input type="email" id="reg-email" class="form-control" placeholder="es. marco@magaripizza.com"></div>
-            <div class="form-group"><label>Password</label><input type="password" id="reg-password" class="form-control" placeholder="Min. 6 caratteri"></div>
-            <button class="btn-save" onclick="handleRegisterSubmit()" style="width:100%; padding:10px; background:#1b5e20; margin-top:6px;">Crea Account Staff</button>
+            <div class="form-group"><label>Nome e Cognome</label><input type="text" id="reg-name" class="form-control" placeholder="es. Tester Marco"></div>
+            <div class="form-group"><label>Email</label><input type="email" id="reg-email" class="form-control" placeholder="es. test@magaripizza.com"></div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="reg-password" class="form-control" placeholder="Min. 6 caratteri">
+            </div>
+            
+            <div style="display:flex; align-items:center; gap:6px; margin:6px 0 10px 0;">
+                <input type="checkbox" id="show-reg-password" onclick="togglePasswordVisibility('reg-password')" style="width:16px; height:16px; accent-color:#b45309; cursor:pointer;">
+                <label for="show-reg-password" style="font-size:12px; font-weight:600; color:#334155; cursor:pointer; user-select:none;">Mostra Password</label>
+            </div>
+
+            <button class="btn-save" onclick="handleRegisterSubmit()" style="width:100%; padding:10px; background: linear-gradient(135deg, #166534, #14532d); margin-top:4px;">Crea Account DEV</button>
         </div>
 
         <div class="modal-actions" style="margin-top:12px;"><button class="btn-cancel" onclick="closeAuthModal()" style="width:100%;">Annulla</button></div>
     </div>
 
     <div class="modal" id="verify-delivery-modal" style="max-width: 520px;">
-        <div class="modal-title">✍️ Verifica Consegna & Storno Giacenze</div>
-        <div style="font-size: 13px; color: #555; margin-bottom: 10px;">Inserisci le quantità effettivamente ricevute per accreditarle in giacenza.</div>
+        <div class="modal-title">✍️ Verifica Consegna & Storno (DEV)</div>
+        <div style="font-size: 13px; color: #555; margin-bottom: 10px;">Inserisci le quantità effettivamente ricevute per accreditarle in giacenza DEV.</div>
         <div id="verify-items-checklist-container" style="display:flex; flex-direction:column; gap:8px; max-height:220px; overflow-y:auto; margin-bottom:12px; background:#f8fafc; padding:8px; border-radius:8px; border:1px solid #e2e8f0;"></div>
-        <div class="form-group"><label style="font-weight:bold; color:var(--primary);">📝 Note / Messaggio (Opzionale):</label><input type="text" id="verify-note-input" class="form-control" placeholder="es. Arrivate tutte le unità..."></div>
-        <div class="modal-actions"><button class="btn-cancel" onclick="closeVerifyDeliveryModal()">Annulla</button><button class="btn-save" onclick="submitDeliveryVerification()" style="background:#1b5e20;">✅ Conferma e Storna</button></div>
+        <div class="form-group"><label style="font-weight:bold; color:#b45309;">📝 Note / Messaggio (Opzionale):</label><input type="text" id="verify-note-input" class="form-control" placeholder="es. Prova verifica..."></div>
+        <div class="modal-actions"><button class="btn-cancel" onclick="closeVerifyDeliveryModal()">Annulla</button><button class="btn-save" onclick="submitDeliveryVerification()" style="background:#1b5e20;">✅ Conferma e Storna DEV</button></div>
     </div>
 
     <div class="modal" id="export-excel-modal">
-        <div class="modal-title">📊 Export Inventory (English Excel)</div>
+        <div class="modal-title">📊 Export Inventory (English Excel - DEV)</div>
         <div class="form-group"><label>Tipologia Report:</label><select id="export-type-select" class="form-control"><option value="food">🍕 Food & Supplies</option><option value="alcohol">🍷 Alcohol & Beverages</option><option value="all">📦 Full Inventory (Entrambi i Fogli)</option></select></div>
         <div class="modal-actions"><button class="btn-cancel" onclick="closeExportExcelModal()">Annulla</button><button class="btn-save" style="background-color: var(--excel-green);" onclick="generateAndExportExcel()">Download Excel</button></div>
     </div>
 
     <div class="modal" id="summary-modal">
-        <div class="modal-title">📋 Riepilogo Ordine Generato</div>
+        <div class="modal-title">📋 Riepilogo Ordine Generato (DEV)</div>
         <div id="summary-content"></div>
         <div class="modal-actions" style="margin-top:14px;"><button class="btn-cancel" onclick="closeSummaryModal()">Chiudi</button></div>
     </div>
 
     <div class="modal" id="add-modal">
-        <div class="modal-title" id="item-modal-title">Prodotto</div>
+        <div class="modal-title" id="item-modal-title">Prodotto DEV</div>
         <input type="hidden" id="edit-item-id">
         <div class="form-group"><label>Nome</label><input type="text" id="new-name" class="form-control"></div>
         <div class="form-group"><label>Categoria</label><select id="new-category-select" class="form-control"><option value="Latticini">🧀 Latticini</option><option value="Farine & Secco">🌾 Farine & Secco</option><option value="Conserve & Pomodoro">🍅 Conserve & Pomodoro</option><option value="Salumi & Carni">🥩 Salumi & Carni</option><option value="Alcolici">🍷 Alcolici</option><option value="Bevande">🥤 Bevande</option><option value="Surgelati">❄️ Surgelati</option><option value="Ortofrutta">🥗 Ortofrutta</option><option value="Pulizia & Monouso">🧹 Pulizia & Monouso</option><option value="Altro">📦 Altro</option></select></div>
@@ -535,19 +484,19 @@
             <div class="form-group" style="flex:1;"><label>Prezzo (SEK)</label><input type="number" step="0.01" id="new-price" class="form-control" value="0"></div>
             <div class="form-group" style="flex:1;"><label>Unità</label><select id="new-unit" class="form-control"><option value="Bottiglie">Bottiglie</option><option value="Unità">Unità</option><option value="Kg">Kg</option><option value="Litri">Litri</option><option value="Cartoni">Cartoni</option></select></div>
         </div>
-        <div class="modal-actions"><button class="btn-cancel" onclick="closeAddModal()">Annulla</button><button class="btn-save" onclick="saveInventoryItem()">Salva</button></div>
+        <div class="modal-actions"><button class="btn-cancel" onclick="closeAddModal()">Annulla</button><button class="btn-save" style="background:#b45309;" onclick="saveInventoryItem()">Salva DEV</button></div>
     </div>
 
-    <!-- MODALE FORNITORE CON SELETTORE PALETTE COLORI -->
+    <!-- MODALE FORNITORE CON SELETTORE PALETTE A 12 COLORI -->
     <div class="modal" id="add-supplier-modal">
-        <div class="modal-title" id="supplier-modal-title">Fornitore</div>
+        <div class="modal-title" id="supplier-modal-title">Fornitore DEV</div>
         <input type="hidden" id="edit-supplier-id">
-        <input type="hidden" id="supp-color-val" value="#1565c0">
+        <input type="hidden" id="supp-color-val" value="#0288d1">
         
         <div class="form-group"><label>Nome Fornitore</label><input type="text" id="supp-name" class="form-control"></div>
         
         <div class="form-group">
-            <label style="font-weight:bold; color:var(--primary);">🎨 Scegli Colore Identificativo:</label>
+            <label style="font-weight:bold; color:#b45309;">🎨 Scegli Colore Identificativo:</label>
             <div id="supplier-color-palette-grid" style="display:grid; grid-template-columns: repeat(6, 1fr); gap:8px; margin-top:6px; background:#f8fafc; padding:8px; border-radius:8px; border:1px solid #cbd5e1;"></div>
         </div>
 
@@ -558,39 +507,50 @@
 
         <div class="form-group"><label>Telefono</label><input type="tel" id="supp-phone" class="form-control"></div>
         <div class="form-group"><label>Email</label><input type="email" id="supp-email" class="form-control"></div>
-        <div class="modal-actions"><button class="btn-cancel" onclick="closeAddSupplierModal()">Annulla</button><button class="btn-save" onclick="saveSupplier()">Salva</button></div>
+        <div class="modal-actions"><button class="btn-cancel" onclick="closeAddSupplierModal()">Annulla</button><button class="btn-save" style="background:#b45309;" onclick="saveSupplier()">Salva DEV</button></div>
     </div>
 
     <style>
         :root {
-            --primary: #043927; --bg: #e6e3dc; --card-bg: #f5f3ed; --text: #1c1c1a;
-            --text-secondary: #5a5854; --border: #d4d0c7; --warning: #ff9800; --danger: #e53935; --whatsapp: #25d366;
-            --excel-green: #107c41; --star-gold: #ffb300;
+            --primary: #b45309; 
+            --primary-dark: #78350f;
+            --bg: #f7f4ec; 
+            --card-bg: #ffffff; 
+            --text: #1c1917;
+            --text-secondary: #78350f; 
+            --border: #e7dfd3; 
+            --warning: #f59e0b; 
+            --danger: #dc2626; 
+            --whatsapp: #25d366;
+            --excel-green: #107c41; 
+            --star-gold: #f59e0b;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
         html, body { width: 100%; overflow-x: hidden; background-color: var(--bg); color: var(--text); }
         body { display: flex; justify-content: center; min-height: 100vh; }
 
-        .app-container { width: 100%; max-width: 430px; min-height: 100vh; background-color: var(--bg); position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.1); display: flex; flex-direction: column; transition: max-width 0.3s ease; overflow-x: hidden; }
+        .app-container { width: 100%; max-width: 430px; min-height: 100vh; background-color: var(--bg); position: relative; box-shadow: 0 0 25px rgba(0,0,0,0.06); display: flex; flex-direction: column; transition: max-width 0.3s ease; overflow-x: hidden; }
         
-        .header { background-color: var(--primary); color: white; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 4px rgba(0,0,0,0.15); }
+        .header { background: linear-gradient(135deg, #b45309, #78350f); color: white; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: 0 3px 6px rgba(0,0,0,0.12); }
         .menu-btn { background: none; border: none; color: white; font-size: 24px; cursor: pointer; }
         .header-brand-text { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
         .brand-title { font-family: 'Cinzel', 'Times New Roman', serif; font-size: 20px; font-weight: 700; color: #ffffff; letter-spacing: 2px; line-height: 1; text-transform: uppercase; }
         .brand-subtitle { font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 8px; font-weight: 700; color: #ffffff; letter-spacing: 1px; margin-top: 3px; text-transform: uppercase; padding: 2px 6px; border-radius: 4px; }
-        .page-badge { font-size: 11px; background: rgba(0, 0, 0, 0.25); color: #fff; padding: 4px 8px; border-radius: 6px; font-weight: 600; }
+        .page-badge { font-size: 11px; background: rgba(0, 0, 0, 0.22); color: #fff; padding: 4px 8px; border-radius: 6px; font-weight: 600; }
 
-        .top-bar-container { padding: 12px 16px; background-color: rgba(255, 255, 255, 0.92); backdrop-filter: blur(5px); border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; width: 100%; }
+        .top-bar-container { padding: 12px 16px; background: linear-gradient(180deg, #ffffff, #fcfbfa); border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; width: 100%; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
         .top-bar-container div { min-width: 0; }
 
         .search-row { display: flex; gap: 8px; width: 100%; }
-        .search-input { flex: 1; min-width: 0; padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; outline: none; width: 100%; }
-        .filter-select, .location-select, .date-picker, .operator-input { flex: 1; min-width: 0; padding: 8px 10px; border: 1px solid var(--primary); border-radius: 8px; font-size: 13px; font-weight: 600; background-color: #f0f7f4; color: var(--primary); outline: none; width: 100%; text-overflow: ellipsis; }
+        .search-input { flex: 1; min-width: 0; padding: 9px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; outline: none; width: 100%; background: #ffffff; transition: border-color 0.2s; }
+        .search-input:focus { border-color: var(--primary); }
         
-        .add-btn { background-color: var(--primary); color: white; border: none; padding: 8px 12px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
-        .btn-excel { background-color: var(--excel-green); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; box-shadow: 0 2px 6px rgba(16, 124, 65, 0.3); }
-        .reset-btn { background-color: #fff3f0; color: var(--danger); border: 1px solid var(--danger); padding: 8px 12px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; width: 100%; }
+        .filter-select, .location-select, .date-picker, .operator-input { flex: 1; min-width: 0; padding: 8px 10px; border: 1px solid #ebd5b3; border-radius: 8px; font-size: 13px; font-weight: 600; background-color: #fefcf6; color: var(--primary-dark); outline: none; width: 100%; text-overflow: ellipsis; }
+        
+        .add-btn { background: linear-gradient(135deg, #b45309, #92400e); color: white; border: none; padding: 8px 12px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; white-space: nowrap; flex-shrink: 0; box-shadow: 0 2px 4px rgba(180,83,9,0.2); }
+        .btn-excel { background: linear-gradient(135deg, #107c41, #0c5e31); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; box-shadow: 0 2px 6px rgba(16, 124, 65, 0.25); }
+        .reset-btn { background-color: #fef2f2; color: var(--danger); border: 1px solid #fecaca; padding: 8px 12px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; width: 100%; }
 
         .star-toggle-btn { 
             background: #fefbf3; 
@@ -615,101 +575,101 @@
             color: #92400e; 
         }
 
-        .location-active-banner { background: #e8f5e9; border-bottom: 1px solid #c8e6c9; padding: 8px 16px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: bold; color: #2e7d32; }
+        .location-active-banner { background: linear-gradient(135deg, #fefbf3, #fdf4e3); border-bottom: 1px solid #f5e6cd; padding: 8px 16px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: bold; color: #92400e; }
 
         .view-section { display: none; flex-direction: column; flex: 1; padding-bottom: 20px; position: relative; width: 100%; }
         .view-section.active { display: flex; }
         #view-ordini { padding-bottom: 140px; }
 
-        .page-lock-banner { position: absolute; top: 0; left: 0; width: 100%; height: 100%; min-height: 100vh; background-color: rgba(244, 246, 248, 0.98); backdrop-filter: blur(8px); z-index: 500; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 80px 20px 20px 20px; text-align: center; }
-        .page-lock-box { background: white; padding: 24px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); width: 100%; max-width: 320px; border: 1px solid var(--border); }
+        .page-lock-banner { position: absolute; top: 0; left: 0; width: 100%; height: 100%; min-height: 100vh; background-color: rgba(247, 244, 236, 0.96); backdrop-filter: blur(8px); z-index: 500; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 80px 20px 20px 20px; text-align: center; }
+        .page-lock-box { background: white; padding: 24px; border-radius: 14px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); width: 100%; max-width: 320px; border: 1px solid var(--border); }
 
         .content-list { padding: 12px 16px; display: flex; flex-direction: column; gap: 12px; flex: 1; width: 100%; }
-        .card-item { background-color: var(--card-bg); border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); border: 1px solid var(--border); overflow: hidden; width: 100%; }
+        .card-item { background: linear-gradient(180deg, #ffffff, #faf8f5); border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); border: 1px solid var(--border); overflow: hidden; width: 100%; transition: transform 0.1s ease; }
         
         @keyframes pulseBorder {
-            0% { border-color: var(--danger); box-shadow: 0 0 0 0 rgba(229, 57, 53, 0.4); }
-            50% { border-color: #ff8a80; box-shadow: 0 0 8px 2px rgba(229, 57, 53, 0.6); }
-            100% { border-color: var(--danger); box-shadow: 0 0 0 0 rgba(229, 57, 53, 0.4); }
+            0% { border-color: var(--danger); box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.3); }
+            50% { border-color: #fca5a5; box-shadow: 0 0 8px 2px rgba(220, 38, 38, 0.4); }
+            100% { border-color: var(--danger); box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.3); }
         }
-        .card-item.low-stock-alert { border: 2px solid var(--danger); background-color: #fff8f8; animation: pulseBorder 1.5s infinite; }
+        .card-item.low-stock-alert { border: 2px solid var(--danger); background: linear-gradient(180deg, #ffffff, #fff5f5); animation: pulseBorder 1.5s infinite; }
 
-        .item-name-box { padding: 10px 12px; border-radius: 6px; display: flex; flex-direction: column; gap: 4px; border-left-width: 4px; border-left-style: solid; background: #ffffff; }
-        .item-name { font-size: 17px; font-weight: 800; color: #111111; line-height: 1.25; display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 8px; }
-        .item-subtext { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+        .item-name-box { padding: 10px 12px; border-radius: 8px; display: flex; flex-direction: column; gap: 4px; border-left-width: 4px; border-left-style: solid; background: #faf8f5; }
+        .item-name { font-size: 17px; font-weight: 800; color: #1c1917; line-height: 1.25; display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 8px; }
+        .item-subtext { font-size: 12px; color: #78350f; margin-top: 2px; }
 
         .stock-warning-badge { display: inline-flex; align-items: center; font-size: 12px; font-weight: 800; padding: 4px 8px; border-radius: 6px; margin-top: 6px; line-height: 1.3; }
-        .stock-warning-badge.alert { background-color: #ffebee; color: #c62828; border: 1px solid #ef9a9a; }
-        .stock-warning-badge.normal { background-color: #f1f8e9; color: #33691e; border: 1px solid #c5e1a5; }
+        .stock-warning-badge.alert { background-color: #fef2f2; color: #991b1b; border: 1px solid #fca5a5; }
+        .stock-warning-badge.normal { background-color: #fefbf3; color: #92400e; border: 1px solid #f3e8d2; }
 
         .badges-row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-top: 6px; }
-        .category-label-tag { font-size: 11px; font-weight: 700; color: #444; text-transform: uppercase; background: #e8f5e9; padding: 3px 8px; border-radius: 4px; border: 1px solid #c8e6c9; }
-        .supplier-badge { font-size: 12px; padding: 3px 8px; border-radius: 6px; display: inline-block; font-weight: 800; color: white; box-shadow: 0 1px 2px rgba(0,0,0,0.15); }
+        .category-label-tag { font-size: 11px; font-weight: 700; color: #78350f; text-transform: uppercase; background: #fefbf3; padding: 3px 8px; border-radius: 6px; border: 1px solid #f3e8d2; }
+        .supplier-badge { font-size: 12px; padding: 3px 8px; border-radius: 6px; display: inline-block; font-weight: 800; color: white; box-shadow: 0 1px 2px rgba(0,0,0,0.12); }
 
-        .item-controls { display: flex; align-items: center; justify-content: flex-end; gap: 6px; flex-wrap: nowrap; margin-top: 4px; border-top: 1px dashed #f0f0f0; padding-top: 8px; }
-        .qty-btn { width: 36px; height: 36px; min-width: 36px; border-radius: 50%; border: 1px solid var(--border); background-color: #f0f0f0; font-weight: bold; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .qty-input { width: 58px; min-width: 58px; text-align: center; padding: 6px 2px; border: 1px solid var(--border); border-radius: 6px; font-size: 15px; font-weight: 700; }
+        .item-controls { display: flex; align-items: center; justify-content: flex-end; gap: 6px; flex-wrap: nowrap; margin-top: 4px; border-top: 1px dashed #e7dfd3; padding-top: 8px; }
+        .qty-btn { width: 36px; height: 36px; min-width: 36px; border-radius: 50%; border: 1px solid #ebd5b3; background: linear-gradient(180deg, #ffffff, #fefcf6); font-weight: bold; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #92400e; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .qty-input { width: 58px; min-width: 58px; text-align: center; padding: 6px 2px; border: 1px solid #ebd5b3; border-radius: 8px; font-size: 15px; font-weight: 700; background: #ffffff; }
         .unit-label { font-size: 13px; color: var(--text-secondary); font-weight: 700; min-width: 38px; }
 
         .stock-label-box { display: flex; flex-direction: column; margin-right: auto; line-height: 1.25; min-width: 0; }
         .stock-label-main { font-size: 13px; font-weight: 600; color: var(--text-secondary); display: flex; align-items: center; }
         .stock-label-sub { font-size: 11px; font-weight: bold; margin-top: 2px; }
 
-        .action-row-btn { display: flex; gap: 8px; margin-top: 6px; border-top: 1px solid #f0f0f0; padding-top: 8px; }
-        .btn-action-edit { background: #e3f2fd; color: #0d47a1; border: 1px solid #bbdefb; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; }
-        .btn-action-del { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; }
+        .action-row-btn { display: flex; gap: 8px; margin-top: 6px; border-top: 1px solid #e7dfd3; padding-top: 8px; }
+        .btn-action-edit { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; }
+        .btn-action-del { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; }
 
-        .faq-item-box { background: white; border-radius: 8px; border: 1px solid var(--border); padding: 12px; margin-bottom: 10px; }
+        .faq-item-box { background: white; border-radius: 10px; border: 1px solid var(--border); padding: 12px; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
         .faq-question { font-size: 14px; font-weight: 800; color: var(--primary); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
         .faq-answer { font-size: 13px; color: #334155; line-height: 1.4; }
 
-        .drawer { position: absolute; top: 0; left: -280px; width: 280px; height: 100%; min-height: 100vh; background-color: #faf8f5; box-shadow: 4px 0 15px rgba(0,0,0,0.15); transition: left 0.3s ease; z-index: 2000; padding: 20px; overflow-y: auto; border-right: 1px solid #e6e2d8; }
+        .drawer { position: absolute; top: 0; left: -280px; width: 280px; height: 100%; min-height: 100vh; background-color: #faf7f0; box-shadow: 4px 0 20px rgba(0,0,0,0.12); transition: left 0.3s ease; z-index: 2000; padding: 20px; overflow-y: auto; border-right: 1px solid #e7dfd3; }
         .drawer.open { left: 0; }
-        .drawer-header { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 16px; border-bottom: 1px solid #1b4332; background-color: var(--primary); border-radius: 10px; padding: 16px 12px; }
+        .drawer-header { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 16px; background: linear-gradient(135deg, #b45309, #78350f); border-radius: 12px; padding: 16px 12px; }
         .drawer-menu { list-style: none; }
-        .drawer-menu li { padding: 12px 10px; font-size: 14px; font-weight: 600; color: #2d3748; border-bottom: 1px solid #eae6df; cursor: pointer; display: flex; justify-content: space-between; align-items: center; border-radius: 6px; transition: background 0.15s ease; }
-        .drawer-menu li:active { background-color: #e8f3ee; color: #043927; }
+        .drawer-menu li { padding: 12px 10px; font-size: 14px; font-weight: 600; color: #2d3748; border-bottom: 1px solid #e7dfd3; cursor: pointer; display: flex; justify-content: space-between; align-items: center; border-radius: 6px; transition: background 0.15s ease; }
+        .drawer-menu li:active { background-color: #fefbf3; color: #b45309; }
 
-        .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; min-height: 100vh; background: rgba(0,0,0,0.6); display: none; z-index: 1000; backdrop-filter: blur(4px); }
+        .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; min-height: 100vh; background: rgba(0,0,0,0.5); display: none; z-index: 1000; backdrop-filter: blur(3px); }
         .overlay.active { display: block; }
 
-        .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #fdfcf7; padding: 22px; border-radius: 14px; width: 92%; max-width: 480px; max-height: 88vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.2); display: none; z-index: 9999; border: 1px solid #e2ded4; }
+        .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #ffffff; padding: 22px; border-radius: 16px; width: 92%; max-width: 480px; max-height: 88vh; overflow-y: auto; box-shadow: 0 15px 30px rgba(0,0,0,0.15); display: none; z-index: 9999; border: 1px solid var(--border); }
         .modal.active { display: block !important; }
         
-        .modal-title { font-size: 17px; font-weight: 800; margin-bottom: 14px; padding: 8px 12px; background: #e8f0ec; color: #043927; border-radius: 8px; border-left: 4px solid #2d6a4f; }
+        .modal-title { font-size: 17px; font-weight: 800; margin-bottom: 14px; padding: 8px 12px; background: #fefbf3; color: #b45309; border-radius: 8px; border-left: 4px solid #b45309; border: 1px solid #f3e8d2; }
         .form-group { margin-bottom: 12px; }
         .form-group label { display: block; font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; }
-        .form-control { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; background-color: white; }
+        .form-control { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; background-color: white; }
         .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
-        .btn-cancel { background: #e5e2d9; color: #4a5568; border: none; padding: 10px 14px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; }
-        .btn-save { background: #2d6a4f; color: white; border: none; padding: 10px 14px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; }
-        .btn-danger { background: var(--danger); color: white; border: none; padding: 10px 14px; border-radius: 6px; cursor: pointer; font-size: 14px; }
+        .btn-cancel { background: #e2e8f0; color: #475569; border: none; padding: 10px 14px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; }
+        .btn-save { background: linear-gradient(135deg, #b45309, #92400e); color: white; border: none; padding: 10px 14px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; }
+        .btn-danger { background: linear-gradient(135deg, #dc2626, #b91c1c); color: white; border: none; padding: 10px 14px; border-radius: 8px; cursor: pointer; font-size: 14px; }
 
         .toast-notification { 
             position: fixed; 
             top: 40%; 
             left: 50%; 
             transform: translate(-50%, -50%); 
-            background-color: rgba(38, 50, 56, 0.95); 
+            background-color: rgba(30, 41, 59, 0.96); 
             color: white; 
-            padding: 18px 24px; 
+            padding: 16px 22px; 
             border-radius: 12px; 
-            font-size: 16px; 
+            font-size: 15px; 
             font-weight: 700; 
-            box-shadow: 0 8px 24px rgba(0,0,0,0.4); 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3); 
             z-index: 99999; 
             display: none; 
             text-align: center; 
             max-width: 85%; 
-            border-left: 6px solid var(--warning); 
+            border-left: 5px solid var(--warning); 
         }
         .toast-notification.show { display: block; }
 
-        .sticky-checkout-container { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; padding: 10px 16px 14px 16px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px); border-top: 1px solid var(--border); z-index: 100; }
-        .btn-checkout { width: 100%; background-color: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; }
+        .sticky-checkout-container { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; padding: 10px 16px 14px 16px; background: rgba(255, 255, 255, 0.94); backdrop-filter: blur(8px); border-top: 1px solid var(--border); z-index: 100; }
+        .btn-checkout { width: 100%; background: linear-gradient(135deg, #b45309, #92400e); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: bold; font-size: 15px; cursor: pointer; box-shadow: 0 3px 8px rgba(180,83,9,0.3); }
 
-        .settings-card { background: white; border-radius: 10px; padding: 16px; margin: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 10px; }
-        .history-card { background: white; border-radius: 8px; border: 1px solid var(--border); padding: 12px; margin-bottom: 10px; position: relative; }
+        .settings-card { background: white; border-radius: 12px; padding: 16px; margin: 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.03); display: flex; flex-direction: column; gap: 10px; border: 1px solid var(--border); }
+        .history-card { background: white; border-radius: 10px; border: 1px solid var(--border); padding: 12px; margin-bottom: 10px; position: relative; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
         .history-header { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; border-bottom: 1px solid #eee; padding-bottom: 4px; }
 
         .report-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; font-size: 12px; }
@@ -720,16 +680,38 @@
         .badge-notification { background: var(--danger); color: white; border-radius: 12px; font-size: 11px; font-weight: 800; padding: 2px 8px; display: inline-block; }
     </style>
     <script type="module">
-        // 1. DEREGISTRAZIONE DIRETTA DEI SERVICE WORKER PER INVALIDARE VECCHIE COPIE IN CACHE
+        // 1. REGISTRAZIONE SERVICE WORKER PWA PER IL SUPPORTO OFFLINE COMPLETO
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.getRegistrations().then(registrations => {
-                for (let registration of registrations) {
-                    registration.unregister();
-                }
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').catch(err => {
+                    console.log("Service Worker Offline dev register:", err);
+                });
             });
         }
 
-        // 2. MODULI FIREBASE SDKS
+        // MONITORAGGIO EVENTI CONNETIVITÀ RETE
+        const updateNetworkStatusUI = () => {
+            const banner = document.getElementById('network-status-banner');
+            if (banner) {
+                banner.style.display = navigator.onLine ? 'none' : 'block';
+            }
+        };
+
+        window.addEventListener('online', () => {
+            updateNetworkStatusUI();
+            if (typeof window.showAlert === 'function') {
+                window.showAlert("📶 Connessione ripristinata! Sincronizzazione scorte in corso...");
+            }
+        });
+        window.addEventListener('offline', () => {
+            updateNetworkStatusUI();
+            if (typeof window.showAlert === 'function') {
+                window.showAlert("📡 Dispositivo offline: Le modifiche scorte verranno salvate in locale.");
+            }
+        });
+        updateNetworkStatusUI();
+
+        // 2. MODULI FIREBASE SDKS CON INDEXEDDB PERSISTENCE ABILITATO
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { 
             getAuth, 
@@ -743,6 +725,7 @@
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { 
             getFirestore, 
+            enableIndexedDbPersistence,
             doc, 
             setDoc, 
             getDoc,
@@ -756,53 +739,63 @@
             where
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // CONFIGURAZIONE FIREBASE AMBIENTE UFFICIALE PRODUZIONE (magari-b7f93)
+        // CONFIGURAZIONE FIREBASE AMBIENTE DEVELOPMENT / TEST (magari-app-dev)
         const firebaseConfig = {
-            apiKey: "AIzaSyAYoG8kDRoEE6AGhAStCvfwCwPZSHSl8j4",
-            authDomain: "magari-b7f93.firebaseapp.com",
-            projectId: "magari-b7f93",
-            storageBucket: "magari-b7f93.firebasestorage.app",
-            messagingSenderId: "135472598053",
-            appId: "1:135472598053:web:a3fd59a851fe99f51a03cc",
-            measurementId: "G-QX5P0FC137"
+            apiKey: "AIzaSyCv1G_nShEHX3_Yho1sWSK0ceK6gWbEEPU",
+            authDomain: "magari-app-dev.firebaseapp.com",
+            projectId: "magari-app-dev",
+            storageBucket: "magari-app-dev.firebasestorage.app",
+            messagingSenderId: "653540923043",
+            appId: "1:653540923043:web:387815ffd7b79385ff1116"
         };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        // ABILITAZIONE PERSISTENZA FIRESTORE OFFLINE (INDEXEDDB)
+        enableIndexedDbPersistence(db).then(() => {
+            console.log("✅ FIRESTORE OFFLINE PERSISTENCE ACTIVATED SUCCESSFULLY!");
+        }).catch((err) => {
+            if (err.code === 'failed-precondition') {
+                console.warn('⚠️ Firestore Offline Persistence: Schede multiple aperte.');
+            } else if (err.code === 'unimplemented') {
+                console.warn('⚠️ Firestore Offline Persistence non supportato dal browser.');
+            }
+        });
+
         window.currentUserProfile = null;
         window.activeLocation = null;
         window.activeVerifyHistoryId = null;
 
-        // PALETTE CURATA A 12 COLORI UNICI E DISTINTI
+        // PALETTE CURATA A 12 COLORI UNICI
         window.supplierColorPalette = [
-            { name: "Rosso Pomodoro", hex: "#e53935" },
-            { name: "Arancio Agrumi", hex: "#f57c00" },
-            { name: "Giallo Ocra", hex: "#fbc02d" },
-            { name: "Verde Smeraldo", hex: "#2e7d32" },
-            { name: "Verde Oliva", hex: "#558b2f" },
-            { name: "Blu Cobalto", hex: "#1565c0" },
-            { name: "Celeste", hex: "#0288d1" },
-            { name: "Viola Melanzana", hex: "#7b1fa2" },
-            { name: "Rosa Magenta", hex: "#c2185b" },
-            { name: "Marrone Tostato", hex: "#5d4037" },
-            { name: "Antracite", hex: "#37474f" },
-            { name: "Borgogna", hex: "#880e4f" }
+            { name: "Rosso Pomodoro", hex: "#dc2626", textColor: "#ffffff" },
+            { name: "Arancio Agrumi", hex: "#ea580c", textColor: "#ffffff" },
+            { name: "Giallo Ocra", hex: "#d97706", textColor: "#ffffff" },
+            { name: "Verde Smeraldo", hex: "#166534", textColor: "#ffffff" },
+            { name: "Verde Oliva", hex: "#65a30d", textColor: "#ffffff" },
+            { name: "Blu Cobalto", hex: "#1d4ed8", textColor: "#ffffff" },
+            { name: "Celeste", hex: "#0288d1", textColor: "#ffffff" },
+            { name: "Viola Melanzana", hex: "#7e22ce", textColor: "#ffffff" },
+            { name: "Rosa Magenta", hex: "#be185d", textColor: "#ffffff" },
+            { name: "Marrone Tostato", hex: "#78350f", textColor: "#ffffff" },
+            { name: "Antracite", hex: "#334155", textColor: "#ffffff" },
+            { name: "Borgogna", hex: "#881337", textColor: "#ffffff" }
         ];
 
         window.defaultSuppliers = [
-            { id: 1700000001, name: "Paolo's Tiramisu", phone: "0764211121", email: "paolo@tiramisusthlm.se", color: "#f57c00", orderIndex: 1 },
-            { id: 1700000002, name: "Divinoil Antica Bottega", phone: "0708223715", email: "info@divinoil.com", color: "#5d4037", orderIndex: 2 },
-            { id: 1700000003, name: "D'ABRAMO Group AB", phone: "0701499424", email: "linnea@dabramo.se", color: "#fbc02d", orderIndex: 3 },
-            { id: 1700000004, name: "Martin & Servera", phone: "08-6978300", email: "", color: "#1565c0", orderIndex: 4 },
-            { id: 1700000005, name: "Don Bibbo AB", phone: "08-7224930", email: "info@donbibbo.com", color: "#e53935", orderIndex: 5 },
-            { id: 1700000006, name: "Daniele FG AB", phone: "0704959768", email: "gino.daniele@hotmail.com", color: "#2e7d32", orderIndex: 6 },
+            { id: 1700000001, name: "Paolo's Tiramisu", phone: "0764211121", email: "paolo@tiramisusthlm.se", color: "#ea580c", orderIndex: 1 },
+            { id: 1700000002, name: "Divinoil Antica Bottega", phone: "0708223715", email: "info@divinoil.com", color: "#78350f", orderIndex: 2 },
+            { id: 1700000003, name: "D'ABRAMO Group AB", phone: "0701499424", email: "linnea@dabramo.se", color: "#d97706", orderIndex: 3 },
+            { id: 1700000004, name: "Martin & Servera", phone: "08-6978300", email: "", color: "#1d4ed8", orderIndex: 4 },
+            { id: 1700000005, name: "Don Bibbo AB", phone: "08-7224930", email: "info@donbibbo.com", color: "#dc2626", orderIndex: 5 },
+            { id: 1700000006, name: "Daniele FG AB", phone: "0704959768", email: "gino.daniele@hotmail.com", color: "#166534", orderIndex: 6 },
             { id: 1700000007, name: "Jansson Fisk AB", phone: "08-310772", email: "janssonsfisk@gmail.com", color: "#0288d1", orderIndex: 7 },
-            { id: 1700000008, name: "Östkustens Smak AB", phone: "0728758967", email: "ostkustenleverans@gmail.com", color: "#c2185b", orderIndex: 8 },
-            { id: 1700000009, name: "Villa Aurum", phone: "", email: "", color: "#7b1fa2", orderIndex: 9 },
-            { id: 1700000010, name: "Stellan Kramer", phone: "", email: "", color: "#37474f", orderIndex: 10 },
-            { id: 1700000011, name: "Ekerö Brygghus AB", phone: "0768837808", email: "kerryn@ekerobrygghus.se", color: "#558b2f", orderIndex: 11 }
+            { id: 1700000008, name: "Östkustens Smak AB", phone: "0728758967", email: "ostkustenleverans@gmail.com", color: "#be185d", orderIndex: 8 },
+            { id: 1700000009, name: "Villa Aurum", phone: "", email: "", color: "#7e22ce", orderIndex: 9 },
+            { id: 1700000010, name: "Stellan Kramer", phone: "", email: "", color: "#334155", orderIndex: 10 },
+            { id: 1700000011, name: "Ekerö Brygghus AB", phone: "0768837808", email: "kerryn@ekerobrygghus.se", color: "#65a30d", orderIndex: 11 }
         ];
 
         window.suppliersData = [...window.defaultSuppliers];
@@ -810,28 +803,104 @@
         window.orderHistoryData = [];
         window.bugReportsData = [];
 
-        // MONITORAGGIO STATO AUTENTICAZIONE UTENTE
+        // FUNZIONI GENERALI
+        window.getLocationKey = () => (window.activeLocation && window.activeLocation.includes('Östermalm')) ? 'ostermalm' : 'vasastan';
+        window.getQty = (i) => window.getLocationKey() === 'ostermalm' ? (i.qty_ostermalm ?? 0) : (i.qty_vasastan ?? i.qty ?? 0);
+        window.getOrderQty = (i) => window.getLocationKey() === 'ostermalm' ? (i.orderQty_ostermalm ?? 0) : (i.orderQty_vasastan ?? i.orderQty ?? 0);
+        window.getMin = (i) => window.getLocationKey() === 'ostermalm' ? (i.minQty_ostermalm ?? 2) : (i.minQty_vasastan ?? i.minQty ?? 2);
+        window.getLastUpdateBy = (i) => window.getLocationKey() === 'ostermalm' ? (i.lastUpdateBy_ostermalm ?? '') : (i.lastUpdateBy_vasastan ?? '');
+        window.getLastUpdateDate = (i) => window.getLocationKey() === 'ostermalm' ? (i.lastUpdateDate_ostermalm ?? '') : (i.lastUpdateDate_vasastan ?? '');
+
+        window.getStockUpdatesObj = function(newQty, opName) {
+            const key = window.getLocationKey();
+            const nowStr = new Date().toISOString(); 
+            const displayStr = new Date().toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+            if (key === 'ostermalm') return { qty_ostermalm: newQty, lastUpdateBy_ostermalm: opName, lastUpdateDate_ostermalm: displayStr, lastUpdateRaw_ostermalm: nowStr };
+            return { qty_vasastan: newQty, lastUpdateBy_vasastan: opName, lastUpdateDate_vasastan: displayStr, lastUpdateRaw_vasastan: nowStr };
+        };
+
+        window.translateUnitToSwedish = (unit) => ({ "Bottiglie": "flaskor", "Unità": "st", "Kg": "kg", "Litri": "liter", "Cartoni": "kartonger", "Sacchi": "säckar" }[unit] || unit || "st");
+        window.getCategoryEmoji = (cat) => ({ "Latticini": "🧀", "Farine & Secco": "🌾", "Conserve & Pomodoro": "🍅", "Salumi & Carni": "🥩", "Alcolici": "🍷", "Bevande": "🥤", "Surgelati": "❄", "Ortofrutta": "🥗", "Pulizia & Monouso": "🧹", "Altro": "📦" }[cat] || "📦");
+
+        window.togglePasswordVisibility = function(inputId) {
+            const field = document.getElementById(inputId);
+            if (field) field.type = field.type === 'password' ? 'text' : 'password';
+        };
+
+        window.setActiveLocation = function(loc) {
+            window.activeLocation = loc;
+            document.getElementById('location-guard-banner').style.display = 'none';
+            document.getElementById('active-location-text').innerText = `📍 Sede DEV: ${loc}`;
+            document.getElementById('active-location-banner').style.display = 'flex';
+            const bugLocInput = document.getElementById('bug-location-display');
+            if (bugLocInput) bugLocInput.value = loc;
+            if (typeof window.listenToStaffNotice === 'function') window.listenToStaffNotice();
+            window.refreshAllViews();
+        };
+
+        window.promptChangeLocation = () => document.getElementById('location-guard-banner').style.display = 'flex';
+        window.toggleMenu = () => { document.getElementById('drawer').classList.toggle('open'); document.getElementById('overlay').classList.toggle('active'); };
+
+        window.toggleReportPeriodInputs = function() {
+            const type = document.getElementById('report-period-type')?.value;
+            const monthGroup = document.getElementById('report-month-select-group');
+            const monthPicker = document.getElementById('report-month-picker');
+
+            if (monthGroup) monthGroup.style.display = (type === 'month') ? 'block' : 'none';
+
+            if (type === 'month' && monthPicker && !monthPicker.value) {
+                const now = new Date();
+                const yr = now.getFullYear();
+                const mo = String(now.getMonth() + 1).padStart(2, '0');
+                monthPicker.value = `${yr}-${mo}`;
+            }
+        };
+
+        window.closeAll = () => { 
+            document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); 
+            document.getElementById('overlay').classList.remove('active'); 
+            document.getElementById('drawer').classList.remove('open'); 
+        };
+
+        // NAVIGAZIONE
+        window.navigateTo = function(sec) {
+            const adminProtectedSections = ['magazzino', 'fornitori', 'sprechi', 'impostazioni'];
+            const isAdmin = window.currentUserProfile && window.currentUserProfile.role === 'admin';
+
+            window.closeAll();
+
+            if (adminProtectedSections.includes(sec) && !isAdmin) {
+                window.showAlert("🔒 Sezione Riservata Admin DEV: Effettua il Login.");
+                setTimeout(() => { window.openAuthModal(); }, 150);
+                return;
+            }
+
+            document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+            document.getElementById(`view-${sec}`).classList.add('active');
+            
+            const titles = { 'ordini': 'Ordini DEV', 'scorte': 'Scorte DEV', 'storico': 'Storico DEV', 'magazzino': 'Magazzino DEV', 'fornitori': 'Fornitori DEV', 'sprechi': 'Report Consumi DEV', 'faq': 'Guida DEV', 'bugreport': 'Segnala Bug DEV', 'impostazioni': 'Impostazioni DEV' };
+            document.getElementById('page-title').innerText = titles[sec] || 'Magari DEV';
+            
+            window.scrollTo({ top: 0, behavior: 'instant' });
+
+            if (sec === 'impostazioni' && isAdmin) window.loadUsersListForAdmin();
+        };
+
+        // AUTH
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 const isMasterAdmin = user.email && user.email.toLowerCase() === "nicolas@magaripizza.com";
                 const userRole = isMasterAdmin ? "admin" : "operator";
                 const userName = user.displayName || user.email.split('@')[0];
 
-                window.currentUserProfile = {
-                    uid: user.uid,
-                    email: user.email,
-                    name: userName,
-                    role: userRole
-                };
+                window.currentUserProfile = { uid: user.uid, email: user.email, name: userName, role: userRole };
 
                 try {
                     const userDocRef = doc(db, "users", user.uid);
                     const userDoc = await getDoc(userDocRef);
                     if (userDoc.exists()) {
                         const data = userDoc.data();
-                        if (!isMasterAdmin) {
-                            window.currentUserProfile.role = data.role || "operator";
-                        }
+                        if (!isMasterAdmin) window.currentUserProfile.role = data.role || "operator";
                         window.currentUserProfile.name = data.name || userName;
                     } else {
                         await setDoc(userDocRef, window.currentUserProfile, { merge: true });
@@ -847,85 +916,6 @@
             window.refreshAllViews();
         });
 
-        // NOTIFICHE PERSISTENTI REGISTRAZIONE STAFF
-        window.activeNotificationsUnsubscribe = null;
-
-        window.listenToPersistentUserNotifications = function() {
-            if (window.activeNotificationsUnsubscribe) {
-                window.activeNotificationsUnsubscribe();
-            }
-
-            const currentUser = window.currentUserProfile;
-            const isMaster = currentUser && currentUser.email && currentUser.email.toLowerCase() === "nicolas@magaripizza.com";
-            const isAdmin = isMaster || (currentUser && currentUser.role === 'admin');
-
-            const container = document.getElementById('realtime-user-toast-container');
-            if (!container) return;
-
-            if (!isAdmin) {
-                container.innerHTML = '';
-                return;
-            }
-
-            const q = query(collection(db, "notifications"), where("status", "==", "unread"));
-            
-            window.activeNotificationsUnsubscribe = onSnapshot(q, (snapshot) => {
-                container.innerHTML = '';
-                snapshot.docs.forEach((docSnap) => {
-                    const notif = docSnap.data();
-                    const notifId = docSnap.id;
-                    window.renderPersistentUserToast(notifId, notif.userName || notif.email || "Nuovo Operatore", notif.timestamp);
-                });
-            });
-        };
-
-        window.renderPersistentUserToast = function(notifId, identifier, timestamp) {
-            const container = document.getElementById('realtime-user-toast-container');
-            if (!container) return;
-
-            const toast = document.createElement('div');
-            toast.id = `toast-notif-${notifId}`;
-            toast.style.cssText = `
-                background: linear-gradient(135deg, #043927, #1b5e20);
-                color: white;
-                padding: 12px 16px;
-                border-radius: 10px;
-                font-size: 13px;
-                font-weight: bold;
-                box-shadow: 0 6px 18px rgba(4, 57, 39, 0.3);
-                border: 1px solid #81c784;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                gap: 10px;
-                width: 100%;
-            `;
-            
-            toast.innerHTML = `
-                <div style="display:flex; align-items:center; gap:10px;">
-                    <span style="font-size:18px;">🔔</span>
-                    <div>
-                        <div style="font-size:10px; text-transform:uppercase; color:#a5d6a7; font-weight:800;">Nuova Registrazione Staff</div>
-                        <div style="margin-top:2px; font-size:13px;">Si è registrato <u>${identifier}</u></div>
-                        ${timestamp ? `<div style="font-size:10px; opacity:0.8; margin-top:2px; font-weight:normal;">🕒 ${timestamp}</div>` : ''}
-                    </div>
-                </div>
-                <button onclick="dismissUserNotification('${notifId}')" title="Chiudi" style="background:rgba(255,255,255,0.2); border:none; color:white; width:24px; height:24px; border-radius:50%; font-weight:bold; cursor:pointer; font-size:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">✕</button>
-            `;
-
-            container.appendChild(toast);
-        };
-
-        window.dismissUserNotification = async function(notifId) {
-            try {
-                await updateDoc(doc(db, "notifications", notifId), { status: "read", dismissedBy: window.currentUserProfile?.name || 'Admin' });
-                const el = document.getElementById(`toast-notif-${notifId}`);
-                if (el) el.remove();
-            } catch(e) {
-                console.error("Errore notifica:", e);
-            }
-        };
-
         window.updateAuthUIState = function() {
             const statusTxt = document.getElementById('user-status-text');
             const authBtn = document.getElementById('btn-auth-action');
@@ -936,10 +926,10 @@
 
             if (window.currentUserProfile) {
                 const isAdmin = window.currentUserProfile.role === 'admin';
-                const roleBadge = isAdmin ? '⭐ Admin' : '👤 Operatore';
+                const roleBadge = isAdmin ? '⭐ Admin DEV' : '👤 Operatore DEV';
 
                 if (statusTxt) statusTxt.innerHTML = `${roleBadge}: <b>${window.currentUserProfile.name}</b>`;
-                if (authBtn) { authBtn.innerText = '🚪 Logout'; authBtn.style.background = '#e53935'; authBtn.onclick = window.handleLogoutSubmit; }
+                if (authBtn) { authBtn.innerText = '🚪 Logout DEV'; authBtn.style.background = 'linear-gradient(135deg, #dc2626, #b91c1c)'; authBtn.onclick = window.handleLogoutSubmit; }
                 if (btnDeleteNotice) btnDeleteNotice.style.display = isAdmin ? 'inline-block' : 'none';
                 
                 const opText = window.currentUserProfile.name;
@@ -952,13 +942,13 @@
                     if (banner) banner.style.display = isAdmin ? 'none' : 'flex';
                 });
             } else {
-                if (statusTxt) statusTxt.innerHTML = '👁️ Modalità Lettura (Guest)';
-                if (authBtn) { authBtn.innerText = '🔑 Accedi / Registrati'; authBtn.style.background = '#2563eb'; authBtn.onclick = window.openAuthModal; }
+                if (statusTxt) statusTxt.innerHTML = '👁️ Modalità Lettura (Guest DEV)';
+                if (authBtn) { authBtn.innerText = '🔑 Accedi / Registrati'; authBtn.style.background = 'linear-gradient(135deg, #2563eb, #1d4ed8)'; authBtn.onclick = window.openAuthModal; }
                 if (btnDeleteNotice) btnDeleteNotice.style.display = 'none';
                 
-                if (opOrderInput) opOrderInput.value = '👁 Nessun Operatore (Accedi)';
-                if (opStockInput) opStockInput.value = '👁 Nessun Operatore (Accedi)';
-                if (opBugInput) opBugInput.value = '👁 Nessun Operatore (Accedi)';
+                if (opOrderInput) opOrderInput.value = '👁 Nessun Operatore DEV';
+                if (opStockInput) opStockInput.value = '👁 Nessun Operatore DEV';
+                if (opBugInput) opBugInput.value = '👁 Nessun Operatore DEV';
 
                 ['magazzino', 'fornitori', 'sprechi', 'impostazioni'].forEach(sec => {
                     const banner = document.getElementById(`lock-banner-${sec}`);
@@ -981,269 +971,7 @@
             if (toast) { toast.innerText = msg; toast.classList.add('show'); setTimeout(() => { toast.classList.remove('show'); }, 3500); }
         };
 
-        // LISTENERS AVVISI STAFF SEPARATI PER SEDE
-        window.activeNoticeUnsubscribe = null;
-
-        window.listenToStaffNotice = function() {
-            if (window.activeNoticeUnsubscribe) {
-                window.activeNoticeUnsubscribe();
-            }
-
-            const locKey = window.getLocationKey ? window.getLocationKey() : 'vasastan';
-            const noticeDocId = `staffNotice_${locKey}`;
-
-            window.activeNoticeUnsubscribe = onSnapshot(doc(db, "settings", noticeDocId), (docSnap) => {
-                const banner = document.getElementById('staff-notice-banner');
-                const txt = document.getElementById('staff-notice-text');
-                const meta = document.getElementById('staff-notice-meta');
-
-                if (docSnap.exists() && docSnap.data().text) {
-                    const data = docSnap.data();
-                    if (txt) txt.innerText = data.text;
-                    if (meta) meta.innerText = `📍 ${data.location || locKey.toUpperCase()} • Pubblicato da ${data.author || 'Admin'} - ${data.date ? new Date(data.date.toDate ? data.date.toDate() : data.date).toLocaleString('it-IT') : ''}`;
-                    if (banner) banner.style.display = 'block';
-                } else {
-                    if (banner) banner.style.display = 'none';
-                }
-            });
-        };
-
-        window.publishStaffNotice = async function() {
-            if (!window.checkAuthGuard()) return;
-            const input = document.getElementById('notice-input-field');
-            const text = input ? input.value.trim() : '';
-            if (!text) return window.showAlert("⚠️ Inserisci un testo per l'avviso.");
-
-            const locKey = window.getLocationKey();
-            const noticeDocId = `staffNotice_${locKey}`;
-
-            await setDoc(doc(db, "settings", noticeDocId), {
-                text: text,
-                author: window.currentUserProfile.name,
-                location: window.activeLocation || locKey,
-                date: new Date().toISOString()
-            });
-
-            if (input) input.value = '';
-            window.showAlert(`📢 Avviso pubblicato per ${window.activeLocation || locKey}!`);
-        };
-
-        window.deleteNoticeFromDb = async function() {
-            if (!window.checkAuthGuard()) return;
-            const locKey = window.getLocationKey();
-            const noticeDocId = `staffNotice_${locKey}`;
-            await deleteDoc(doc(db, "settings", noticeDocId));
-            window.showAlert(`🗑️ Avviso rimosso per ${window.activeLocation || locKey}.`);
-        };
-
-        // MODALE AUTHENTICATION
-        window.openAuthModal = () => { 
-            window.closeAll();
-            document.getElementById('auth-modal').classList.add('active'); 
-            document.getElementById('overlay').classList.add('active'); 
-        };
-        window.closeAuthModal = () => { 
-            document.getElementById('auth-modal').classList.remove('active'); 
-            document.getElementById('overlay').classList.remove('active'); 
-        };
-
-        window.switchAuthTab = function(tab) {
-            const isLogin = tab === 'login';
-            document.getElementById('auth-form-login').style.display = isLogin ? 'block' : 'none';
-            document.getElementById('auth-form-register').style.display = isLogin ? 'none' : 'block';
-            document.getElementById('tab-btn-login').style.background = isLogin ? 'var(--primary)' : '#f1f5f9';
-            document.getElementById('tab-btn-login').style.color = isLogin ? 'white' : '#334155';
-            document.getElementById('tab-btn-register').style.background = isLogin ? '#f1f5f9' : 'var(--primary)';
-            document.getElementById('tab-btn-register').style.color = isLogin ? '#334155' : 'white';
-        };
-
-        window.handleLoginSubmit = async function() {
-            const email = document.getElementById('login-email').value.trim();
-            const pass = document.getElementById('login-password').value.trim();
-            const rememberMe = document.getElementById('remember-me-checkbox').checked;
-
-            if (!email || !pass) return window.showAlert("⚠️ Compila tutti i campi.");
-
-            try {
-                const persistenceType = rememberMe ? browserLocalPersistence : browserSessionPersistence;
-                await setPersistence(auth, persistenceType);
-                await signInWithEmailAndPassword(auth, email, pass);
-                closeAuthModal(); 
-                window.showAlert("🎉 Login effettuato con successo!");
-            } catch(e) { 
-                window.showAlert(`❌ Errore Login: ${e.message}`); 
-            }
-        };
-
-        window.handleRegisterSubmit = async function() {
-            const name = document.getElementById('reg-name').value.trim();
-            const email = document.getElementById('reg-email').value.trim();
-            const pass = document.getElementById('reg-password').value.trim();
-            if (!name || !email || !pass) return window.showAlert("⚠️ Compila tutti i campi.");
-            try {
-                const res = await createUserWithEmailAndPassword(auth, email, pass);
-                const isMasterAdmin = email.toLowerCase() === "nicolas@magaripizza.com";
-                
-                const newUser = { 
-                    uid: res.user.uid, 
-                    email: email, 
-                    name: name, 
-                    role: isMasterAdmin ? 'admin' : 'operator'
-                };
-                
-                await setDoc(doc(db, "users", res.user.uid), newUser);
-
-                const notifId = `reg_${Date.now()}`;
-                const nowDisplay = new Date().toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-                await setDoc(doc(db, "notifications", notifId), {
-                    id: notifId,
-                    type: "new_registration",
-                    userName: name,
-                    email: email,
-                    status: "unread",
-                    timestamp: nowDisplay
-                });
-
-                closeAuthModal(); 
-                window.showAlert("🎉 Account registrato ed attivo!");
-            } catch(e) { window.showAlert(`❌ Errore Registrazione: ${e.message}`); }
-        };
-
-        window.handleLogoutSubmit = async function() {
-            await signOut(auth);
-            window.showAlert("🚪 Logout effettuato.");
-        };
-
-        // GESTIONE STAFF
-        window.loadUsersListForAdmin = async function() {
-            const container = document.getElementById('admin-users-list-container');
-            if (!container) return;
-            
-            const currentUser = auth.currentUser;
-            const isMaster = currentUser && currentUser.email && currentUser.email.toLowerCase() === "nicolas@magaripizza.com";
-            const isAdmin = isMaster || (window.currentUserProfile && window.currentUserProfile.role === 'admin');
-
-            if (!isAdmin) {
-                container.innerHTML = '<div style="font-size:12px; color:#666; text-align:center; padding:10px;">Riservato agli Admin.</div>';
-                return;
-            }
-
-            try {
-                container.innerHTML = '<div style="font-size:12px; color:#666; text-align:center; padding:10px;">Caricamento utenti in corso...</div>';
-                const querySnapshot = await getDocs(collection(db, "users"));
-                
-                if (querySnapshot.empty) {
-                    container.innerHTML = '<div style="font-size:12px; color:#666; text-align:center; padding:10px;">Nessun operatore presente nel database.</div>';
-                    return;
-                }
-
-                container.innerHTML = '';
-                querySnapshot.forEach((docSnap) => {
-                    const uData = docSnap.data();
-                    const uUid = docSnap.id;
-                    const isUserAdmin = uData.role === 'admin';
-                    const isMasterEmail = uData.email && uData.email.toLowerCase() === "nicolas@magaripizza.com";
-
-                    const roleBadge = isMasterEmail ? '⭐ Master Admin' : (isUserAdmin ? '⭐ Admin' : '👤 Operatore');
-
-                    container.innerHTML += `
-                        <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; padding:10px; display:flex; flex-direction:column; gap:6px; box-shadow:0 1px 2px rgba(0,0,0,0.05);">
-                            <div style="display:flex; justify-content:space-between; align-items:center;">
-                                <div>
-                                    <div style="font-weight:bold; color:var(--primary, #1e293b); font-size:13px;">${uData.name || 'Senza Nome'}</div>
-                                    <div style="font-size:11px; color:#64748b;">${uData.email || 'N/D'}</div>
-                                </div>
-                                <div style="font-size:11px; font-weight:600; background:#f1f5f9; padding:2px 8px; border-radius:12px; color:#334155;">${roleBadge}</div>
-                            </div>
-                            
-                            <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:4px; border-top:1px dashed #e2e8f0; padding-top:6px;">
-                                ${!isMasterEmail ? `
-                                    <button onclick="openUserModal('${uUid}')" style="background:#e3f2fd; color:#0d47a1; border:1px solid #bbdefb; padding:4px 8px; border-radius:4px; font-size:11px; font-weight:600; cursor:pointer;">✏️ Modifica</button>
-                                    <button onclick="deleteUserFromAdmin('${uUid}', '${(uData.name || '').replace(/'/g, "\\'")}')" style="background:#ffebee; color:#c62828; border:1px solid #ffcdd2; padding:4px 8px; border-radius:4px; font-size:11px; font-weight:600; cursor:pointer;">🗑️ Elimina</button>
-                                ` : '<span style="font-size:10px; color:#94a3b8; font-style:italic;">Account Principale</span>'}
-                            </div>
-                        </div>`;
-                });
-            } catch(e) {
-                console.error("Errore lettura utenti:", e);
-                container.innerHTML = `<div style="font-size:12px; color:#c62828; text-align:center; padding:10px;">⚠️ Impossibile caricare la lista utenti (${e.message}).</div>`;
-            }
-        };
-
-        window.openUserModal = async function(uid = null) {
-            if (!window.checkAuthGuard()) return;
-            window.closeAll();
-            document.getElementById('edit-user-uid').value = '';
-            document.getElementById('user-field-name').value = '';
-            document.getElementById('user-field-email').value = '';
-            document.getElementById('user-field-pass').value = '';
-            document.getElementById('user-field-role').value = 'operator';
-
-            const passGroup = document.getElementById('user-field-pass-group');
-
-            if (uid) {
-                document.getElementById('user-modal-title').innerText = '✏️ Modifica Profilo Operatore';
-                passGroup.style.display = 'none';
-                const userDoc = await getDoc(doc(db, "users", uid));
-                if (userDoc.exists()) {
-                    const data = userDoc.data();
-                    document.getElementById('edit-user-uid').value = uid;
-                    document.getElementById('user-field-name').value = data.name || '';
-                    document.getElementById('user-field-email').value = data.email || '';
-                    document.getElementById('user-field-role').value = data.role || 'operator';
-                }
-            } else {
-                document.getElementById('user-modal-title').innerText = '➕ Nuovo Operatore';
-                passGroup.style.display = 'block';
-            }
-
-            document.getElementById('user-edit-modal').classList.add('active');
-            document.getElementById('overlay').classList.add('active');
-        };
-
-        window.closeUserModal = () => {
-            document.getElementById('user-edit-modal').classList.remove('active');
-            document.getElementById('overlay').classList.remove('active');
-        };
-
-        window.saveUserFromAdmin = async function() {
-            if (!window.checkAuthGuard()) return;
-            const uid = document.getElementById('edit-user-uid').value;
-            const name = document.getElementById('user-field-name').value.trim();
-            const email = document.getElementById('user-field-email').value.trim();
-            const role = document.getElementById('user-field-role').value;
-            const pass = document.getElementById('user-field-pass').value.trim();
-
-            if (!name || !email) return window.showAlert("⚠️ Inserisci Nome ed Email.");
-
-            if (uid) {
-                await updateDoc(doc(db, "users", uid), { name, email, role });
-                window.showAlert("✅ Operatore aggiornato!");
-            } else {
-                if (!pass || pass.length < 6) return window.showAlert("⚠️ Password di almeno 6 caratteri.");
-                try {
-                    const res = await createUserWithEmailAndPassword(auth, email, pass);
-                    await setDoc(doc(db, "users", res.user.uid), { uid: res.user.uid, name, email, role });
-                    window.showAlert("🎉 Nuovo operatore creato con successo!");
-                } catch(e) {
-                    return window.showAlert(`❌ Errore Creazione: ${e.message}`);
-                }
-            }
-
-            closeUserModal();
-            window.loadUsersListForAdmin();
-        };
-
-        window.deleteUserFromAdmin = async function(uid, name) {
-            if (!window.checkAuthGuard()) return;
-            if (confirm(`Eliminare il profilo dell'operatore "${name}"?`)) {
-                await deleteDoc(doc(db, "users", uid));
-                window.showAlert("🗑 Profilo eliminato dal database.");
-                window.loadUsersListForAdmin();
-            }
-        };
-
-        // LISTENERS FIRESTORE REALTIME
+        // LISTENERS REALTIME CON CACHE OFFLINE AUTOMATICA
         onSnapshot(collection(db, "inventory"), (snapshot) => {
             window.inventoryData = snapshot.docs.map(doc => doc.data());
             window.refreshAllViews();
@@ -1268,89 +996,6 @@
             window.refreshAllViews();
         });
 
-        // HELPERS GENERALI
-        window.getLocationKey = () => (window.activeLocation && window.activeLocation.includes('Östermalm')) ? 'ostermalm' : 'vasastan';
-        window.getQty = (i) => window.getLocationKey() === 'ostermalm' ? (i.qty_ostermalm ?? 0) : (i.qty_vasastan ?? i.qty ?? 0);
-        window.getOrderQty = (i) => window.getLocationKey() === 'ostermalm' ? (i.orderQty_ostermalm ?? 0) : (i.orderQty_vasastan ?? i.orderQty ?? 0);
-        window.getMin = (i) => window.getLocationKey() === 'ostermalm' ? (i.minQty_ostermalm ?? 2) : (i.minQty_vasastan ?? i.minQty ?? 2);
-        window.getLastUpdateBy = (i) => window.getLocationKey() === 'ostermalm' ? (i.lastUpdateBy_ostermalm ?? '') : (i.lastUpdateBy_vasastan ?? '');
-        window.getLastUpdateDate = (i) => window.getLocationKey() === 'ostermalm' ? (i.lastUpdateDate_ostermalm ?? '') : (i.lastUpdateDate_vasastan ?? '');
-
-        window.getStockUpdatesObj = function(newQty, opName) {
-            const key = window.getLocationKey();
-            const nowStr = new Date().toISOString(); 
-            const displayStr = new Date().toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-            if (key === 'ostermalm') return { qty_ostermalm: newQty, lastUpdateBy_ostermalm: opName, lastUpdateDate_ostermalm: displayStr, lastUpdateRaw_ostermalm: nowStr };
-            return { qty_vasastan: newQty, lastUpdateBy_vasastan: opName, lastUpdateDate_vasastan: displayStr, lastUpdateRaw_vasastan: nowStr };
-        };
-
-        window.translateUnitToSwedish = (unit) => ({ "Bottiglie": "flaskor", "Unità": "st", "Kg": "kg", "Litri": "liter", "Cartoni": "kartonger", "Sacchi": "säckar" }[unit] || unit || "st");
-        window.getCategoryEmoji = (cat) => ({ "Latticini": "🧀", "Farine & Secco": "🌾", "Conserve & Pomodoro": "🍅", "Salumi & Carni": "🥩", "Alcolici": "🍷", "Bevande": "🥤", "Surgelati": "❄", "Ortofrutta": "🥗", "Pulizia & Monouso": "🧹", "Altro": "📦" }[cat] || "📦");
-
-        window.setActiveLocation = function(loc) {
-            window.activeLocation = loc;
-            document.getElementById('location-guard-banner').style.display = 'none';
-            document.getElementById('active-location-text').innerText = `📍 Sede: ${loc}`;
-            document.getElementById('active-location-banner').style.display = 'flex';
-            const bugLocInput = document.getElementById('bug-location-display');
-            if (bugLocInput) bugLocInput.value = loc;
-            if (typeof window.listenToStaffNotice === 'function') window.listenToStaffNotice();
-            window.refreshAllViews();
-        };
-
-        window.promptChangeLocation = () => document.getElementById('location-guard-banner').style.display = 'flex';
-        window.toggleMenu = () => { document.getElementById('drawer').classList.toggle('open'); document.getElementById('overlay').classList.toggle('active'); };
-
-        window.toggleReportPeriodInputs = function() {
-            const type = document.getElementById('report-period-type')?.value;
-            const monthGroup = document.getElementById('report-month-select-group');
-            const monthPicker = document.getElementById('report-month-picker');
-
-            if (monthGroup) {
-                monthGroup.style.display = (type === 'month') ? 'block' : 'none';
-            }
-
-            // Inizializzazione automatica al mese corrente se vuoto
-            if (type === 'month' && monthPicker && !monthPicker.value) {
-                const now = new Date();
-                const yr = now.getFullYear();
-                const mo = String(now.getMonth() + 1).padStart(2, '0');
-                monthPicker.value = `${yr}-${mo}`;
-            }
-        };
-
-        window.closeAll = () => { 
-            document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); 
-            document.getElementById('overlay').classList.remove('active'); 
-            document.getElementById('drawer').classList.remove('open'); 
-        };
-
-        // NAVIGAZIONE
-        window.navigateTo = function(sec) {
-            const adminProtectedSections = ['magazzino', 'fornitori', 'sprechi', 'impostazioni'];
-            const isAdmin = window.currentUserProfile && window.currentUserProfile.role === 'admin';
-
-            window.closeAll();
-
-            if (adminProtectedSections.includes(sec) && !isAdmin) {
-                window.showAlert("🔒 Sezione Riservata Admin: Effettua il Login.");
-                setTimeout(() => { window.openAuthModal(); }, 150);
-                return;
-            }
-
-            document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
-            document.getElementById(`view-${sec}`).classList.add('active');
-            
-            const titles = { 'ordini': 'Ordini', 'scorte': 'Scorte', 'storico': 'Storico', 'magazzino': 'Magazzino', 'fornitori': 'Fornitori', 'sprechi': 'Report Consumi', 'faq': 'Guida & FAQ', 'bugreport': 'Segnala Bug', 'impostazioni': 'Impostazioni' };
-            document.getElementById('page-title').innerText = titles[sec] || 'Magari';
-            
-            window.scrollTo({ top: 0, behavior: 'instant' });
-
-            if (sec === 'impostazioni' && isAdmin) {
-                window.loadUsersListForAdmin();
-            }
-        };
-
         window.populateAllSupplierFilters = function() {
             ['filter-order-supplier', 'filter-inventory-supplier', 'filter-stock-supplier', 'new-supplier-select'].forEach(id => {
                 const sel = document.getElementById(id); if (!sel) return;
@@ -1365,88 +1010,18 @@
             try { filterItems(); filterStockItems(); filterOrderItems(); filterSuppliers(); filterHistoryItems(); updateCartBadge(); updateHistoryBadge(); updateBugBadgesAndAdminList(); } catch(e){} 
         };
 
-        // BADGES E UI
-        window.updateCartBadge = function() {
-            const activeItemsCount = window.inventoryData.filter(i => window.getOrderQty(i) > 0).length;
-            const badge = document.getElementById('cart-badge-drawer');
-            if (badge) { badge.innerText = `${activeItemsCount} da ordinare`; badge.style.display = activeItemsCount > 0 ? 'inline-block' : 'none'; }
-        };
-
-        window.updateHistoryBadge = function() {
-            const activeLocShort = window.activeLocation ? window.activeLocation.split(' ')[0] : '';
-            const uncheckedCount = Array.isArray(window.orderHistoryData) 
-                ? window.orderHistoryData.filter(h => !h.checked && (h.destination && h.destination.includes(activeLocShort))).length 
-                : 0;
-            const badge = document.getElementById('history-badge-drawer');
-            if (badge) { badge.innerText = uncheckedCount; badge.style.display = uncheckedCount > 0 ? 'inline-block' : 'none'; }
-        };
-
-        window.updateBugBadgesAndAdminList = function() {
-            const isResolvedCheck = (b) => (b.resolved === true || b.resolved === "true" || b.status === "resolved");
-            const unresolvedCount = Array.isArray(window.bugReportsData) ? window.bugReportsData.filter(b => !isResolvedCheck(b)).length : 0;
-            
-            const settingsBadge = document.getElementById('bug-badge-settings');
-            if (settingsBadge) { 
-                settingsBadge.innerText = unresolvedCount; 
-                settingsBadge.style.display = unresolvedCount > 0 ? 'inline-block' : 'none'; 
-            }
-
-            const container = document.getElementById('admin-bug-reports-container');
-            if (container) {
-                if (!window.bugReportsData || window.bugReportsData.length === 0) {
-                    container.innerHTML = '<div style="font-size:12px; color:#666; text-align:center; padding:8px;">Nessuna segnalazione presente nel database.</div>';
-                } else {
-                    container.innerHTML = '';
-                    
-                    const sortedBugs = [...window.bugReportsData].sort((a, b) => {
-                        const resA = isResolvedCheck(a) ? 1 : 0;
-                        const resB = isResolvedCheck(b) ? 1 : 0;
-                        if (resA !== resB) return resA - resB;
-                        return b.id - a.id;
-                    });
-
-                    sortedBugs.forEach((b) => {
-                        const isResolved = isResolvedCheck(b);
-                        const bgStyle = isResolved ? 'background:#f8fafc; opacity:0.85;' : 'background:#fff8f0; border-color:#f97316;';
-                        const statusLabel = isResolved 
-                            ? '<span style="color:#2e7d32; font-weight:bold; background:#e8f5e9; padding:2px 6px; border-radius:4px;">✅ Risolto</span>' 
-                            : '<span style="color:#c2410c; font-weight:bold; background:#ffedd5; padding:2px 6px; border-radius:4px;">⏳ Da Gestire</span>';
-
-                        container.innerHTML += `
-                            <div style="${bgStyle} border:1px solid #cbd5e1; padding:10px; border-radius:8px; font-size:12px; display:flex; flex-direction:column; gap:6px;">
-                                <div style="display:flex; justify-content:space-between; align-items:center; font-weight:bold; color:var(--primary);">
-                                    <span style="font-size:13px;">${b.type || '🐛 Bug'} - 👤 ${b.operator || 'Staff'}</span>
-                                    <span>${statusLabel}</span>
-                                </div>
-                                <div style="display:flex; justify-content:space-between; color:#666; font-size:11px;">
-                                    <span>📍 <b>Sede:</b> ${b.location || 'N/D'}</span>
-                                    <span>🕒 ${b.timestamp || ''}</span>
-                                </div>
-                                <div style="color:#1e293b; background:#ffffff; padding:8px; border-radius:6px; border:1px solid #e2e8f0; font-size:12px; font-weight:500;">
-                                    ${b.description || 'Nessun dettaglio fornito.'}
-                                </div>
-                                <div style="display:flex; justify-content:flex-end; gap:6px; margin-top:2px;">
-                                    <button class="btn-action-edit" onclick="toggleBugStatus('${b.id}')" style="padding:4px 8px; font-size:11px;">
-                                        ${isResolved ? '🔄 Riapri' : '✅ Segna Risolto'}
-                                    </button>
-                                    <button class="btn-action-del" onclick="deleteBugReport('${b.id}')" style="padding:4px 8px; font-size:11px;">
-                                        🗑 Elimina
-                                    </button>
-                                </div>
-                            </div>`;
-                    });
-                }
-            }
-        };
-
-        // SCORTE
+        // AGGIORNAMENTO SCORTE
         window.updateStock = async function(id, d) { 
             if (!window.checkAuthGuard()) return;
             const opName = window.currentUserProfile.name;
             const i = window.inventoryData.find(x => x.id === id); 
             if(i) { 
                 const newQty = Math.max(0, window.getQty(i) + d);
+                // La chiamata updateDoc aggiorna IndexedDB localmente anche senza internet!
                 await updateDoc(doc(db, "inventory", String(id)), window.getStockUpdatesObj(newQty, opName)); 
+                if (!navigator.onLine) {
+                    window.showAlert(`💾 Giacenza di ${i.name} salvata in locale (Offline)`);
+                }
             } 
         };
 
@@ -1457,6 +1032,9 @@
             if(i) { 
                 const newQty = Math.max(0, parseFloat(v) || 0);
                 await updateDoc(doc(db, "inventory", String(id)), window.getStockUpdatesObj(newQty, opName)); 
+                if (!navigator.onLine) {
+                    window.showAlert(`💾 Giacenza di ${i.name} salvata in locale (Offline)`);
+                }
             } 
         };
 
@@ -1469,6 +1047,7 @@
                 const matchesCat = !cat ? true : (cat === 'FAVORITES' ? i.isFavorite === true : i.category === cat);
                 return i.name.toLowerCase().includes(q) && matchesCat && (!sup || String(i.supplierId) === String(sup));
             });
+
             filtered.sort((a, b) => a.name.localeCompare(b.name));
             
             const c = document.getElementById('stock-list'); 
@@ -1480,23 +1059,22 @@
                 const lastBy = window.getLastUpdateBy(item), lastDate = window.getLastUpdateDate(item);
                 const lastUpdate = lastDate ? `🕒 ${lastDate} (${lastBy || 'N/D'})` : '🕒 Non aggiornato';
 
-                // Badge fisso di sola lettura per operatori
                 const favBadgeHtml = item.isFavorite 
                     ? `<span style="font-size:11px; font-weight:800; color:#92400e; background:#fef3c7; border:1px solid #f59e0b; padding:3px 8px; border-radius:6px; display:inline-flex; align-items:center; gap:3px;">⭐ Preferito</span>`
                     : `<span style="font-size:11px; font-weight:600; color:#a8a29e; background:#f5f5f4; border:1px solid #e7e5e4; padding:3px 8px; border-radius:6px; display:inline-flex; align-items:center; gap:3px;">☆ Preferito</span>`;
 
                 c.innerHTML += `
                     <div class="card-item ${isLow ? 'low-stock-alert' : ''}">
-                        <div class="item-name-box" style="border-left-color:${sup?.color || '#043927'};">
+                        <div class="item-name-box" style="border-left-color:${sup?.color || '#78350f'};">
                             <div class="item-name">
                                 <span>${item.name}</span>
                                 ${favBadgeHtml}
                             </div>
-                            <div class="item-subtext" style="font-size:11px; color:#555;">${lastUpdate}</div>
-                            <div class="badges-row"><span class="category-label-tag">${window.getCategoryEmoji(item.category)} ${item.category}</span><span class="supplier-badge" style="background:${sup?.color || '#043927'}">${sup?.name || 'N/D'}</span></div>
+                            <div class="item-subtext" style="font-size:11px; color:#78350f;">${lastUpdate}</div>
+                            <div class="badges-row"><span class="category-label-tag">${window.getCategoryEmoji(item.category)} ${item.category}</span><span class="supplier-badge" style="background:${sup?.color || '#78350f'}">${sup?.name || 'N/D'}</span></div>
                         </div>
                         <div class="item-controls">
-                            <div class="stock-label-box"><span class="stock-label-main">Giacenza</span><span class="stock-label-sub" style="color:${isLow?'var(--danger)':'#666'};">(Min: ${min})</span></div>
+                            <div class="stock-label-box"><span class="stock-label-main">Giacenza</span><span class="stock-label-sub" style="color:${isLow?'var(--danger)':'#78350f'};">(Min: ${min})</span></div>
                             <button class="qty-btn" onclick="updateStock(${item.id}, -1)">-</button>
                             <input type="number" class="qty-input" value="${qty}" onchange="setStock(${item.id}, this.value)">
                             <span class="unit-label">${item.unit}</span>
@@ -1506,284 +1084,9 @@
             });
         };
 
-        // ORDINI
-        window.filterOrderItems = function() {
-            const q = (document.getElementById('search-order-input')?.value || '').toLowerCase();
-            const cat = document.getElementById('filter-order-category')?.value || '';
-            const sup = document.getElementById('filter-order-supplier')?.value || '';
-
-            let filtered = window.inventoryData.filter(i => {
-                const matchesCat = !cat ? true : (cat === 'FAVORITES' ? i.isFavorite === true : i.category === cat);
-                return i.name.toLowerCase().includes(q) && matchesCat && (!sup || String(i.supplierId) === String(sup));
-            });
-            filtered.sort((a, b) => a.name.localeCompare(b.name));
-            
-            const c = document.getElementById('order-list'); 
-            if (!c) return;
-            c.innerHTML = '';
-            filtered.forEach(item => {
-                const sup = window.suppliersData.find(s => String(s.id) === String(item.supplierId));
-                const qty = window.getQty(item), min = window.getMin(item), isLow = qty < min;
-                const lastBy = window.getLastUpdateBy(item), lastDate = window.getLastUpdateDate(item);
-                const lastUpdateText = lastDate ? `🕒 Ultima modifica scorta: <b>${lastBy || 'Operatore'}</b> (${lastDate})` : '🕒 Scorta non ancora modificata';
-
-                // Badge fisso di sola lettura per operatori
-                const favBadgeHtml = item.isFavorite 
-                    ? `<span style="font-size:11px; font-weight:800; color:#92400e; background:#fef3c7; border:1px solid #f59e0b; padding:3px 8px; border-radius:6px; display:inline-flex; align-items:center; gap:3px;">⭐ Preferito</span>`
-                    : `<span style="font-size:11px; font-weight:600; color:#a8a29e; background:#f5f5f4; border:1px solid #e7e5e4; padding:3px 8px; border-radius:6px; display:inline-flex; align-items:center; gap:3px;">☆ Preferito</span>`;
-
-                c.innerHTML += `
-                    <div class="card-item ${isLow ? 'low-stock-alert' : ''}">
-                        <div class="item-name-box" style="border-left-color:${sup?.color || '#043927'};">
-                            <div class="item-name">
-                                <span>${item.name}</span>
-                                ${favBadgeHtml}
-                            </div>
-                            <div class="stock-warning-badge ${isLow?'alert':'normal'}">Scorta: ${qty} ${item.unit} (Min: ${min})</div>
-                            <div class="item-subtext" style="font-size:11px; color:#555; background:#f8fafc; padding:4px 8px; border-radius:4px; border:1px solid #e2e8f0; margin-top:4px;">
-                                ${lastUpdateText}
-                            </div>
-                            <div class="badges-row"><span class="category-label-tag">${window.getCategoryEmoji(item.category)} ${item.category}</span><span class="supplier-badge" style="background:${sup?.color || '#043927'}">${sup?.name || 'N/D'}</span></div>
-                        </div>
-                        <div class="item-controls">
-                            <span style="font-size:13px; font-weight:600; margin-right:auto;">Da Ordinare:</span>
-                            <button class="qty-btn" onclick="updateOrder(${item.id}, -1)">-</button>
-                            <input type="number" class="qty-input" value="${window.getOrderQty(item)}" onchange="setOrder(${item.id}, this.value)">
-                            <span class="unit-label">${item.unit}</span>
-                            <button class="qty-btn" onclick="updateOrder(${item.id}, 1)">+</button>
-                        </div>
-                    </div>`;
-            });
-        };
-
-        window.updateOrder = async function(id, d) { 
-            if (!window.checkAuthGuard()) return;
-            const i = window.inventoryData.find(x => x.id === id); 
-            if(i) { 
-                const field = window.getLocationKey() === 'ostermalm' ? 'orderQty_ostermalm' : 'orderQty_vasastan';
-                await updateDoc(doc(db, "inventory", String(id)), { [field]: Math.max(0, window.getOrderQty(i) + d) }); 
-            } 
-        };
-        window.setOrder = async function(id, v) { 
-            if (!window.checkAuthGuard()) return;
-            const i = window.inventoryData.find(x => x.id === id); 
-            if(i) { 
-                const field = window.getLocationKey() === 'ostermalm' ? 'orderQty_ostermalm' : 'orderQty_vasastan';
-                await updateDoc(doc(db, "inventory", String(id)), { [field]: Math.max(0, parseFloat(v) || 0) }); 
-            } 
-        };
-
-        window.generateOrderSummary = function() {
-            if (!window.checkAuthGuard()) return;
-            const op = window.currentUserProfile.name;
-            const dateVal = document.getElementById('order-date-picker').value;
-            if (!dateVal) return window.showAlert("🚚 Seleziona una data di consegna.");
-
-            const items = window.inventoryData.filter(i => window.getOrderQty(i) > 0);
-            if (items.length === 0) return window.showAlert("🛒 Nessun prodotto selezionato.");
-
-            window.renderSummaryModalContent(op, dateVal);
-            document.getElementById('summary-modal').classList.add('active');
-            document.getElementById('overlay').classList.add('active');
-        };
-
-        window.renderSummaryModalContent = function(op, dateVal) {
-            const items = window.inventoryData.filter(i => window.getOrderQty(i) > 0);
-            let groups = {};
-            items.forEach(i => { if(!groups[i.supplierId]) groups[i.supplierId] = []; groups[i.supplierId].push(i); });
-            
-            const c = document.getElementById('summary-content'); c.innerHTML = '';
-            const locNameClean = (window.activeLocation || 'Magari').split(' ')[0].toUpperCase();
-            const todayFormatted = new Date().toLocaleDateString('it-IT');
-
-            for (let sId in groups) {
-                const sup = window.suppliersData.find(s => String(s.id) === String(sId));
-                const supName = sup?.name || 'Fornitore';
-                const emailSubject = `Beställning Magari ${locNameClean} - ${todayFormatted} (Leverans: ${dateVal})`;
-                
-                let emailBody = `BESTÄLLNING MAGARI - ${locNameClean}\n========================================\n👤 BESTÄLLARE: ${op.toUpperCase()}\n🚚 ÖNSKAT LEVERANSDATUM: ${dateVal}\n\nCiao ${supName},\n\nPRODUKTER:\n`;
-                let waTxt = `*BESTÄLLNING MAGARI - ${locNameClean}*\n👤 Beställare: *${op.toUpperCase()}*\n🚚 Önskat leveransdatum: *${dateVal}*\n\nCiao ${supName},\n\n*PRODUKTER:*\n`;
-                
-                groups[sId].forEach(p => { 
-                    const q = window.getOrderQty(p), u = window.translateUnitToSwedish(p.unit).toUpperCase();
-                    emailBody += `• ${p.name.toUpperCase()} -> ${q} ${u}\n`; 
-                    waTxt += `• *${p.name.toUpperCase()}*  ->  *${q} ${u}*\n`; 
-                });
-                emailBody += `\nMed vänliga hälsningar,\nMagari`; waTxt += `\nMed vänliga hälsningar,\nMagari`;
-                
-                const wa = `whatsapp://send?phone=${(sup?.phone || '').replace(/[^0-9]/g,'')}&text=${encodeURIComponent(waTxt)}`;
-                const itemsListHtml = groups[sId].map(p => `• <b>${p.name.toUpperCase()}</b>  ->  <span style="color:var(--primary);">${window.getOrderQty(p)} ${window.translateUnitToSwedish(p.unit).toUpperCase()}</span>`).join('<br>');
-
-                c.innerHTML += `
-                    <div style="background:#f9f9f9; padding:16px; border-radius:10px; margin-bottom:16px; border:1px solid #cbd5e1;">
-                        <div style="font-weight:800; color:var(--primary); font-size:18px; margin-bottom:8px;">🚚 ${supName}</div>
-                        <div style="margin:12px 0; background:#fff; padding:10px; border-radius:6px; border:1px solid #e2e8f0;">${itemsListHtml}</div>
-                        <a href="${wa}" style="background:var(--whatsapp); color:white; padding:12px; display:block; text-align:center; border-radius:8px; text-decoration:none; font-weight:bold; margin-bottom:6px;">💬 Invia via WhatsApp</a>
-                        <a href="mailto:${sup?.email||''}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}" style="background:#2563eb; color:white; padding:12px; display:block; text-align:center; border-radius:8px; text-decoration:none; font-weight:bold; margin-bottom:6px;">✉️ Invia via Email</a>
-                        <button onclick="confirmSingleSupplierOrder('${sId}', '${op}', '${dateVal}')" class="btn-save" style="width:100%; background:#1b5e20;">✅ Conferma Ordine per ${supName}</button>
-                    </div>`;
-            }
-            c.innerHTML += `<button onclick="confirmAndSaveOrderToHistory('${op}')" class="btn-save" style="width:100%; padding:14px; background:#043927;">✅ Conferma TUTTI gli Ordini</button>`;
-        };
-
-        window.confirmSingleSupplierOrder = async function(sId, operator, dateVal) {
-            const items = window.inventoryData.filter(i => String(i.supplierId) === String(sId) && window.getOrderQty(i) > 0);
-            if (items.length === 0) return;
-            const sup = window.suppliersData.find(s => String(s.id) === String(sId));
-            const nowStr = new Date().toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-            const entryId = Date.now() + Math.random();
-
-            const batch = writeBatch(db);
-            batch.set(doc(db, "history", String(entryId)), {
-                id: entryId, timestamp: nowStr, destination: window.activeLocation || 'Sede Non Specifica',
-                operatorName: operator, supplierName: sup?.name || 'Fornitore',
-                items: items.map(i => ({ id: i.id, name: i.name, qty: window.getOrderQty(i), unit: i.unit })),
-                checked: false, verificationDetails: null
-            });
-
-            const field = window.getLocationKey() === 'ostermalm' ? 'orderQty_ostermalm' : 'orderQty_vasastan';
-            items.forEach(i => batch.update(doc(db, "inventory", String(i.id)), { [field]: 0 }));
-            
-            await batch.commit();
-            closeSummaryModal(); window.showAlert("✅ Ordine salvato nello storico!");
-        };
-
-        window.confirmAndSaveOrderToHistory = async function(operator) {
-            const items = window.inventoryData.filter(i => window.getOrderQty(i) > 0);
-            if (items.length === 0) return;
-            let groups = {}; items.forEach(i => { if(!groups[i.supplierId]) groups[i.supplierId] = []; groups[i.supplierId].push(i); });
-            const nowStr = new Date().toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-
-            const batch = writeBatch(db);
-            for (let sId in groups) {
-                const sup = window.suppliersData.find(s => String(s.id) === String(sId));
-                const entryId = Date.now() + Math.random();
-                batch.set(doc(db, "history", String(entryId)), {
-                    id: entryId, timestamp: nowStr, destination: window.activeLocation || 'Sede Non Specifica',
-                    operatorName: operator, supplierName: sup?.name || 'Fornitore',
-                    items: groups[sId].map(i => ({ id: i.id, name: i.name, qty: window.getOrderQty(i), unit: i.unit })),
-                    checked: false, verificationDetails: null
-                });
-            }
-
-            const field = window.getLocationKey() === 'ostermalm' ? 'orderQty_ostermalm' : 'orderQty_vasastan';
-            items.forEach(i => batch.update(doc(db, "inventory", String(i.id)), { [field]: 0 }));
-            
-            await batch.commit();
-            closeSummaryModal(); window.showAlert("🎉 Ordini salvati nello storico!");
-        };
-
-        window.closeSummaryModal = () => { document.getElementById('summary-modal').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); };
-
-        // STORICO E VERIFICA
-        window.openVerifyDeliveryModal = function(historyId) {
-            if (!window.checkAuthGuard()) return;
-            window.activeVerifyHistoryId = historyId;
-            const entry = window.orderHistoryData.find(x => x.id === historyId);
-            if (!entry) return;
-
-            const container = document.getElementById('verify-items-checklist-container');
-            container.innerHTML = '';
-            entry.items.forEach((it, idx) => {
-                container.innerHTML += `
-                    <div style="background:white; padding:8px 10px; border-radius:6px; border:1px solid #cbd5e1; display:flex; flex-direction:column; gap:4px;">
-                        <div style="font-weight:bold; font-size:13px; color:#1e293b;">• ${it.name}</div>
-                        <div style="display:flex; justify-content:space-between; font-size:12px; color:#555;">
-                            <span>Ordinato: <b>${it.qty} ${it.unit}</b></span>
-                            <div style="display:flex; align-items:center; gap:6px;">
-                                <label style="font-size:11px; font-weight:600;">Ricevuti:</label>
-                                <input type="number" id="verify-item-qty-${idx}" class="form-control" value="${it.qty}" style="width:60px; padding:4px; text-align:center; font-weight:bold;" min="0">
-                                <span style="font-size:11px;">${it.unit}</span>
-                            </div>
-                        </div>
-                    </div>`;
-            });
-            document.getElementById('verify-note-input').value = '';
-            document.getElementById('verify-delivery-modal').classList.add('active');
-            document.getElementById('overlay').classList.add('active');
-        };
-
-        window.closeVerifyDeliveryModal = () => { document.getElementById('verify-delivery-modal').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); window.activeVerifyHistoryId = null; };
-
-        window.submitDeliveryVerification = async function() {
-            if (!window.checkAuthGuard()) return;
-            const opName = window.currentUserProfile.name;
-            const customNote = document.getElementById('verify-note-input').value.trim();
-            const entry = window.orderHistoryData.find(x => x.id === window.activeVerifyHistoryId);
-            if (!entry) return;
-
-            let discrepancies = customNote ? [customNote] : [];
-            const batch = writeBatch(db);
-            
-            entry.items.forEach((it, idx) => {
-                const receivedInput = document.getElementById(`verify-item-qty-${idx}`);
-                const receivedQty = receivedInput ? parseFloat(receivedInput.value) || 0 : it.qty;
-                if (receivedQty !== it.qty) discrepancies.push(`${it.name}: attesi ${it.qty}, ricevuti ${receivedQty}`);
-
-                if (receivedQty > 0) {
-                    let invItem = window.inventoryData.find(x => x.id === it.id || x.name.toLowerCase() === it.name.toLowerCase());
-                    if (invItem) {
-                        const newQty = window.getQty(invItem) + receivedQty;
-                        batch.update(doc(db, "inventory", String(invItem.id)), window.getStockUpdatesObj(newQty, opName));
-                    }
-                }
-            });
-
-            const nowStr = new Date().toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-            batch.update(doc(db, "history", String(entry.id)), {
-                checked: true, checkedBy: opName, checkedAt: nowStr,
-                verificationDetails: discrepancies.length > 0 ? discrepancies.join(' | ') : "Merce completa al 100%"
-            });
-
-            await batch.commit();
-            closeVerifyDeliveryModal(); window.showAlert("✅ Merce verificata, stornata e aggiunta alle giacenze!");
-        };
-
-        window.filterHistoryItems = function() {
-            const c = document.getElementById('history-list'); c.innerHTML = '';
-            const query = (document.getElementById('search-history-input')?.value || '').toLowerCase();
-            const activeLocShort = window.activeLocation ? window.activeLocation.split(' ')[0] : '';
-
-            const filtered = window.orderHistoryData.filter(h => {
-                const matchesQuery = (h.supplierName || '').toLowerCase().includes(query) || (h.operatorName || '').toLowerCase().includes(query);
-                const matchesLoc = h.destination && h.destination.includes(activeLocShort);
-                return matchesQuery && matchesLoc;
-            });
-
-            if (filtered.length === 0) return c.innerHTML = '<div style="padding:16px; text-align:center; color:#666;">Nessun ordine nello storico per questa sede.</div>';
-
-            filtered.forEach((h, idx) => {
-                let itemsHtml = Array.isArray(h.items) ? h.items.map(it => `• ${it.name}: <b>${it.qty} ${it.unit}</b>`).join('<br>') : '';
-                const isChecked = h.checked === true;
-                let checkStatusHtml = '';
-
-                if (!isChecked) {
-                    checkStatusHtml = `
-                        <div style="background:#fff3f0; border:1px solid #ffcdd2; padding:8px; border-radius:6px; font-size:12px; color:#c62828; margin-top:8px; display:flex; justify-content:space-between; align-items:center;">
-                            <span>⚠️ <b>Da Controllare</b></span><button class="btn-save" style="padding:6px 10px; font-size:11px; background:#c62828;" onclick="openVerifyDeliveryModal(${h.id})">✍️ Verifica & Storna</button>
-                        </div>`;
-                } else if (h.verificationDetails && !h.verificationDetails.includes("100%")) {
-                    checkStatusHtml = `<div style="background:#fff8e1; border:1px solid #ffe0b2; padding:8px; border-radius:6px; font-size:12px; color:#b45309; margin-top:8px;">⚠ <b>Discrepanze:</b> ${h.verificationDetails}</div>`;
-                } else {
-                    checkStatusHtml = `<div style="background:#e8f5e9; border:1px solid #c8e6c9; padding:8px; border-radius:6px; font-size:12px; color:#2e7d32; margin-top:8px;">✅ <b>Completo</b> (${h.checkedBy} - ${h.checkedAt})</div>`;
-                }
-                
-                c.innerHTML += `
-                    <div class="history-card" style="border-left: 4px solid ${!isChecked ? '#e53935' : (h.verificationDetails && !h.verificationDetails.includes("100%") ? '#ffb300' : '#2e7d32')};">
-                        <div class="history-header"><span>🕒 ${h.timestamp}</span><span>📍 ${h.destination}</span></div>
-                        <div style="font-weight:bold; font-size:14px; margin-bottom:4px;">🚚 ${h.supplierName} <span style="font-size:12px; font-weight:normal; color:#666;">(👤 ${h.operatorName})</span></div>
-                        ${itemsHtml ? `<div style="font-size:12px; margin-top:6px; background:#f8fafc; padding:6px; border-radius:4px;">${itemsHtml}</div>` : ''}
-                        ${checkStatusHtml}
-                        <div style="margin-top:8px; text-align:right;"><button class="btn-action-del" onclick="deleteHistoryItemGuard(${idx})">🗑 Elimina</button></div>
-                    </div>`;
-            });
-        };
-
-        // MAGAZZINO ED EDITOR - FUNZIONE PREFERITI PROTETTA PER ADMIN
+        // MAGAZZINO ED EDITOR - GESTIONE PREFERITI RISERVATA AD ADMIN
         window.toggleFavorite = async function(itemId) {
             if (!window.checkAuthGuard()) return;
-            
-            // Controllo permessi: Solo gli Admin possono gestire i preferiti dal Magazzino
             if (!window.currentUserProfile || window.currentUserProfile.role !== 'admin') {
                 return window.showAlert("🔒 Solo gli Admin possono gestire i preferiti dal Magazzino.");
             }
@@ -1813,16 +1116,15 @@
 
                 c.innerHTML += `
                     <div class="card-item">
-                        <div class="item-name-box" style="border-left-color:${supObj?.color || '#043927'};">
+                        <div class="item-name-box" style="border-left-color:${supObj?.color || '#78350f'};">
                             <div class="item-name">
                                 <span>${item.name}</span>
-                                <!-- Pulsante interattivo cliccabile riservato all'Admin -->
                                 <button class="star-toggle-btn ${item.isFavorite ? 'active' : ''}" onclick="toggleFavorite(${item.id})">
                                     ${item.isFavorite ? '⭐ Preferito' : '☆ Preferito'}
                                 </button>
                             </div>
                             <div class="item-subtext">Prezzo: ${item.price} SEK | Unità: ${item.unit}</div>
-                            <div class="item-subtext" style="font-weight: 600; color: var(--primary); margin-top: 4px;">
+                            <div class="item-subtext" style="font-weight: 600; color: #b45309; margin-top: 4px;">
                                 📉 Min: Vasastan ${minVas} ${item.unit} | Östermalm ${minOst} ${item.unit}
                             </div>
                         </div>
@@ -1832,556 +1134,6 @@
                         </div>
                     </div>`;
             });
-        };
-
-        window.openAddModal = function(id = null) {
-            if (!window.checkAuthGuard()) return;
-            window.closeAll();
-            window.populateAllSupplierFilters();
-            document.getElementById('edit-item-id').value = ''; 
-            document.getElementById('new-name').value = ''; 
-            document.getElementById('new-price').value = '0';
-            document.getElementById('new-min-vasastan').value = '2';
-            document.getElementById('new-min-ostermalm').value = '2';
-            
-            if (id) {
-                const item = window.inventoryData.find(x => x.id === id);
-                if (item) {
-                    document.getElementById('edit-item-id').value = item.id; 
-                    document.getElementById('new-name').value = item.name;
-                    document.getElementById('new-category-select').value = item.category; 
-                    document.getElementById('new-supplier-select').value = item.supplierId;
-                    document.getElementById('new-min-vasastan').value = (item.minQty_vasastan !== undefined && item.minQty_vasastan !== null) ? item.minQty_vasastan : (item.minQty ?? 2);
-                    document.getElementById('new-min-ostermalm').value = (item.minQty_ostermalm !== undefined && item.minQty_ostermalm !== null) ? item.minQty_ostermalm : 2;
-                    document.getElementById('new-price').value = item.price || 0; 
-                    document.getElementById('new-unit').value = item.unit || 'Bottiglie';
-                }
-            }
-            document.getElementById('add-modal').classList.add('active'); 
-            document.getElementById('overlay').classList.add('active');
-        };
-        window.closeAddModal = () => { document.getElementById('add-modal').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); };
-
-        window.saveInventoryItem = async function() {
-            if (!window.checkAuthGuard()) return;
-            const idVal = document.getElementById('edit-item-id').value;
-            const name = document.getElementById('new-name').value.trim();
-            if (!name) return window.showAlert("⚠️ Inserisci il nome.");
-            
-            const cat = document.getElementById('new-category-select').value;
-            const supId = parseInt(document.getElementById('new-supplier-select').value);
-            const price = parseFloat(document.getElementById('new-price').value) || 0;
-            const unit = document.getElementById('new-unit').value;
-            const valVas = parseFloat(document.getElementById('new-min-vasastan').value);
-            const minVasastan = isNaN(valVas) ? 2 : valVas;
-            const valOst = parseFloat(document.getElementById('new-min-ostermalm').value);
-            const minOstermalm = isNaN(valOst) ? 2 : valOst;
-
-            if (idVal) {
-                await updateDoc(doc(db, "inventory", String(idVal)), { 
-                    name, category: cat, supplierId: supId, price, unit, minQty_vasastan: minVasastan, minQty_ostermalm: minOstermalm
-                });
-            } else {
-                const newId = Date.now();
-                await setDoc(doc(db, "inventory", String(newId)), { 
-                    id: newId, name, category: cat, supplierId: supId, minQty_vasastan: minVasastan, minQty_ostermalm: minOstermalm, 
-                    orderQty_vasastan: 0, orderQty_ostermalm: 0, unit, price, qty_vasastan: 0, qty_ostermalm: 0, isFavorite: false 
-                });
-            }
-            closeAddModal(); window.showAlert("✅ Prodotto salvato!");
-        };
-        window.deleteInventoryItem = async function(id) { if (window.checkAuthGuard() && confirm("Eliminare prodotto?")) await deleteDoc(doc(db, "inventory", String(id))); };
-
-        // FORNITORI, PALETTE COLORI ED ORDINAMENTO
-        window.renderSupplierColorGrid = function(selectedHex) {
-            const grid = document.getElementById('supplier-color-palette-grid');
-            if (!grid) return;
-            grid.innerHTML = '';
-
-            window.supplierColorPalette.forEach(col => {
-                const isSelected = (col.hex.toLowerCase() === (selectedHex || '').toLowerCase());
-                const circle = document.createElement('div');
-                circle.style.cssText = `
-                    width: 34px; height: 34px; border-radius: 50%; background-color: ${col.hex};
-                    cursor: pointer; border: ${isSelected ? '3px solid #1e293b' : '2px solid white'};
-                    box-shadow: ${isSelected ? '0 0 0 2px var(--primary)' : '0 1px 3px rgba(0,0,0,0.2)'};
-                    display: flex; align-items: center; justify-content: center; color: white; font-size: 14px;
-                    transition: transform 0.1s ease;
-                `;
-                if (isSelected) circle.innerHTML = '✓';
-                circle.onclick = () => { window.selectSupplierColor(col.hex); };
-                grid.appendChild(circle);
-            });
-        };
-
-        window.selectSupplierColor = function(hex) {
-            document.getElementById('supp-color-val').value = hex;
-            window.renderSupplierColorGrid(hex);
-            
-            const nameVal = document.getElementById('supp-name').value.trim() || 'Anteprima Fornitore';
-            const badge = document.getElementById('supplier-color-preview-badge');
-            if (badge) {
-                badge.style.backgroundColor = hex;
-                badge.style.color = '#ffffff';
-                badge.innerText = `🚚 ${nameVal}`;
-            }
-        };
-
-        window.getAutoAvailableColor = function() {
-            const usedColors = window.suppliersData.map(s => (s.color || '').toLowerCase());
-            const free = window.supplierColorPalette.find(c => !usedColors.includes(c.hex.toLowerCase()));
-            return free ? free.hex : window.supplierColorPalette[0].hex;
-        };
-
-        window.filterSuppliers = function() {
-            const q = (document.getElementById('search-supplier-input')?.value || '').toLowerCase();
-            const c = document.getElementById('suppliers-list'); 
-            if (!c) return;
-            c.innerHTML = '';
-
-            let sortedSupps = [...window.suppliersData].sort((a, b) => (a.orderIndex || 999) - (b.orderIndex || 999));
-
-            sortedSupps.filter(s => s.name.toLowerCase().includes(q)).forEach((s, index) => {
-                c.innerHTML += `
-                    <div class="card-item">
-                        <div class="item-name-box" style="border-left-color:${s.color || '#1565c0'};">
-                            <div class="item-name" style="color:${s.color || '#1565c0'};">
-                                <span>🚚 ${s.name}</span>
-                                <div style="display:flex; gap:4px;">
-                                    <button onclick="moveSupplierOrder(${s.id}, -1)" style="background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; padding:2px 6px; font-size:12px; cursor:pointer;" title="Sposta In Alto">⬆️</button>
-                                    <button onclick="moveSupplierOrder(${s.id}, 1)" style="background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; padding:2px 6px; font-size:12px; cursor:pointer;" title="Sposta In Basso">⬇️</button>
-                                </div>
-                            </div>
-                            <div class="item-subtext">📞 ${s.phone || 'N/D'} | ✉ ${s.email || 'N/D'}</div>
-                        </div>
-                        <div class="action-row-btn">
-                            <button class="btn-action-edit" onclick="openAddSupplierModal('${s.id}')">✏️ Modifica</button>
-                            <button class="btn-action-del" onclick="deleteSupplier('${s.id}')">🗑 Elimina</button>
-                        </div>
-                    </div>`;
-            });
-        };
-
-        window.moveSupplierOrder = async function(supId, direction) {
-            if (!window.checkAuthGuard()) return;
-            let sorted = [...window.suppliersData].sort((a, b) => (a.orderIndex || 999) - (b.orderIndex || 999));
-            const idx = sorted.findIndex(s => String(s.id) === String(supId));
-            if (idx === -1) return;
-
-            const targetIdx = idx + direction;
-            if (targetIdx < 0 || targetIdx >= sorted.length) return;
-
-            const currentSup = sorted[idx];
-            const targetSup = sorted[targetIdx];
-
-            const batch = writeBatch(db);
-            batch.update(doc(db, "suppliers", String(currentSup.id)), { orderIndex: targetIdx + 1 });
-            batch.update(doc(db, "suppliers", String(targetSup.id)), { orderIndex: idx + 1 });
-
-            await batch.commit();
-            window.showAlert("↕️ Ordine fornitori aggiornato!");
-        };
-
-        window.openAddSupplierModal = function(id = null) {
-            if (!window.checkAuthGuard()) return;
-            window.closeAll();
-            document.getElementById('edit-supplier-id').value = '';
-            document.getElementById('supp-name').value = '';
-            document.getElementById('supp-phone').value = '';
-            document.getElementById('supp-email').value = '';
-
-            let chosenHex = window.getAutoAvailableColor();
-
-            if (id) {
-                const s = window.suppliersData.find(x => String(x.id) === String(id));
-                if (s) {
-                    document.getElementById('supplier-modal-title').innerText = '✏️ Modifica Fornitore';
-                    document.getElementById('edit-supplier-id').value = s.id;
-                    document.getElementById('supp-name').value = s.name || '';
-                    document.getElementById('supp-phone').value = s.phone || '';
-                    document.getElementById('supp-email').value = s.email || '';
-                    chosenHex = s.color || chosenHex;
-                }
-            } else {
-                document.getElementById('supplier-modal-title').innerText = '➕ Nuovo Fornitore';
-            }
-
-            window.selectSupplierColor(chosenHex);
-            document.getElementById('add-supplier-modal').classList.add('active');
-            document.getElementById('overlay').classList.add('active');
-        };
-
-        window.closeAddSupplierModal = () => { 
-            document.getElementById('add-supplier-modal').classList.remove('active'); 
-            document.getElementById('overlay').classList.remove('active'); 
-        };
-
-        window.saveSupplier = async function() {
-            if (!window.checkAuthGuard()) return;
-            const idVal = document.getElementById('edit-supplier-id').value;
-            const name = document.getElementById('supp-name').value.trim();
-            const phone = document.getElementById('supp-phone').value.trim();
-            const email = document.getElementById('supp-email').value.trim();
-            const color = document.getElementById('supp-color-val').value;
-
-            if (!name) return window.showAlert("⚠️ Inserisci il nome del fornitore.");
-
-            if (idVal) {
-                await updateDoc(doc(db, "suppliers", String(idVal)), { name, phone, email, color });
-                window.showAlert("✅ Fornitore aggiornato!");
-            } else {
-                const newId = Date.now();
-                const nextOrderIndex = window.suppliersData.length + 1;
-                await setDoc(doc(db, "suppliers", String(newId)), { id: newId, name, phone, email, color, orderIndex: nextOrderIndex });
-                window.showAlert("✅ Nuovo fornitore salvato!");
-            }
-
-            closeAddSupplierModal();
-        };
-
-        window.deleteSupplier = async function(id) {
-            if (!window.checkAuthGuard()) return;
-            if (confirm("Sei sicuro di voler eliminare questo fornitore?")) {
-                await deleteDoc(doc(db, "suppliers", String(id)));
-                window.showAlert("🗑️ Fornitore eliminato.");
-            }
-        };
-
-        // EXPORT EXCEL CON AUTO-FIT COLONNE ED ALCOLICI/BEVANDE COMPLETI
-        window.promptExportExcelModal = () => { 
-            if (!window.checkAuthGuard()) return; 
-            window.closeAll(); 
-            document.getElementById('export-excel-modal').classList.add('active'); 
-            document.getElementById('overlay').classList.add('active'); 
-        };
-        window.closeExportExcelModal = () => { document.getElementById('export-excel-modal').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); };
-        
-        window.generateAndExportExcel = function() {
-            const type = document.getElementById('export-type-select').value;
-            const opName = window.currentUserProfile ? window.currentUserProfile.name : 'Operatore';
-            const locName = window.activeLocation || 'Magari';
-            const todayStr = new Date().toLocaleDateString('it-IT');
-            const isAlcoholCategory = (cat) => (cat === 'Alcolici' || cat === 'Bevande');
-
-            // Calcolo automatico della larghezza colonne per evitare tagli
-            const applyAutoColumnWidths = (ws, rows) => {
-                if (!rows || !rows.length) return;
-                const colWidths = rows[0].map((_, colIdx) => {
-                    let maxLen = 12;
-                    rows.forEach(r => {
-                        if (r[colIdx] !== undefined && r[colIdx] !== null) {
-                            const strLen = String(r[colIdx]).length;
-                            if (strLen > maxLen) maxLen = strLen;
-                        }
-                    });
-                    return { wch: maxLen + 3 };
-                });
-                ws['!cols'] = colWidths;
-            };
-
-            // Foglio Standard (Food & Supplies)
-            const buildStandardSheetData = (itemsList, titleHeader) => {
-                const rows = [
-                    [`MAGARI INVENTORY REPORT - ${titleHeader.toUpperCase()}`],
-                    [`Location: ${locName}`, `Date: ${todayStr}`, `Operator: ${opName}`],
-                    [""],
-                    ["ITEM NAME", "CATEGORY", "SUPPLIER", "PRICE (SEK)", "STOCK QTY", "TOTAL VALUE (SEK)", "UNIT"]
-                ];
-
-                let totalStockSum = 0; let totalValueSum = 0;
-                itemsList.forEach(i => {
-                    const sup = window.suppliersData.find(s => String(s.id) === String(i.supplierId))?.name || 'N/D';
-                    const stock = window.getQty(i); const price = i.price || 0;
-                    const val = parseFloat((stock * price).toFixed(2));
-                    totalStockSum += stock; totalValueSum += val;
-                    rows.push([i.name, i.category, sup, price, stock, val, i.unit]);
-                });
-
-                rows.push([""]);
-                rows.push(["TOTAL FOOD & SUPPLIES", "", "", "", totalStockSum, parseFloat(totalValueSum.toFixed(2)), ""]);
-                const ws = XLSX.utils.aoa_to_sheet(rows);
-                applyAutoColumnWidths(ws, rows);
-                return ws;
-            };
-
-            // Foglio Alcolici & Bevande con Subtotali e Gran Totale
-            const buildAlcoholSheetData = () => {
-                const rows = [
-                    [`MAGARI INVENTORY REPORT - ALCOHOL & BEVERAGES`],
-                    [`Location: ${locName}`, `Date: ${todayStr}`, `Operator: ${opName}`],
-                    [""],
-                    ["ITEM NAME", "CATEGORY", "SUPPLIER", "PRICE (SEK)", "STOCK QTY", "TOTAL VALUE (SEK)", "UNIT"]
-                ];
-
-                const alcoholItems = window.inventoryData.filter(i => i.category === 'Alcolici').sort((a, b) => a.name.localeCompare(b.name));
-                const beverageItems = window.inventoryData.filter(i => i.category === 'Bevande').sort((a, b) => a.name.localeCompare(b.name));
-
-                let alcStockSum = 0, alcValueSum = 0;
-                let bevStockSum = 0, bevValueSum = 0;
-
-                // 1. ALCOLICI
-                rows.push(["--- ALCOHOLIC BEVERAGES ---", "", "", "", "", "", ""]);
-                alcoholItems.forEach(i => {
-                    const sup = window.suppliersData.find(s => String(s.id) === String(i.supplierId))?.name || 'N/D';
-                    const stock = window.getQty(i); const price = i.price || 0;
-                    const val = parseFloat((stock * price).toFixed(2));
-                    alcStockSum += stock; alcValueSum += val;
-                    rows.push([i.name, i.category, sup, price, stock, val, i.unit]);
-                });
-                rows.push(["SUBTOTAL ALCOHOL", "", "", "", alcStockSum, parseFloat(alcValueSum.toFixed(2)), ""]);
-                rows.push([""]);
-
-                // 2. BEVANDE
-                rows.push(["--- NON-ALCOHOLIC BEVERAGES & SOFT DRINKS ---", "", "", "", "", "", ""]);
-                beverageItems.forEach(i => {
-                    const sup = window.suppliersData.find(s => String(s.id) === String(i.supplierId))?.name || 'N/D';
-                    const stock = window.getQty(i); const price = i.price || 0;
-                    const val = parseFloat((stock * price).toFixed(2));
-                    bevStockSum += stock; bevValueSum += val;
-                    rows.push([i.name, i.category, sup, price, stock, val, i.unit]);
-                });
-                rows.push(["SUBTOTAL BEVERAGES", "", "", "", bevStockSum, parseFloat(bevValueSum.toFixed(2)), ""]);
-                rows.push([""]);
-
-                // 3. GRAN TOTALE
-                const grandStock = alcStockSum + bevStockSum;
-                const grandValue = parseFloat((alcValueSum + bevValueSum).toFixed(2));
-                rows.push(["GRAND TOTAL (ALCOHOL + BEVERAGES)", "", "", "", grandStock, grandValue, ""]);
-
-                const ws = XLSX.utils.aoa_to_sheet(rows);
-                applyAutoColumnWidths(ws, rows);
-                return ws;
-            };
-
-            const wb = XLSX.utils.book_new();
-            const foodItems = window.inventoryData.filter(i => !isAlcoholCategory(i.category)).sort((a, b) => a.name.localeCompare(b.name));
-
-            if (type === 'food') { 
-                XLSX.utils.book_append_sheet(wb, buildStandardSheetData(foodItems, "Food & Supplies"), "Food & Supplies"); 
-            } else if (type === 'alcohol') { 
-                XLSX.utils.book_append_sheet(wb, buildAlcoholSheetData(), "Alcohol & Beverages"); 
-            } else {
-                XLSX.utils.book_append_sheet(wb, buildStandardSheetData(foodItems, "Food & Supplies"), "Food & Supplies");
-                XLSX.utils.book_append_sheet(wb, buildAlcoholSheetData(), "Alcohol & Beverages");
-            }
-
-            const cleanLoc = locName.split(' ')[0];
-            const dateStr = new Date().toISOString().split('T')[0];
-            
-            XLSX.writeFile(wb, `Inventory_Magari_${cleanLoc}_${type}_${dateStr}.xlsx`);
-            closeExportExcelModal(); 
-            window.showAlert("📊 File Excel scaricato con la distinzione Alcolici/Bevande!");
-        };
-
-        // REPORT CONSUMI ENGINE CON SUPPORTO MESE AUTOMATICO E FORMATI DATE FLESSIBILI
-        window.generateRealReport = function() {
-            if (!window.checkAuthGuard()) return;
-
-            const periodType = document.getElementById('report-period-type').value;
-            let monthVal = document.getElementById('report-month-picker').value;
-            const resultsContainer = document.getElementById('report-results-container');
-            const titleDisplay = document.getElementById('report-title-display');
-            const alcTbody = document.querySelector('#table-alcohol-report tbody');
-            const foodTbody = document.querySelector('#table-food-report tbody');
-            const grandTotalBox = document.getElementById('grand-total-report-box');
-
-            if (periodType === 'month') {
-                if (!monthVal) {
-                    const now = new Date();
-                    const yr = now.getFullYear();
-                    const mo = String(now.getMonth() + 1).padStart(2, '0');
-                    monthVal = `${yr}-${mo}`;
-                    document.getElementById('report-month-picker').value = monthVal;
-                }
-            }
-
-            const isAlcohol = (cat) => (cat === 'Alcolici' || cat === 'Bevande');
-            const activeLocShort = window.activeLocation ? window.activeLocation.split(' ')[0] : '';
-
-            let itemTotals = {}; 
-
-            if (periodType === 'stock') {
-                titleDisplay.innerText = `📊 Report Valore Giacenze Attuali (${window.activeLocation || 'Tutte le sedi'})`;
-                window.inventoryData.forEach(item => {
-                    const qty = window.getQty(item);
-                    if (qty > 0) {
-                        itemTotals[item.name] = {
-                            qty: qty,
-                            price: item.price || 0,
-                            unit: item.unit,
-                            isAlc: isAlcohol(item.category)
-                        };
-                    }
-                });
-            } else {
-                const label = periodType === 'month' ? `Mese: ${monthVal}` : 'Totale Storico';
-                titleDisplay.innerText = `📋 Report Consumi & Ordini (${label} - ${window.activeLocation || 'Tutte le sedi'})`;
-
-                const filteredHistory = window.orderHistoryData.filter(h => {
-                    const matchLoc = !activeLocShort || (h.destination && h.destination.includes(activeLocShort));
-                    if (!matchLoc) return false;
-
-                    if (periodType === 'month') {
-                        if (!h.timestamp) return false;
-                        let hMonth = "";
-                        
-                        // Supporto per timestamp sia italiani ("12/10/2026, 12:08") che ISO ("2026-10-12")
-                        if (h.timestamp.includes('/')) {
-                            const datePart = h.timestamp.split(',')[0].trim();
-                            const parts = datePart.split('/');
-                            if (parts.length === 3) {
-                                hMonth = `${parts[2]}-${parts[1].padStart(2, '0')}`;
-                            }
-                        } else if (h.timestamp.includes('-')) {
-                            const parts = h.timestamp.split('T')[0].split('-');
-                            if (parts.length >= 2) {
-                                hMonth = `${parts[0]}-${parts[1].padStart(2, '0')}`;
-                            }
-                        }
-                        
-                        return hMonth === monthVal;
-                    }
-                    return true;
-                });
-
-                filteredHistory.forEach(h => {
-                    if (Array.isArray(h.items)) {
-                        h.items.forEach(it => {
-                            const invMatch = window.inventoryData.find(x => x.id === it.id || x.name.toLowerCase() === it.name.toLowerCase());
-                            const price = invMatch ? (invMatch.price || 0) : 0;
-                            const isAlc = invMatch ? isAlcohol(invMatch.category) : false;
-
-                            if (!itemTotals[it.name]) {
-                                itemTotals[it.name] = { qty: 0, price: price, unit: it.unit, isAlc: isAlc };
-                            }
-                            itemTotals[it.name].qty += parseFloat(it.qty) || 0;
-                        });
-                    }
-                });
-            }
-
-            // Render Tabelle
-            alcTbody.innerHTML = '';
-            foodTbody.innerHTML = '';
-            let totalAlcCost = 0;
-            let totalFoodCost = 0;
-            let hasAlc = false;
-            let hasFood = false;
-
-            Object.keys(itemTotals).sort().forEach(name => {
-                const data = itemTotals[name];
-                const cost = parseFloat((data.qty * data.price).toFixed(2));
-                const rowHtml = `<tr><td><b>${name}</b></td><td>${data.qty} ${data.unit}</td><td>${cost.toFixed(2)} SEK</td></tr>`;
-
-                if (data.isAlc) {
-                    alcTbody.innerHTML += rowHtml;
-                    totalAlcCost += cost;
-                    hasAlc = true;
-                } else {
-                    foodTbody.innerHTML += rowHtml;
-                    totalFoodCost += cost;
-                    hasFood = true;
-                }
-            });
-
-            if (!hasAlc) alcTbody.innerHTML = '<tr><td colspan="3" style="color:#888; text-align:center;">Nessun dato registrato.</td></tr>';
-            if (!hasFood) foodTbody.innerHTML = '<tr><td colspan="3" style="color:#888; text-align:center;">Nessun dato registrato.</td></tr>';
-
-            const grandTotal = parseFloat((totalAlcCost + totalFoodCost).toFixed(2));
-            grandTotalBox.innerHTML = `💰 COSTO TOTALE STIMATO: <span style="font-size:16px;">${grandTotal.toFixed(2)} SEK</span>`;
-
-            resultsContainer.style.display = 'block';
-            window.showAlert("📊 Report generato con successo!");
-        };
-
-        // BUG REPORT & AZIONI RESET
-        window.submitBugReport = async function() {
-            if (!window.checkAuthGuard()) return;
-            const op = window.currentUserProfile.name;
-            const desc = document.getElementById('bug-desc-input').value.trim();
-            if (!desc) return window.showAlert("⚠️ Compila la descrizione.");
-            const nowStr = new Date().toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-            const newId = Date.now();
-
-            await setDoc(doc(db, "bugReports", String(newId)), {
-                id: newId, timestamp: nowStr, operator: op, type: document.getElementById('bug-type-select').value,
-                description: desc, location: document.getElementById('bug-location-display').value || window.activeLocation || 'Sede Non Specifica', resolved: false
-            });
-
-            document.getElementById('bug-desc-input').value = '';
-            window.showAlert("🚀 Segnalazione inviata!"); window.navigateTo('ordini');
-        };
-
-        window.toggleBugStatus = async function(bugId) {
-            if (!window.checkAuthGuard()) return;
-            const bug = window.bugReportsData.find(b => String(b.id) === String(bugId));
-            if (bug) {
-                const currentStatus = (bug.resolved === true || bug.resolved === "true" || bug.status === "resolved");
-                await updateDoc(doc(db, "bugReports", String(bugId)), { resolved: !currentStatus });
-                window.showAlert(!currentStatus ? "✅ Segnalazione contrassegnata come Risolta!" : "🔄 Segnalazione riaperta!");
-            }
-        };
-
-        window.deleteBugReport = async function(bugId) {
-            if (!window.checkAuthGuard()) return;
-            if (confirm("Eliminare definitivamente la segnalazione?")) {
-                await deleteDoc(doc(db, "bugReports", String(bugId)));
-                window.showAlert("🗑️ Segnalazione eliminata.");
-            }
-        };
-
-        window.deleteHistoryItemGuard = async function(idx) {
-            if (!window.checkAuthGuard()) return;
-            if (confirm("Eliminare questa voce dallo storico?")) {
-                const h = window.orderHistoryData[idx];
-                await deleteDoc(doc(db, "history", String(h.id)));
-            }
-        };
-
-        window.executeResetStockGuard = async function() {
-            if (!window.checkAuthGuard()) return;
-            const key = window.getLocationKey();
-            if (confirm(`Azzerare giacenze per la sede attiva (${key})?`)) {
-                const batch = writeBatch(db);
-                window.inventoryData.forEach(i => {
-                    const ref = doc(db, "inventory", String(i.id));
-                    if (key === 'ostermalm') batch.update(ref, { qty_ostermalm: 0 });
-                    else batch.update(ref, { qty_vasastan: 0 });
-                });
-                await batch.commit(); window.showAlert("✅ Giacenze azzerate!");
-            }
-        };
-
-        window.executeClearHistoryGuard = async function() {
-            if (!window.checkAuthGuard()) return;
-            if (confirm("Svuotare lo storico ordini?")) {
-                const batch = writeBatch(db);
-                window.orderHistoryData.forEach(h => batch.delete(doc(db, "history", String(h.id))));
-                await batch.commit(); window.showAlert("🗑️ Storico svuotato!");
-            }
-        };
-
-        window.executeResetSuppliersGuard = async function() {
-            if (!window.checkAuthGuard()) return;
-            if (confirm("Ripristinare i fornitori di default?")) {
-                const batch = writeBatch(db);
-                window.suppliersData.forEach(s => batch.delete(doc(db, "suppliers", String(s.id))));
-                window.defaultSuppliers.forEach(s => batch.set(doc(db, "suppliers", String(s.id)), s));
-                await batch.commit(); window.showAlert("✅ Fornitori ripristinati!");
-            }
-        };
-
-        window.executeResetAllGuard = async function() {
-            if (!window.checkAuthGuard()) return;
-            if (confirm("RESET TOTALE DATABASE PRODUZIONE? Questa azione elimina tutti i dati sul database ufficiale.")) {
-                const batch = writeBatch(db);
-                window.inventoryData.forEach(i => batch.delete(doc(db, "inventory", String(i.id))));
-                window.orderHistoryData.forEach(h => batch.delete(doc(db, "history", String(h.id))));
-                window.bugReportsData.forEach(b => batch.delete(doc(db, "bugReports", String(b.id))));
-                window.suppliersData.forEach(s => batch.delete(doc(db, "suppliers", String(s.id))));
-                window.defaultSuppliers.forEach(s => batch.set(doc(db, "suppliers", String(s.id)), s));
-                await batch.commit(); window.showAlert("⚠️ Reset completato.");
-            }
         };
 
         const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
