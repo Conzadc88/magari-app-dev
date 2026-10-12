@@ -4,7 +4,7 @@
 <!--
 ====================================================================
 [MAGARI APP - DEVELOPMENT / TEST ENVIRONMENT]
-- VERSION: v4.1.7-DEV
+- VERSION: v4.1.8-DEV
 - FIREBASE PROJECT: magari-app-dev
 - TARGET: Ambiente isolato di test e sviluppo
 ====================================================================
@@ -25,11 +25,11 @@
     <meta name="apple-mobile-web-app-title" content="Magari DEV">
     
     <!-- Icone Schermata Home & Favicon -->
-    <link rel="manifest" href="manifest.json?v=4.1.7-dev">
-    <link rel="apple-touch-icon" href="logo-square.png?v=4.1.7-dev">
-    <link rel="icon" type="image/png" href="logo-square.png?v=4.1.7-dev">
+    <link rel="manifest" href="manifest.json?v=4.1.8-dev">
+    <link rel="apple-touch-icon" href="logo-square.png?v=4.1.8-dev">
+    <link rel="icon" type="image/png" href="logo-square.png?v=4.1.8-dev">
 
-    <title>Magari v4.1.7 [DEV TEST]</title>
+    <title>Magari v4.1.8 [DEV TEST]</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -47,7 +47,7 @@
     <div class="page-lock-banner" id="location-guard-banner" style="display: flex; position: fixed; z-index: 3000; padding-top: 100px;">
         <div class="page-lock-box" style="max-width: 340px;">
             <div style="font-size: 32px; margin-bottom: 8px;">🧪</div>
-            <h3 style="margin-bottom: 6px; color: #92400e;">Seleziona Sede (DEV v4.1.7)</h3>
+            <h3 style="margin-bottom: 6px; color: #92400e;">Seleziona Sede (DEV v4.1.8)</h3>
             <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 14px;">Sei nell'ambiente di test. Seleziona il locale per caricare i dati di prova.</p>
             <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;">
                 <button class="btn-save" style="padding: 12px; font-size: 14px; background: linear-gradient(135deg, #064e3b, #043927);" onclick="setActiveLocation('Vasastan (Sankt Eriksgatan 110)')">📍 Vasastan<br><span style="font-size:10px; opacity:0.8;">Sankt Eriksgatan 110</span></button>
@@ -64,7 +64,7 @@
             <div class="drawer-header" style="text-align: center;">
                 <img src="logo-header.png" alt="Magari Logo" style="max-width: 170px; height: auto; margin-bottom: 4px;" onerror="this.style.display='none'; document.getElementById('drawer-text-fallback').style.display='block';">
                 <div id="drawer-text-fallback" class="brand-title" style="display:none; font-size: 24px;">MAGARI</div>
-                <div class="brand-subtitle" style="font-size: 9px; background: rgba(255,255,255,0.2); font-weight:800;">🧪 DEV MODE • v4.1.7</div>
+                <div class="brand-subtitle" style="font-size: 9px; background: rgba(255,255,255,0.2); font-weight:800;">🧪 DEV MODE • v4.1.8</div>
             </div>
 
             <!-- USER ACCOUNT BANNER NELLO MENU -->
@@ -100,7 +100,7 @@
             <div class="header-brand-text">
                 <img src="logo-header.png" alt="Magari" style="height: 34px; width: auto;" onerror="this.style.display='none'; document.getElementById('header-text-fallback').style.display='block';">
                 <div id="header-text-fallback" class="brand-title" style="display:none;">MAGARI</div>
-                <div class="brand-subtitle" style="background: rgba(255,255,255,0.2); font-weight:800;">🧪 DEV • v4.1.7</div>
+                <div class="brand-subtitle" style="background: rgba(255,255,255,0.2); font-weight:800;">🧪 DEV • v4.1.8</div>
             </div>
             <div class="page-badge" id="page-title">Ordini</div>
         </div>
@@ -248,7 +248,12 @@
             <div class="page-lock-banner" id="lock-banner-fornitori">
                 <div class="page-lock-box"><div style="font-size: 32px; margin-bottom: 8px;">🔒</div><h3 style="margin-bottom: 6px;">Sezione Riservata Admin DEV</h3><p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Effettua il Login con account Admin per accedere.</p><button class="btn-save" onclick="openAuthModal()">Accedi come Admin</button></div>
             </div>
-            <div class="top-bar-container"><div class="search-row"><input type="text" id="search-supplier-input" class="search-input" placeholder="Cerca fornitore DEV..." oninput="filterSuppliers()"><button class="add-btn" style="background:#b45309;" onclick="openAddSupplierModal()">+ Fornitore</button></div></div>
+            <div class="top-bar-container">
+                <div style="font-size:11px; background:#e0f2fe; color:#0369a1; padding:6px 10px; border-radius:6px; font-weight:600; border:1px solid #bae6fd;">
+                    ↕️ <b>Ordinamento Fornitori:</b> Usa le frecce ⬆️ ⬇️ per riposizionare i fornitori in alto nei menu.
+                </div>
+                <div class="search-row"><input type="text" id="search-supplier-input" class="search-input" placeholder="Cerca fornitore DEV..." oninput="filterSuppliers()"><button class="add-btn" style="background:#b45309;" onclick="openAddSupplierModal()">+ Fornitore</button></div>
+            </div>
             <div class="content-list" id="suppliers-list"></div>
         </div>
 
@@ -275,14 +280,14 @@
         <!-- 7. FAQ & GUIDA RAPIDA -->
         <div id="view-faq" class="view-section">
             <div class="top-bar-container">
-                <div style="font-size:16px; font-weight:800; color:#b45309;">❓ Guida Rapida DEV Environment (v4.1.7)</div>
+                <div style="font-size:16px; font-weight:800; color:#b45309;">❓ Guida Rapida DEV Environment (v4.1.8)</div>
                 <div style="font-size:12px; color:var(--text-secondary);">Manuale ed indicazioni operative per l'ambiente di test.</div>
             </div>
             <div class="content-list">
                 <div class="faq-item-box">
                     <div class="faq-question">🧪 1. Che cos'è questa versione DEV?</div>
                     <div class="faq-answer">
-                        Questa è la copia speculare di test collegata al progetto Firebase <b>magari-app-dev</b> (Versione corrente: <b>v4.1.7-DEV</b>). Qualsiasi modifica effettuata qui non tocca il database dei locali reali.
+                        Questa è la copia speculare di test collegata al progetto Firebase <b>magari-app-dev</b> (Versione corrente: <b>v4.1.8-DEV</b>). Qualsiasi modifica effettuata qui non tocca il database dei locali reali.
                     </div>
                 </div>
 
@@ -294,9 +299,9 @@
                 </div>
 
                 <div class="faq-item-box">
-                    <div class="faq-question">📦 3. Come resettare o simulare ordini?</div>
+                    <div class="faq-question">🎨 3. Gestione Colori e Posizione Fornitori</div>
                     <div class="faq-answer">
-                        Dalle impostazioni DEV puoi eseguire il reset totale dei dati di test in qualsiasi momento per ripartire da una configurazione pulita.
+                        La palette fornisce 12 tonalità ad alto contrasto. Puoi riordinare i fornitori con le frecce ⬆️ ⬇️ per spostare in alto quelli usati più di frequente nei filtri.
                     </div>
                 </div>
             </div>
@@ -322,7 +327,7 @@
                 <div class="page-lock-box"><div style="font-size: 32px; margin-bottom: 8px;">🔒</div><h3 style="margin-bottom: 6px;">Sezione Riservata Admin DEV</h3><p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Effettua il Login con account Admin per accedere.</p><button class="btn-save" onclick="openAuthModal()">Accedi come Admin</button></div>
             </div>
             <div class="settings-card">
-                <h3>⚙️ Gestione Impostazioni (DEV MODE v4.1.7)</h3>
+                <h3>⚙️ Gestione Impostazioni (DEV MODE v4.1.8)</h3>
 
                 <!-- PUBBLICAZIONE AVVISO STAFF -->
                 <div style="background:#fefbf3; border:1px solid #f3e8d2; padding:12px; border-radius:10px; margin-top:8px;">
@@ -358,7 +363,7 @@
 
         <!-- FOOTER FIRMA DEVELOPER -->
         <footer style="background: linear-gradient(135deg, #78350f, #451a03); color:#fffbe8; text-align:center; padding:16px 14px; font-size:11px; border-top:1px solid #92400e; margin-top:auto; width:100%; position:relative; z-index:80;">
-            <div>&copy; 2026 <b>Magari Pizzeria DEV</b> - Versione <span style="background:rgba(255,255,255,0.15); padding:2px 6px; border-radius:4px; font-weight:bold;">v4.1.7-DEV</span></div>
+            <div>&copy; 2026 <b>Magari Pizzeria DEV</b> - Versione <span style="background:rgba(255,255,255,0.15); padding:2px 6px; border-radius:4px; font-weight:bold;">v4.1.8-DEV</span></div>
             <div style="margin-top:6px; font-size:11px; color:#ffffff;">
                 Sviluppato da <span style="color:#ffffff; font-weight:bold; background:rgba(0,0,0,0.25); padding:2px 6px; border-radius:4px;">Nicolas Cappiello</span>
             </div>
@@ -389,7 +394,7 @@
 
     <!-- MODALE AUTHENTICATION -->
     <div class="modal" id="auth-modal">
-        <div class="modal-title" id="auth-modal-title" style="text-align:center;">🔑 Login - Magari DEV v4.1.7</div>
+        <div class="modal-title" id="auth-modal-title" style="text-align:center;">🔑 Login - Magari DEV v4.1.8</div>
         <div style="display:flex; justify-content:center; gap:10px; margin-bottom:12px;">
             <button id="tab-btn-login" onclick="switchAuthTab('login')" style="flex:1; padding:6px; border-radius:6px; font-weight:bold; border:1px solid #b45309; background:#b45309; color:white;">Login</button>
             <button id="tab-btn-register" onclick="switchAuthTab('register')" style="flex:1; padding:6px; border-radius:6px; font-weight:bold; border:1px solid #cbd5e1; background:#f1f5f9; color:#334155;">Nuovo Account DEV</button>
@@ -472,11 +477,24 @@
         <div class="modal-actions"><button class="btn-cancel" onclick="closeAddModal()">Annulla</button><button class="btn-save" style="background:#b45309;" onclick="saveInventoryItem()">Salva DEV</button></div>
     </div>
 
+    <!-- MODALE FORNITORE CON SELETTORE PALETTE A 12 COLORI -->
     <div class="modal" id="add-supplier-modal">
         <div class="modal-title" id="supplier-modal-title">Fornitore DEV</div>
         <input type="hidden" id="edit-supplier-id">
-        <div class="form-group"><label>Nome</label><input type="text" id="supp-name" class="form-control"></div>
-        <div class="form-group"><label>Colore</label><input type="color" id="supp-color-input" class="form-control" value="#1976d2"></div>
+        <input type="hidden" id="supp-color-val" value="#0288d1">
+        
+        <div class="form-group"><label>Nome Fornitore</label><input type="text" id="supp-name" class="form-control"></div>
+        
+        <div class="form-group">
+            <label style="font-weight:bold; color:#b45309;">🎨 Scegli Colore Identificativo:</label>
+            <div id="supplier-color-palette-grid" style="display:grid; grid-template-columns: repeat(6, 1fr); gap:8px; margin-top:6px; background:#f8fafc; padding:8px; border-radius:8px; border:1px solid #cbd5e1;"></div>
+        </div>
+
+        <div style="margin-bottom:12px;">
+            <label style="font-size:11px; color:#666;">Anteprima Badge Visivo:</label>
+            <div id="supplier-color-preview-badge" style="padding:6px 12px; border-radius:6px; font-weight:800; font-size:12px; display:inline-block; margin-top:4px;">🚚 Anteprima Fornitore</div>
+        </div>
+
         <div class="form-group"><label>Telefono</label><input type="tel" id="supp-phone" class="form-control"></div>
         <div class="form-group"><label>Email</label><input type="email" id="supp-email" class="form-control"></div>
         <div class="modal-actions"><button class="btn-cancel" onclick="closeAddSupplierModal()">Annulla</button><button class="btn-save" style="background:#b45309;" onclick="saveSupplier()">Salva DEV</button></div>
@@ -687,18 +705,34 @@
         window.activeLocation = null;
         window.activeVerifyHistoryId = null;
 
+        // PALETTE CURATA A 12 COLORI UNICI E DISTINTI
+        window.supplierColorPalette = [
+            { name: "Rosso Pomodoro", hex: "#dc2626", textColor: "#ffffff" },
+            { name: "Arancio Agrumi", hex: "#ea580c", textColor: "#ffffff" },
+            { name: "Giallo Ocra", hex: "#d97706", textColor: "#ffffff" },
+            { name: "Verde Smeraldo", hex: "#166534", textColor: "#ffffff" },
+            { name: "Verde Oliva", hex: "#65a30d", textColor: "#ffffff" },
+            { name: "Blu Cobalto", hex: "#1d4ed8", textColor: "#ffffff" },
+            { name: "Celeste", hex: "#0288d1", textColor: "#ffffff" },
+            { name: "Viola Melanzana", hex: "#7e22ce", textColor: "#ffffff" },
+            { name: "Rosa Magenta", hex: "#be185d", textColor: "#ffffff" },
+            { name: "Marrone Tostato", hex: "#78350f", textColor: "#ffffff" },
+            { name: "Antracite", hex: "#334155", textColor: "#ffffff" },
+            { name: "Borgogna", hex: "#881337", textColor: "#ffffff" }
+        ];
+
         window.defaultSuppliers = [
-            { id: 1700000001, name: "Paolo's Tiramisu", phone: "0764211121", email: "paolo@tiramisusthlm.se", color: "#f57c00" },
-            { id: 1700000002, name: "Divinoil Antica Bottega", phone: "0708223715", email: "info@divinoil.com", color: "#5d4037" },
-            { id: 1700000003, name: "D'ABRAMO Group AB", phone: "0701499424", email: "linnea@dabramo.se", color: "#6d4c41" },
-            { id: 1700000004, name: "Martin & Servera", phone: "08-6978300", email: "", color: "#1565c0" },
-            { id: 1700000005, name: "Don Bibbo AB", phone: "08-7224930", email: "info@donbibbo.com", color: "#e65100" },
-            { id: 1700000006, name: "Daniele FG AB", phone: "0704959768", email: "gino.daniele@hotmail.com", color: "#43a047" },
-            { id: 1700000007, name: "Jansson Fisk AB", phone: "08-310772", email: "janssonsfisk@gmail.com", color: "#0288d1" },
-            { id: 1700000008, name: "Östkustens Smak AB", phone: "0728758967", email: "ostkustenleverans@gmail.com", color: "#d81b60" },
-            { id: 1700000009, name: "Villa Aurum", phone: "", email: "", color: "#795548" },
-            { id: 1700000010, name: "Stellan Kramer", phone: "", email: "", color: "#8e24aa" },
-            { id: 1700000011, name: "Ekerö Brygghus AB", phone: "0768837808", email: "kerryn@ekerobrygghus.se", color: "#00897b" }
+            { id: 1700000001, name: "Paolo's Tiramisu", phone: "0764211121", email: "paolo@tiramisusthlm.se", color: "#ea580c", orderIndex: 1 },
+            { id: 1700000002, name: "Divinoil Antica Bottega", phone: "0708223715", email: "info@divinoil.com", color: "#78350f", orderIndex: 2 },
+            { id: 1700000003, name: "D'ABRAMO Group AB", phone: "0701499424", email: "linnea@dabramo.se", color: "#d97706", orderIndex: 3 },
+            { id: 1700000004, name: "Martin & Servera", phone: "08-6978300", email: "", color: "#1d4ed8", orderIndex: 4 },
+            { id: 1700000005, name: "Don Bibbo AB", phone: "08-7224930", email: "info@donbibbo.com", color: "#dc2626", orderIndex: 5 },
+            { id: 1700000006, name: "Daniele FG AB", phone: "0704959768", email: "gino.daniele@hotmail.com", color: "#166534", orderIndex: 6 },
+            { id: 1700000007, name: "Jansson Fisk AB", phone: "08-310772", email: "janssonsfisk@gmail.com", color: "#0288d1", orderIndex: 7 },
+            { id: 1700000008, name: "Östkustens Smak AB", phone: "0728758967", email: "ostkustenleverans@gmail.com", color: "#be185d", orderIndex: 8 },
+            { id: 1700000009, name: "Villa Aurum", phone: "", email: "", color: "#7e22ce", orderIndex: 9 },
+            { id: 1700000010, name: "Stellan Kramer", phone: "", email: "", color: "#334155", orderIndex: 10 },
+            { id: 1700000011, name: "Ekerö Brygghus AB", phone: "0768837808", email: "kerryn@ekerobrygghus.se", color: "#65a30d", orderIndex: 11 }
         ];
 
         window.suppliersData = [...window.defaultSuppliers];
@@ -1244,7 +1278,10 @@
         });
 
         onSnapshot(collection(db, "suppliers"), (snapshot) => {
-            if(!snapshot.empty) window.suppliersData = snapshot.docs.map(doc => doc.data());
+            if(!snapshot.empty) {
+                window.suppliersData = snapshot.docs.map(doc => doc.data());
+                window.suppliersData.sort((a, b) => (a.orderIndex || 999) - (b.orderIndex || 999));
+            }
             window.populateAllSupplierFilters();
             window.refreshAllViews();
         });
@@ -1370,7 +1407,6 @@
             const q = (document.getElementById('search-stock-input')?.value || '').toLowerCase();
             const cat = document.getElementById('filter-stock-category')?.value || '';
             const sup = document.getElementById('filter-stock-supplier')?.value || '';
-            const sortMode = document.getElementById('sort-stock-select')?.value || 'name-asc';
 
             let filtered = window.inventoryData.filter(i => {
                 const matchesCat = !cat ? true : (cat === 'FAVORITES' ? i.isFavorite === true : i.category === cat);
@@ -1773,17 +1809,66 @@
         };
         window.deleteInventoryItem = async function(id) { if (window.checkAuthGuard() && confirm("Eliminare prodotto DEV?")) await deleteDoc(doc(db, "inventory", String(id))); };
 
-        // FORNITORI
+        // FORNITORI, PALETTE COLORI E ORDINAMENTO
+        window.renderSupplierColorGrid = function(selectedHex) {
+            const grid = document.getElementById('supplier-color-palette-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            window.supplierColorPalette.forEach(col => {
+                const isSelected = (col.hex.toLowerCase() === (selectedHex || '').toLowerCase());
+                const circle = document.createElement('div');
+                circle.style.cssText = `
+                    width: 34px; height: 34px; border-radius: 50%; background-color: ${col.hex};
+                    cursor: pointer; border: ${isSelected ? '3px solid #1e293b' : '2px solid white'};
+                    box-shadow: ${isSelected ? '0 0 0 2px #b45309' : '0 1px 3px rgba(0,0,0,0.2)'};
+                    display: flex; align-items: center; justify-content: center; color: white; font-size: 14px;
+                    transition: transform 0.1s ease;
+                `;
+                if (isSelected) circle.innerHTML = '✓';
+                circle.onclick = () => { window.selectSupplierColor(col.hex); };
+                grid.appendChild(circle);
+            });
+        };
+
+        window.selectSupplierColor = function(hex) {
+            document.getElementById('supp-color-val').value = hex;
+            window.renderSupplierColorGrid(hex);
+            
+            const nameVal = document.getElementById('supp-name').value.trim() || 'Anteprima Fornitore';
+            const badge = document.getElementById('supplier-color-preview-badge');
+            if (badge) {
+                badge.style.backgroundColor = hex;
+                badge.style.color = '#ffffff';
+                badge.innerText = `🚚 ${nameVal}`;
+            }
+        };
+
+        window.getAutoAvailableColor = function() {
+            const usedColors = window.suppliersData.map(s => (s.color || '').toLowerCase());
+            const free = window.supplierColorPalette.find(c => !usedColors.includes(c.hex.toLowerCase()));
+            return free ? free.hex : window.supplierColorPalette[0].hex;
+        };
+
         window.filterSuppliers = function() {
             const q = (document.getElementById('search-supplier-input')?.value || '').toLowerCase();
             const c = document.getElementById('suppliers-list'); 
             if (!c) return;
             c.innerHTML = '';
-            window.suppliersData.filter(s => s.name.toLowerCase().includes(q)).sort((a, b) => a.name.localeCompare(b.name)).forEach(s => {
+
+            let sortedSupps = [...window.suppliersData].sort((a, b) => (a.orderIndex || 999) - (b.orderIndex || 999));
+
+            sortedSupps.filter(s => s.name.toLowerCase().includes(q)).forEach((s, index) => {
                 c.innerHTML += `
                     <div class="card-item">
-                        <div class="item-name-box" style="border-left-color:${s.color};">
-                            <div class="item-name" style="color:${s.color};">🚚 ${s.name}</div>
+                        <div class="item-name-box" style="border-left-color:${s.color || '#0288d1'};">
+                            <div class="item-name" style="color:${s.color || '#0288d1'};">
+                                <span>🚚 ${s.name}</span>
+                                <div style="display:flex; gap:4px;">
+                                    <button onclick="moveSupplierOrder(${s.id}, -1)" style="background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; padding:2px 6px; font-size:12px; cursor:pointer;" title="Sposta In Alto">⬆️</button>
+                                    <button onclick="moveSupplierOrder(${s.id}, 1)" style="background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; padding:2px 6px; font-size:12px; cursor:pointer;" title="Sposta In Basso">⬇️</button>
+                                </div>
+                            </div>
                             <div class="item-subtext">📞 ${s.phone || 'N/D'} | ✉ ${s.email || 'N/D'}</div>
                         </div>
                         <div class="action-row-btn">
@@ -1794,6 +1879,26 @@
             });
         };
 
+        window.moveSupplierOrder = async function(supId, direction) {
+            if (!window.checkAuthGuard()) return;
+            let sorted = [...window.suppliersData].sort((a, b) => (a.orderIndex || 999) - (b.orderIndex || 999));
+            const idx = sorted.findIndex(s => String(s.id) === String(supId));
+            if (idx === -1) return;
+
+            const targetIdx = idx + direction;
+            if (targetIdx < 0 || targetIdx >= sorted.length) return;
+
+            const currentSup = sorted[idx];
+            const targetSup = sorted[targetIdx];
+
+            const batch = writeBatch(db);
+            batch.update(doc(db, "suppliers", String(currentSup.id)), { orderIndex: targetIdx + 1 });
+            batch.update(doc(db, "suppliers", String(targetSup.id)), { orderIndex: idx + 1 });
+
+            await batch.commit();
+            window.showAlert("↕️ Ordine fornitori aggiornato!");
+        };
+
         window.openAddSupplierModal = function(id = null) {
             if (!window.checkAuthGuard()) return;
             window.closeAll();
@@ -1801,7 +1906,8 @@
             document.getElementById('supp-name').value = '';
             document.getElementById('supp-phone').value = '';
             document.getElementById('supp-email').value = '';
-            document.getElementById('supp-color-input').value = '#1976d2';
+
+            let chosenHex = window.getAutoAvailableColor();
 
             if (id) {
                 const s = window.suppliersData.find(x => String(x.id) === String(id));
@@ -1811,12 +1917,13 @@
                     document.getElementById('supp-name').value = s.name || '';
                     document.getElementById('supp-phone').value = s.phone || '';
                     document.getElementById('supp-email').value = s.email || '';
-                    document.getElementById('supp-color-input').value = s.color || '#1976d2';
+                    chosenHex = s.color || chosenHex;
                 }
             } else {
                 document.getElementById('supplier-modal-title').innerText = '➕ Nuovo Fornitore DEV';
             }
 
+            window.selectSupplierColor(chosenHex);
             document.getElementById('add-supplier-modal').classList.add('active');
             document.getElementById('overlay').classList.add('active');
         };
@@ -1832,7 +1939,7 @@
             const name = document.getElementById('supp-name').value.trim();
             const phone = document.getElementById('supp-phone').value.trim();
             const email = document.getElementById('supp-email').value.trim();
-            const color = document.getElementById('supp-color-input').value;
+            const color = document.getElementById('supp-color-val').value;
 
             if (!name) return window.showAlert("⚠️ Inserisci il nome del fornitore.");
 
@@ -1841,7 +1948,8 @@
                 window.showAlert("✅ Fornitore DEV aggiornato!");
             } else {
                 const newId = Date.now();
-                await setDoc(doc(db, "suppliers", String(newId)), { id: newId, name, phone, email, color });
+                const nextOrderIndex = window.suppliersData.length + 1;
+                await setDoc(doc(db, "suppliers", String(newId)), { id: newId, name, phone, email, color, orderIndex: nextOrderIndex });
                 window.showAlert("✅ Nuovo fornitore DEV salvato!");
             }
 
