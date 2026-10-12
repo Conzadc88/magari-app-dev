@@ -3,15 +3,19 @@
 <head>
 <!--
 ====================================================================
-[MAGARI APP - DEVELOPMENT / TEST ENVIRONMENT]
-- VERSION: v4.1.8-DEV
-- FIREBASE PROJECT: magari-app-dev
-- TARGET: Ambiente isolato di test e sviluppo
+[MAGARI APP - AMBIENTE SVILUPPO / DEV]
+
+- v4.1.9-DEV (12/10/2026 - OPTIMIZED FAVORITES UX & DEV REPOSITORY):
+  1. Corretta configurazione Firebase per ambiente DEV (separato da PROD magari-b7f93).
+  2. Pulsante Preferiti "⭐ Preferito" posizionato a destra nell'intestazione della card.
+  3. Mantenuto il design grafico pulito ed essenziale.
+  4. Filtro rapido "⭐ Solo Preferiti" integrato su Ordini, Scorte e Magazzino.
+  5. Palette Fornitori a 12 Colori e Re-ordering (⬆️ ⬇️) ereditati dalla STABLE.
 ====================================================================
 -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#92400e">
+    <meta name="theme-color" content="#043927">
     
     <!-- META TAGS NO-CACHE -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -22,14 +26,14 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Magari DEV">
+    <meta name="apple-mobile-web-app-title" content="Magari Pizzeria DEV">
     
     <!-- Icone Schermata Home & Favicon -->
-    <link rel="manifest" href="manifest.json?v=4.1.8-dev">
-    <link rel="apple-touch-icon" href="logo-square.png?v=4.1.8-dev">
-    <link rel="icon" type="image/png" href="logo-square.png?v=4.1.8-dev">
+    <link rel="manifest" href="manifest.json?v=4.1.9-DEV">
+    <link rel="apple-touch-icon" href="logo-square.png?v=4.1.9-DEV">
+    <link rel="icon" type="image/png" href="logo-square.png?v=4.1.9-DEV">
 
-    <title>Magari v4.1.8 [DEV TEST]</title>
+    <title>Magari v4.1.9-DEV</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -46,12 +50,12 @@
     <!-- SELEZIONE SEDE GUARD -->
     <div class="page-lock-banner" id="location-guard-banner" style="display: flex; position: fixed; z-index: 3000; padding-top: 100px;">
         <div class="page-lock-box" style="max-width: 340px;">
-            <div style="font-size: 32px; margin-bottom: 8px;">🧪</div>
-            <h3 style="margin-bottom: 6px; color: #92400e;">Seleziona Sede (DEV v4.1.8)</h3>
-            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 14px;">Sei nell'ambiente di test. Seleziona il locale per caricare i dati di prova.</p>
+            <div style="font-size: 32px; margin-bottom: 8px;">📍</div>
+            <h3 style="margin-bottom: 6px; color: var(--primary);">Seleziona la Sede (DEV)</h3>
+            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 14px;">Seleziona il locale in cui ti trovi per caricare le giacenze e il carrello corretti.</p>
             <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;">
-                <button class="btn-save" style="padding: 12px; font-size: 14px; background: linear-gradient(135deg, #064e3b, #043927);" onclick="setActiveLocation('Vasastan (Sankt Eriksgatan 110)')">📍 Vasastan<br><span style="font-size:10px; opacity:0.8;">Sankt Eriksgatan 110</span></button>
-                <button class="btn-save" style="padding: 12px; font-size: 14px; background: linear-gradient(135deg, #166534, #14532d);" onclick="setActiveLocation('Östermalm (Styrmansgatan 52)')">📍 Östermalm<br><span style="font-size:10px; opacity:0.8;">Styrmansgatan 52</span></button>
+                <button class="btn-save" style="padding: 12px; font-size: 14px; background-color: #043927;" onclick="setActiveLocation('Vasastan (Sankt Eriksgatan 110)')">📍 Vasastan<br><span style="font-size:10px; opacity:0.8;">Sankt Eriksgatan 110</span></button>
+                <button class="btn-save" style="padding: 12px; font-size: 14px; background-color: #1b5e20;" onclick="setActiveLocation('Östermalm (Styrmansgatan 52)')">📍 Östermalm<br><span style="font-size:10px; opacity:0.8;">Styrmansgatan 52</span></button>
             </div>
         </div>
     </div>
@@ -64,12 +68,12 @@
             <div class="drawer-header" style="text-align: center;">
                 <img src="logo-header.png" alt="Magari Logo" style="max-width: 170px; height: auto; margin-bottom: 4px;" onerror="this.style.display='none'; document.getElementById('drawer-text-fallback').style.display='block';">
                 <div id="drawer-text-fallback" class="brand-title" style="display:none; font-size: 24px;">MAGARI</div>
-                <div class="brand-subtitle" style="font-size: 9px; background: rgba(255,255,255,0.2); font-weight:800;">🧪 DEV MODE • v4.1.8</div>
+                <div class="brand-subtitle" style="font-size: 9px; background:#d97706; font-weight:800;">v4.1.9 DEV</div>
             </div>
 
             <!-- USER ACCOUNT BANNER NELLO MENU -->
-            <div id="drawer-user-box" style="background:#fefbf3; padding:10px; border-radius:10px; margin-bottom:12px; text-align:center; border:1px solid #f3e8d2; box-shadow: 0 2px 4px rgba(0,0,0,0.03);">
-                <div id="user-status-text" style="font-size:12px; font-weight:bold; color:#92400e;">👁️ Modalità Lettura (Guest)</div>
+            <div id="drawer-user-box" style="background:#f1f5f9; padding:10px; border-radius:10px; margin-bottom:12px; text-align:center; border:1px solid #cbd5e1; box-shadow: 0 2px 4px rgba(0,0,0,0.03);">
+                <div id="user-status-text" style="font-size:12px; font-weight:bold; color:var(--primary);">👁️ Modalità Lettura (Guest)</div>
                 <button id="btn-auth-action" onclick="openAuthModal()" class="btn-save" style="width:100%; margin-top:6px; padding:6px; font-size:12px; background: linear-gradient(135deg, #2563eb, #1d4ed8);">🔑 Accedi / Registrati</button>
             </div>
 
@@ -100,7 +104,7 @@
             <div class="header-brand-text">
                 <img src="logo-header.png" alt="Magari" style="height: 34px; width: auto;" onerror="this.style.display='none'; document.getElementById('header-text-fallback').style.display='block';">
                 <div id="header-text-fallback" class="brand-title" style="display:none;">MAGARI</div>
-                <div class="brand-subtitle" style="background: rgba(255,255,255,0.2); font-weight:800;">🧪 DEV • v4.1.8</div>
+                <div class="brand-subtitle" style="background:#d97706; font-weight:800;">v4.1.9 DEV</div>
             </div>
             <div class="page-badge" id="page-title">Ordini</div>
         </div>
@@ -109,7 +113,7 @@
         <div id="staff-notice-banner" style="display:none; background: linear-gradient(135deg, #fffcf5, #fef3c7); border-left:4px solid #f59e0b; border-bottom:1px solid #fde68a; padding:12px 16px; margin:10px 12px; border-radius:10px; box-shadow:0 3px 8px rgba(0,0,0,0.04);">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
                 <div style="display:flex; align-items:center; gap:6px;">
-                    <span style="font-size:11px; font-weight:800; background:#fef3c7; color:#92400e; padding:2px 8px; border-radius:12px; border:1px solid #fde68a;">📢 COMUNICAZIONE DEV</span>
+                    <span style="font-size:11px; font-weight:800; background:#fef3c7; color:#92400e; padding:2px 8px; border-radius:12px; border:1px solid #fde68a;">📢 COMUNICAZIONE STAFF</span>
                 </div>
                 <button id="btn-delete-notice" onclick="deleteNoticeFromDb()" style="display:none; background:#fee2e2; border:1px solid #fca5a5; color:#991b1b; font-size:10px; font-weight:bold; padding:3px 8px; border-radius:12px; cursor:pointer;">🗑️ Rimuovi</button>
             </div>
@@ -118,8 +122,8 @@
         </div>
 
         <div class="location-active-banner" id="active-location-banner" style="display: none;">
-            <span id="active-location-text">📍 Sede DEV: Non selezionata</span>
-            <button onclick="promptChangeLocation()" style="background: white; border: 1px solid #b45309; color: #b45309; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">Cambia Sede</button>
+            <span id="active-location-text">📍 Sede: Non selezionata</span>
+            <button onclick="promptChangeLocation()" style="background: white; border: 1px solid #2e7d32; color: #2e7d32; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">Cambia Sede</button>
         </div>
 
         <!-- 1. ORDINI -->
@@ -134,8 +138,8 @@
                 </div>
                 <div style="display: flex; gap: 8px; width: 100%;">
                     <select id="filter-order-category" class="filter-select" onchange="filterOrderItems()">
-                        <option value="">📂 Categorie</option>
-                        <option value="FAVORITES" style="font-weight:bold; color:#b45309;">⭐ Solo Preferiti</option>
+                        <option value="">📂 Tutte le Categorie</option>
+                        <option value="FAVORITES" style="font-weight:bold; color:#b45309; background:#fef3c7;">⭐ Solo Preferiti</option>
                         <option value="Latticini">🧀 Latticini</option>
                         <option value="Farine & Secco">🌾 Farine & Secco</option>
                         <option value="Conserve & Pomodoro">🍅 Conserve & Pomodoro</option>
@@ -155,10 +159,10 @@
                         <option value="low-stock">🚨 Prima Scorte Basse</option>
                     </select>
                 </div>
-                <div class="search-row"><input type="text" id="search-order-input" class="search-input" placeholder="Cerca prodotto DEV..." oninput="filterOrderItems()"></div>
+                <div class="search-row"><input type="text" id="search-order-input" class="search-input" placeholder="Cerca prodotto da ordinare..." oninput="filterOrderItems()"></div>
             </div>
             <div class="content-list" id="order-list"></div>
-            <div class="sticky-checkout-container"><button class="btn-checkout" onclick="generateOrderSummary()">📋 Genera Riepilogo Ordine (DEV)</button></div>
+            <div class="sticky-checkout-container"><button class="btn-checkout" onclick="generateOrderSummary()">📋 Genera Riepilogo Ordine</button></div>
         </div>
 
         <!-- 2. SCORTE -->
@@ -170,11 +174,11 @@
                 <div style="display:flex; gap:8px; align-items:center; width: 100%;">
                     <button class="btn-excel" onclick="promptExportExcelModal()">📊 Export Inventory (Excel)</button>
                 </div>
-                <button class="reset-btn" onclick="executeResetStockGuard()">🔒 🔄 Azzera Giacenze Sede Attiva (DEV)</button>
+                <button class="reset-btn" onclick="executeResetStockGuard()">🔒 🔄 Azzera Giacenze Sede Attiva</button>
                 <div style="display: flex; gap: 8px; width: 100%;">
                     <select id="filter-stock-category" class="filter-select" onchange="filterStockItems()">
-                        <option value="">📂 Categorie</option>
-                        <option value="FAVORITES" style="font-weight:bold; color:#b45309;">⭐ Solo Preferiti</option>
+                        <option value="">📂 Tutte le Categorie</option>
+                        <option value="FAVORITES" style="font-weight:bold; color:#b45309; background:#fef3c7;">⭐ Solo Preferiti</option>
                         <option value="Latticini">🧀 Latticini</option>
                         <option value="Farine & Secco">🌾 Farine & Secco</option>
                         <option value="Conserve & Pomodoro">🍅 Conserve & Pomodoro</option>
@@ -196,7 +200,7 @@
                         <option value="last-update">🕒 Ultima Modifica (Recenti)</option>
                     </select>
                 </div>
-                <div class="search-row"><input type="text" id="search-stock-input" class="search-input" placeholder="Cerca alimento in scorta DEV..." oninput="filterStockItems()"></div>
+                <div class="search-row"><input type="text" id="search-stock-input" class="search-input" placeholder="Cerca alimento in scorta..." oninput="filterStockItems()"></div>
             </div>
             <div class="content-list" id="stock-list"></div>
         </div>
@@ -204,27 +208,27 @@
         <!-- 3. STORICO ORDINI -->
         <div id="view-storico" class="view-section">
             <div class="top-bar-container">
-                <button class="reset-btn" onclick="executeClearHistoryGuard()">🔒 🗑️ Svuota Tutto lo Storico Ordini (DEV)</button>
-                <div style="font-size:12px; font-weight:700; color:#92400e; background:#fefbf3; padding:8px 12px; border-radius:8px; border:1px solid #f3e8d2;">
-                    📍 Ordini visualizzati per la Sede Attiva (Database DEV)
+                <button class="reset-btn" onclick="executeClearHistoryGuard()">🔒 🗑️ Svuota Tutto lo Storico Ordini</button>
+                <div style="font-size:12px; font-weight:700; color:#2e7d32; background:#e8f5e9; padding:8px 12px; border-radius:8px; border:1px solid #c8e6c9;">
+                    📍 Ordini visualizzati per la Sede Attiva
                 </div>
-                <input type="text" id="search-history-input" class="search-input" placeholder="Cerca nello storico DEV..." oninput="filterHistoryItems()">
+                <input type="text" id="search-history-input" class="search-input" placeholder="Cerca nello storico..." oninput="filterHistoryItems()">
             </div>
             <div class="content-list" id="history-list"></div>
         </div>
         <!-- 4. MAGAZZINO (SOLO ADMIN) -->
         <div id="view-magazzino" class="view-section">
             <div class="page-lock-banner" id="lock-banner-magazzino">
-                <div class="page-lock-box"><div style="font-size: 32px; margin-bottom: 8px;">🔒</div><h3 style="margin-bottom: 6px;">Sezione Riservata Admin DEV</h3><p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Effettua il Login con account Admin per accedere.</p><button class="btn-save" onclick="openAuthModal()">Accedi come Admin</button></div>
+                <div class="page-lock-box"><div style="font-size: 32px; margin-bottom: 8px;">🔒</div><h3 style="margin-bottom: 6px;">Sezione Riservata Admin</h3><p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Effettua il Login con account Admin per accedere.</p><button class="btn-save" onclick="openAuthModal()">Accedi come Admin</button></div>
             </div>
             <div class="top-bar-container">
                 <div style="font-size:11px; background:#fef3c7; color:#92400e; padding:6px 10px; border-radius:6px; font-weight:600; border:1px solid #fde68a;">
-                    ⭐ <b>Gestione Preferiti:</b> Clicca sulla stellina accanto ai prodotti.
+                    ⭐ <b>Gestione Preferiti:</b> Clicca su <b>"⭐ Preferito"</b> a destra della scheda per attivarlo o disattivarlo.
                 </div>
                 <div style="display: flex; gap: 8px; width: 100%;">
                     <select id="filter-inventory-category" class="filter-select" onchange="filterItems()">
-                        <option value="">📂 Categorie</option>
-                        <option value="FAVORITES" style="font-weight:bold; color:#b45309;">⭐ Solo Preferiti</option>
+                        <option value="">📂 Tutte le Categorie</option>
+                        <option value="FAVORITES" style="font-weight:bold; color:#b45309; background:#fef3c7;">⭐ Solo Preferiti</option>
                         <option value="Latticini">🧀 Latticini</option>
                         <option value="Farine & Secco">🌾 Farine & Secco</option>
                         <option value="Conserve & Pomodoro">🍅 Conserve & Pomodoro</option>
@@ -238,7 +242,7 @@
                     </select>
                     <select id="filter-inventory-supplier" class="filter-select" onchange="filterItems()"><option value="">🚚 Tutti i Fornitori</option></select>
                 </div>
-                <div class="search-row"><input type="text" id="search-input" class="search-input" placeholder="Cerca in anagrafica DEV..." oninput="filterItems()"><button class="add-btn" style="background:#b45309;" onclick="openAddModal()">+ Nuovo</button></div>
+                <div class="search-row"><input type="text" id="search-input" class="search-input" placeholder="Cerca in anagrafica..." oninput="filterItems()"><button class="add-btn" onclick="openAddModal()">+ Nuovo</button></div>
             </div>
             <div class="content-list" id="inventory-list"></div>
         </div>
@@ -246,13 +250,13 @@
         <!-- 5. FORNITORI (SOLO ADMIN) -->
         <div id="view-fornitori" class="view-section">
             <div class="page-lock-banner" id="lock-banner-fornitori">
-                <div class="page-lock-box"><div style="font-size: 32px; margin-bottom: 8px;">🔒</div><h3 style="margin-bottom: 6px;">Sezione Riservata Admin DEV</h3><p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Effettua il Login con account Admin per accedere.</p><button class="btn-save" onclick="openAuthModal()">Accedi come Admin</button></div>
+                <div class="page-lock-box"><div style="font-size: 32px; margin-bottom: 8px;">🔒</div><h3 style="margin-bottom: 6px;">Sezione Riservata Admin</h3><p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Effettua il Login con account Admin per accedere.</p><button class="btn-save" onclick="openAuthModal()">Accedi come Admin</button></div>
             </div>
             <div class="top-bar-container">
                 <div style="font-size:11px; background:#e0f2fe; color:#0369a1; padding:6px 10px; border-radius:6px; font-weight:600; border:1px solid #bae6fd;">
                     ↕️ <b>Ordinamento Fornitori:</b> Usa le frecce ⬆️ ⬇️ per riposizionare i fornitori in alto nei menu.
                 </div>
-                <div class="search-row"><input type="text" id="search-supplier-input" class="search-input" placeholder="Cerca fornitore DEV..." oninput="filterSuppliers()"><button class="add-btn" style="background:#b45309;" onclick="openAddSupplierModal()">+ Fornitore</button></div>
+                <div class="search-row"><input type="text" id="search-supplier-input" class="search-input" placeholder="Cerca fornitore..." oninput="filterSuppliers()"><button class="add-btn" onclick="openAddSupplierModal()">+ Fornitore</button></div>
             </div>
             <div class="content-list" id="suppliers-list"></div>
         </div>
@@ -260,48 +264,70 @@
         <!-- 6. REPORT CONSUMI (SOLO ADMIN) -->
         <div id="view-sprechi" class="view-section">
             <div class="page-lock-banner" id="lock-banner-sprechi">
-                <div class="page-lock-box"><div style="font-size: 32px; margin-bottom: 8px;">🔒</div><h3 style="margin-bottom: 6px;">Sezione Riservata Admin DEV</h3><p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Effettua il Login con account Admin per accedere.</p><button class="btn-save" onclick="openAuthModal()">Accedi come Admin</button></div>
+                <div class="page-lock-box"><div style="font-size: 32px; margin-bottom: 8px;">🔒</div><h3 style="margin-bottom: 6px;">Sezione Riservata Admin</h3><p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Effettua il Login con account Admin per accedere.</p><button class="btn-save" onclick="openAuthModal()">Accedi come Admin</button></div>
             </div>
             <div class="top-bar-container">
                 <div class="form-group"><label>Periodo Report:</label><select id="report-period-type" class="form-control" onchange="toggleReportPeriodInputs()"><option value="total">Totale Storico Ordini</option><option value="month">Mese Specifico</option><option value="stock">Giacenze Attuali</option></select></div>
                 <div class="form-group" id="report-month-select-group" style="display:none;"><label>Mese:</label><input type="month" id="report-month-picker" class="form-control"></div>
-                <button class="btn-save" onclick="generateRealReport()" style="width:100%; padding:10px; background:#b45309;">📋 Genera Report (DEV)</button>
+                <button class="btn-save" onclick="generateRealReport()" style="width:100%; padding:10px;">📋 Genera Report</button>
             </div>
             <div id="report-results-container" style="display:none; background:white; padding:16px; border-radius:10px; margin:16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border:1px solid var(--border);">
-                <h3 id="report-title-display" style="font-size:14px; margin-bottom:10px; color:#b45309;"></h3>
+                <h3 id="report-title-display" style="font-size:14px; margin-bottom:10px; color:var(--primary);"></h3>
                 <div style="font-weight:bold; font-size:12px; color:#1e293b;">🍷 Alcolici & Bevande</div>
                 <table class="report-table" id="table-alcohol-report"><thead><tr><th>Prodotto</th><th>Qtà</th><th>Costo Totale</th></tr></thead><tbody></tbody></table>
                 <div style="font-weight:bold; font-size:12px; color:#1e293b; margin-top:10px;">🍕 Cibo & Consumabili</div>
                 <table class="report-table" id="table-food-report"><thead><tr><th>Prodotto</th><th>Qtà</th><th>Costo Totale</th></tr></thead><tbody></tbody></table>
-                <div id="grand-total-report-box" style="margin-top:14px; padding:10px; background:#fffbe8; border:1px solid #fde68a; border-radius:6px; font-weight:800; font-size:14px; color:#b45309; text-align:right;"></div>
+                <div id="grand-total-report-box" style="margin-top:14px; padding:10px; background:#e8f5e9; border:1px solid #c8e6c9; border-radius:6px; font-weight:800; font-size:14px; color:#2e7d32; text-align:right;"></div>
             </div>
         </div>
 
         <!-- 7. FAQ & GUIDA RAPIDA -->
         <div id="view-faq" class="view-section">
             <div class="top-bar-container">
-                <div style="font-size:16px; font-weight:800; color:#b45309;">❓ Guida Rapida DEV Environment (v4.1.8)</div>
-                <div style="font-size:12px; color:var(--text-secondary);">Manuale ed indicazioni operative per l'ambiente di test.</div>
+                <div style="font-size:16px; font-weight:800; color:var(--primary);">❓ Guida Rapida & FAQ Staff (v4.1.9)</div>
+                <div style="font-size:12px; color:var(--text-secondary);">Manuale ed indicazioni operative ufficiali per Vasastan ed Östermalm.</div>
             </div>
             <div class="content-list">
                 <div class="faq-item-box">
-                    <div class="faq-question">🧪 1. Che cos'è questa versione DEV?</div>
+                    <div class="faq-question">📍 1. Come cambiare la Sede attiva?</div>
                     <div class="faq-answer">
-                        Questa è la copia speculare di test collegata al progetto Firebase <b>magari-app-dev</b> (Versione corrente: <b>v4.1.8-DEV</b>). Qualsiasi modifica effettuata qui non tocca il database dei locali reali.
+                        In cima alla schermata è indicato il locale attivo (<b>Vasastan</b> o <b>Östermalm</b>). Clicca su <b>"Cambia Sede"</b> per switchare. Le giacenze, i minimi scorta e il carrello sono <b>isolati per ciascun locale</b>.
                     </div>
                 </div>
 
                 <div class="faq-item-box">
-                    <div class="faq-question">🔑 2. Come funziona il Login nel DEV?</div>
+                    <div class="faq-question">🔑 2. Come funziona il Login e la Registrazione?</div>
                     <div class="faq-answer">
-                        Gli account staff creati qui sono registrati nel database di test. Puoi creare liberamente utenti per fare prove senza alterare gli account del personale reale.
+                        Apri il menu laterale (☰) e clicca su <b>"🔑 Accedi / Registrati"</b>.<br>
+                        • Inserisci le credenziali e spunta <b>"Rimani collegato"</b> per memorizzare l'accesso.<br>
+                        • Gli Admin ricevono una notifica in tempo reale quando si registra un nuovo membro dello staff.
                     </div>
                 </div>
 
                 <div class="faq-item-box">
-                    <div class="faq-question">🎨 3. Gestione Colori e Posizione Fornitori</div>
+                    <div class="faq-question">🛒 3. Come creare ed inviare un Ordine Fornitori?</div>
                     <div class="faq-answer">
-                        La palette fornisce 12 tonalità ad alto contrasto. Puoi riordinare i fornitori con le frecce ⬆️ ⬇️ per spostare in alto quelli usati più di frequente nei filtri.
+                        1. Seleziona la data di consegna prevista in alto alla pagina <b>Ordini</b>.<br>
+                        2. Regola le quantità da ordinare con i tasti <b>+</b> / <b>-</b>.<br>
+                        3. Clicca su <b>"📋 Genera Riepilogo Ordine"</b>.<br>
+                        4. Dalla finestra puoi inviare il testo in svedese via <b>WhatsApp</b> o <b>Email</b>.
+                    </div>
+                </div>
+
+                <div class="faq-item-box">
+                    <div class="faq-question">✍️ 4. Come verificare una Consegna e stornare la Scorta?</div>
+                    <div class="faq-answer">
+                        1. Vai in <b>📜 Storico Ordini</b>.<br>
+                        2. Trova l'ordine con il bollino ⚠️ <i>Da Controllare</i>.<br>
+                        3. Clicca su <b>"✍️ Verifica & Storna"</b>.<br>
+                        4. Conferma le quantità arrivate per accreditarle in automatico nella giacenza del locale.
+                    </div>
+                </div>
+
+                <div class="faq-item-box">
+                    <div class="faq-question">⭐ 5. Gestione Preferiti Intelligente</div>
+                    <div class="faq-answer">
+                        Il tasto <b>"⭐ Preferito"</b> si trova a destra nell'intestazione di ciascun prodotto. Puoi attivarlo o disattivarlo in un click. Usa il filtro <b>"⭐ Solo Preferiti"</b> dal menu a tendina delle Categorie per isolare istantaneamente gli ingredienti chiave.
                     </div>
                 </div>
             </div>
@@ -310,74 +336,74 @@
         <!-- 8. SEGNALA BUG -->
         <div id="view-bugreport" class="view-section">
             <div class="top-bar-container">
-                <div style="font-size:16px; font-weight:800; color:#d97706;">🐛 Segnala Bug o Feedback (DEV)</div>
+                <div style="font-size:16px; font-weight:800; color:#d97706;">🐛 Segnala Bug o Invia Feedback</div>
             </div>
             <div style="padding:16px;">
                 <div class="form-group"><label>Sede Rilevata</label><input type="text" id="bug-location-display" class="form-control" readonly style="background:#f1f5f9; font-weight:bold;"></div>
                 <div class="form-group"><label>Operatore</label><input type="text" id="bug-operator-input" class="form-control" readonly style="background:#f1f5f9; font-weight:bold;"></div>
                 <div class="form-group"><label>Tipo di Segnalazione</label><select id="bug-type-select" class="form-control"><option value="🐛 Errore Tecnico / Bug App">🐛 Errore Tecnico / Bug App</option><option value="🧀 Errore Dati">🧀 Errore Dati</option><option value="💡 Suggerimento">💡 Suggerimento</option></select></div>
-                <div class="form-group"><label>Descrizione</label><textarea id="bug-desc-input" class="form-control" rows="4" placeholder="Descrivi il test o il problema..."></textarea></div>
-                <button class="btn-save" onclick="submitBugReport()" style="width:100%; padding:12px; background: linear-gradient(135deg, #d97706, #b45309);">🚀 Invia Segnalazione DEV</button>
+                <div class="form-group"><label>Descrizione</label><textarea id="bug-desc-input" class="form-control" rows="4" placeholder="Descrivi il problema o il suggerimento..."></textarea></div>
+                <button class="btn-save" onclick="submitBugReport()" style="width:100%; padding:12px; background:#d97706;">🚀 Invia Segnalazione</button>
             </div>
         </div>
 
         <!-- 9. IMPOSTAZIONI -->
         <div id="view-impostazioni" class="view-section">
             <div class="page-lock-banner" id="lock-banner-impostazioni">
-                <div class="page-lock-box"><div style="font-size: 32px; margin-bottom: 8px;">🔒</div><h3 style="margin-bottom: 6px;">Sezione Riservata Admin DEV</h3><p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Effettua il Login con account Admin per accedere.</p><button class="btn-save" onclick="openAuthModal()">Accedi come Admin</button></div>
+                <div class="page-lock-box"><div style="font-size: 32px; margin-bottom: 8px;">🔒</div><h3 style="margin-bottom: 6px;">Sezione Riservata Admin</h3><p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Effettua il Login con account Admin per accedere.</p><button class="btn-save" onclick="openAuthModal()">Accedi come Admin</button></div>
             </div>
             <div class="settings-card">
-                <h3>⚙️ Gestione Impostazioni (DEV MODE v4.1.8)</h3>
+                <h3>⚙️ Gestione Avanzata Impostazioni (v4.1.9 DEV)</h3>
 
                 <!-- PUBBLICAZIONE AVVISO STAFF -->
-                <div style="background:#fefbf3; border:1px solid #f3e8d2; padding:12px; border-radius:10px; margin-top:8px;">
-                    <h4 style="font-size:14px; color:#92400e; margin-bottom:6px;">📢 Pubblica Banner Avviso Staff DEV</h4>
-                    <textarea id="notice-input-field" class="form-control" rows="2" placeholder="Scrivi un avviso di test..."></textarea>
-                    <button onclick="publishStaffNotice()" class="btn-save" style="width:100%; margin-top:8px; background:#b45309;">Pubblica Avviso DEV</button>
+                <div style="background:#fffbe8; border:1px solid #ffe0b2; padding:12px; border-radius:10px; margin-top:8px;">
+                    <h4 style="font-size:14px; color:#b45309; margin-bottom:6px;">📢 Pubblica Banner Avviso Staff</h4>
+                    <textarea id="notice-input-field" class="form-control" rows="2" placeholder="Scrivi un avviso per la bacheca staff..."></textarea>
+                    <button onclick="publishStaffNotice()" class="btn-save" style="width:100%; margin-top:8px; background:#b45309;">Pubblica Avviso</button>
                 </div>
 
                 <!-- 👥 PANNELLO GESTIONE STAFF -->
-                <div style="background:#f8fafc; padding:12px; border-radius:10px; border:1px solid #e2e8f0; margin-top:8px;">
+                <div style="background:#f8fafc; padding:12px; border-radius:10px; border:1px solid #cbd5e1; margin-top:8px;">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                        <h4 style="font-size:14px; color:#92400e;">👥 Gestione Staff (Database DEV)</h4>
+                        <h4 style="font-size:14px; color:var(--primary);">👥 Gestione Operatori Staff</h4>
                         <div style="display:flex; gap:6px;">
-                            <button onclick="openUserModal()" class="add-btn" style="padding:4px 8px; font-size:11px; background:#b45309;">+ Nuovo Utente</button>
+                            <button onclick="openUserModal()" class="add-btn" style="padding:4px 8px; font-size:11px;">+ Nuovo Utente</button>
                             <button onclick="loadUsersListForAdmin()" style="background:none; border:none; color:#2563eb; font-size:12px; font-weight:bold; cursor:pointer;">🔄</button>
                         </div>
                     </div>
                     <div id="admin-users-list-container" style="display:flex; flex-direction:column; gap:8px; max-height:280px; overflow-y:auto; background:white; padding:8px; border-radius:6px; border:1px solid #e2e8f0;">
-                        <div style="font-size:12px; color:#666; text-align:center;">Caricamento utenti test...</div>
+                        <div style="font-size:12px; color:#666; text-align:center;">Caricamento utenti...</div>
                     </div>
                 </div>
 
                 <hr style="border:0; border-top:1px solid #eee; margin: 12px 0;">
                 
-                <h4 style="font-size:14px; color:#d97706;">🐛 Segnalazioni Staff Rilevate (DEV)</h4>
+                <h4 style="font-size:14px; color:#d97706;">🐛 Segnalazioni Staff Rilevate</h4>
                 <div id="admin-bug-reports-container" style="display:flex; flex-direction:column; gap:8px; max-height:300px; overflow-y:auto; margin-top:6px; background:#fafafa; padding:8px; border-radius:6px; border:1px solid #e2e8f0;"></div>
                 
                 <hr style="border:0; border-top:1px solid #eee; margin: 12px 0;">
                 <button class="reset-btn" onclick="executeResetSuppliersGuard()">🔒 🔄 Ripristina Fornitori Default (DEV)</button>
-                <button class="btn-danger" onclick="executeResetAllGuard()" style="width:100%; margin-top: 6px;">🔒 ⚠️ RESET TOTALE DATABASE DEV TEST</button>
+                <button class="btn-danger" onclick="executeResetAllGuard()" style="width:100%; margin-top: 6px;">🔒 ⚠️ RESET TOTALE DATABASE SVILUPPO (DEV)</button>
             </div>
         </div>
 
         <!-- FOOTER FIRMA DEVELOPER -->
-        <footer style="background: linear-gradient(135deg, #78350f, #451a03); color:#fffbe8; text-align:center; padding:16px 14px; font-size:11px; border-top:1px solid #92400e; margin-top:auto; width:100%; position:relative; z-index:80;">
-            <div>&copy; 2026 <b>Magari Pizzeria DEV</b> - Versione <span style="background:rgba(255,255,255,0.15); padding:2px 6px; border-radius:4px; font-weight:bold;">v4.1.8-DEV</span></div>
+        <footer style="background:#043927; color:#c8e6c9; text-align:center; padding:16px 14px; font-size:11px; border-top:1px solid #1b5e20; margin-top:auto; width:100%; position:relative; z-index:80;">
+            <div>&copy; 2026 <b>Magari Pizzeria Stockholm</b> - Ambito Sviluppo <span style="background:rgba(217, 119, 6, 0.25); color:#fef3c7; padding:2px 6px; border-radius:4px; font-weight:bold; border:1px solid #d97706;">v4.1.9 DEV</span></div>
             <div style="margin-top:6px; font-size:11px; color:#ffffff;">
-                Sviluppato da <span style="color:#ffffff; font-weight:bold; background:rgba(0,0,0,0.25); padding:2px 6px; border-radius:4px;">Nicolas Cappiello</span>
+                App sviluppata da <span style="color:#f59e0b; font-weight:bold; background:rgba(0,0,0,0.3); padding:2px 6px; border-radius:4px; border:1px solid rgba(245,158,11,0.3);">Nicolas Cappiello</span>
             </div>
         </footer>
 
     </div>
 
-    <!-- MODALI UTILITY -->
+    <!-- MODALI UTILITY PASTELLO -->
     <div class="modal" id="user-edit-modal">
-        <div class="modal-title" id="user-modal-title">👤 Operatore DEV</div>
+        <div class="modal-title" id="user-modal-title">👤 Operatore</div>
         <input type="hidden" id="edit-user-uid">
         
-        <div class="form-group"><label>Nome e Cognome</label><input type="text" id="user-field-name" class="form-control" placeholder="es. Tester Marco"></div>
-        <div class="form-group"><label>Email</label><input type="email" id="user-field-email" class="form-control" placeholder="es. test@magaripizza.com"></div>
+        <div class="form-group"><label>Nome e Cognome</label><input type="text" id="user-field-name" class="form-control" placeholder="es. Marco Rossi"></div>
+        <div class="form-group"><label>Email</label><input type="email" id="user-field-email" class="form-control" placeholder="es. marco@magaripizza.com"></div>
         <div class="form-group" id="user-field-pass-group"><label>Password (Min. 6 caratteri)</label><input type="password" id="user-field-pass" class="form-control" placeholder="••••••••"></div>
         <div class="form-group"><label>Ruolo</label>
             <select id="user-field-role" class="form-control">
@@ -388,20 +414,20 @@
 
         <div class="modal-actions" style="margin-top:16px;">
             <button class="btn-cancel" onclick="closeUserModal()">Annulla</button>
-            <button class="btn-save" style="background:#b45309;" onclick="saveUserFromAdmin()">Salva Utente DEV</button>
+            <button class="btn-save" onclick="saveUserFromAdmin()">Salva Utente</button>
         </div>
     </div>
 
     <!-- MODALE AUTHENTICATION -->
     <div class="modal" id="auth-modal">
-        <div class="modal-title" id="auth-modal-title" style="text-align:center;">🔑 Login - Magari DEV v4.1.8</div>
+        <div class="modal-title" id="auth-modal-title" style="text-align:center;">🔑 Accedi a Magari Pizzeria (DEV)</div>
         <div style="display:flex; justify-content:center; gap:10px; margin-bottom:12px;">
-            <button id="tab-btn-login" onclick="switchAuthTab('login')" style="flex:1; padding:6px; border-radius:6px; font-weight:bold; border:1px solid #b45309; background:#b45309; color:white;">Login</button>
-            <button id="tab-btn-register" onclick="switchAuthTab('register')" style="flex:1; padding:6px; border-radius:6px; font-weight:bold; border:1px solid #cbd5e1; background:#f1f5f9; color:#334155;">Nuovo Account DEV</button>
+            <button id="tab-btn-login" onclick="switchAuthTab('login')" style="flex:1; padding:6px; border-radius:6px; font-weight:bold; border:1px solid var(--primary); background:var(--primary); color:white;">Login</button>
+            <button id="tab-btn-register" onclick="switchAuthTab('register')" style="flex:1; padding:6px; border-radius:6px; font-weight:bold; border:1px solid #cbd5e1; background:#f1f5f9; color:#334155;">Nuovo Account Staff</button>
         </div>
 
         <div id="auth-form-login">
-            <div class="form-group"><label>Email</label><input type="email" id="login-email" class="form-control" placeholder="es. test@magaripizza.com"></div>
+            <div class="form-group"><label>Email</label><input type="email" id="login-email" class="form-control" placeholder="es. marco@magaripizza.com"></div>
             <div class="form-group">
                 <label>Password</label>
                 <input type="password" id="login-password" class="form-control" placeholder="••••••••">
@@ -409,59 +435,59 @@
             
             <div style="display:flex; align-items:center; justify-content:space-between; margin:8px 0 10px 0;">
                 <div style="display:flex; align-items:center; gap:6px;">
-                    <input type="checkbox" id="show-login-password" onclick="togglePasswordVisibility('login-password')" style="width:16px; height:16px; accent-color:#b45309; cursor:pointer;">
+                    <input type="checkbox" id="show-login-password" onclick="togglePasswordVisibility('login-password')" style="width:16px; height:16px; accent-color:var(--primary); cursor:pointer;">
                     <label for="show-login-password" style="font-size:12px; font-weight:600; color:#334155; cursor:pointer; user-select:none;">Mostra Password</label>
                 </div>
                 <div style="display:flex; align-items:center; gap:6px;">
-                    <input type="checkbox" id="remember-me-checkbox" checked style="width:16px; height:16px; accent-color:#b45309; cursor:pointer;">
+                    <input type="checkbox" id="remember-me-checkbox" checked style="width:16px; height:16px; accent-color:var(--primary); cursor:pointer;">
                     <label for="remember-me-checkbox" style="font-size:12px; font-weight:600; color:#334155; cursor:pointer; user-select:none;">Rimani collegato</label>
                 </div>
             </div>
 
-            <button class="btn-save" onclick="handleLoginSubmit()" style="width:100%; padding:10px; margin-top:4px; background: linear-gradient(135deg, #b45309, #92400e);">Entra in DEV</button>
+            <button class="btn-save" onclick="handleLoginSubmit()" style="width:100%; padding:10px; margin-top:4px;">Entra</button>
         </div>
 
         <div id="auth-form-register" style="display:none;">
-            <div class="form-group"><label>Nome e Cognome</label><input type="text" id="reg-name" class="form-control" placeholder="es. Tester Marco"></div>
-            <div class="form-group"><label>Email</label><input type="email" id="reg-email" class="form-control" placeholder="es. test@magaripizza.com"></div>
+            <div class="form-group"><label>Nome e Cognome (Firma Operatore)</label><input type="text" id="reg-name" class="form-control" placeholder="es. Marco Rossi"></div>
+            <div class="form-group"><label>Email</label><input type="email" id="reg-email" class="form-control" placeholder="es. marco@magaripizza.com"></div>
             <div class="form-group">
                 <label>Password</label>
                 <input type="password" id="reg-password" class="form-control" placeholder="Min. 6 caratteri">
             </div>
             
             <div style="display:flex; align-items:center; gap:6px; margin:6px 0 10px 0;">
-                <input type="checkbox" id="show-reg-password" onclick="togglePasswordVisibility('reg-password')" style="width:16px; height:16px; accent-color:#b45309; cursor:pointer;">
+                <input type="checkbox" id="show-reg-password" onclick="togglePasswordVisibility('reg-password')" style="width:16px; height:16px; accent-color:var(--primary); cursor:pointer;">
                 <label for="show-reg-password" style="font-size:12px; font-weight:600; color:#334155; cursor:pointer; user-select:none;">Mostra Password</label>
             </div>
 
-            <button class="btn-save" onclick="handleRegisterSubmit()" style="width:100%; padding:10px; background: linear-gradient(135deg, #166534, #14532d); margin-top:4px;">Crea Account DEV</button>
+            <button class="btn-save" onclick="handleRegisterSubmit()" style="width:100%; padding:10px; background:#1b5e20; margin-top:4px;">Crea Account Staff</button>
         </div>
 
         <div class="modal-actions" style="margin-top:12px;"><button class="btn-cancel" onclick="closeAuthModal()" style="width:100%;">Annulla</button></div>
     </div>
 
     <div class="modal" id="verify-delivery-modal" style="max-width: 520px;">
-        <div class="modal-title">✍️ Verifica Consegna & Storno (DEV)</div>
-        <div style="font-size: 13px; color: #555; margin-bottom: 10px;">Inserisci le quantità effettivamente ricevute per accreditarle in giacenza DEV.</div>
+        <div class="modal-title">✍️ Verifica Consegna & Storno Giacenze</div>
+        <div style="font-size: 13px; color: #555; margin-bottom: 10px;">Inserisci le quantità effettivamente ricevute per accreditarle in giacenza.</div>
         <div id="verify-items-checklist-container" style="display:flex; flex-direction:column; gap:8px; max-height:220px; overflow-y:auto; margin-bottom:12px; background:#f8fafc; padding:8px; border-radius:8px; border:1px solid #e2e8f0;"></div>
-        <div class="form-group"><label style="font-weight:bold; color:#b45309;">📝 Note / Messaggio (Opzionale):</label><input type="text" id="verify-note-input" class="form-control" placeholder="es. Prova verifica..."></div>
-        <div class="modal-actions"><button class="btn-cancel" onclick="closeVerifyDeliveryModal()">Annulla</button><button class="btn-save" onclick="submitDeliveryVerification()" style="background:#1b5e20;">✅ Conferma e Storna DEV</button></div>
+        <div class="form-group"><label style="font-weight:bold; color:var(--primary);">📝 Note / Messaggio (Opzionale):</label><input type="text" id="verify-note-input" class="form-control" placeholder="es. Arrivate tutte le unità..."></div>
+        <div class="modal-actions"><button class="btn-cancel" onclick="closeVerifyDeliveryModal()">Annulla</button><button class="btn-save" onclick="submitDeliveryVerification()" style="background:#1b5e20;">✅ Conferma e Storna</button></div>
     </div>
 
     <div class="modal" id="export-excel-modal">
-        <div class="modal-title">📊 Export Inventory (English Excel - DEV)</div>
+        <div class="modal-title">📊 Export Inventory (English Excel)</div>
         <div class="form-group"><label>Tipologia Report:</label><select id="export-type-select" class="form-control"><option value="food">🍕 Food & Supplies</option><option value="alcohol">🍷 Alcohol & Beverages</option><option value="all">📦 Full Inventory (Entrambi i Fogli)</option></select></div>
         <div class="modal-actions"><button class="btn-cancel" onclick="closeExportExcelModal()">Annulla</button><button class="btn-save" style="background-color: var(--excel-green);" onclick="generateAndExportExcel()">Download Excel</button></div>
     </div>
 
     <div class="modal" id="summary-modal">
-        <div class="modal-title">📋 Riepilogo Ordine Generato (DEV)</div>
+        <div class="modal-title">📋 Riepilogo Ordine Generato</div>
         <div id="summary-content"></div>
         <div class="modal-actions" style="margin-top:14px;"><button class="btn-cancel" onclick="closeSummaryModal()">Chiudi</button></div>
     </div>
 
     <div class="modal" id="add-modal">
-        <div class="modal-title" id="item-modal-title">Prodotto DEV</div>
+        <div class="modal-title" id="item-modal-title">Prodotto</div>
         <input type="hidden" id="edit-item-id">
         <div class="form-group"><label>Nome</label><input type="text" id="new-name" class="form-control"></div>
         <div class="form-group"><label>Categoria</label><select id="new-category-select" class="form-control"><option value="Latticini">🧀 Latticini</option><option value="Farine & Secco">🌾 Farine & Secco</option><option value="Conserve & Pomodoro">🍅 Conserve & Pomodoro</option><option value="Salumi & Carni">🥩 Salumi & Carni</option><option value="Alcolici">🍷 Alcolici</option><option value="Bevande">🥤 Bevande</option><option value="Surgelati">❄️ Surgelati</option><option value="Ortofrutta">🥗 Ortofrutta</option><option value="Pulizia & Monouso">🧹 Pulizia & Monouso</option><option value="Altro">📦 Altro</option></select></div>
@@ -474,19 +500,19 @@
             <div class="form-group" style="flex:1;"><label>Prezzo (SEK)</label><input type="number" step="0.01" id="new-price" class="form-control" value="0"></div>
             <div class="form-group" style="flex:1;"><label>Unità</label><select id="new-unit" class="form-control"><option value="Bottiglie">Bottiglie</option><option value="Unità">Unità</option><option value="Kg">Kg</option><option value="Litri">Litri</option><option value="Cartoni">Cartoni</option></select></div>
         </div>
-        <div class="modal-actions"><button class="btn-cancel" onclick="closeAddModal()">Annulla</button><button class="btn-save" style="background:#b45309;" onclick="saveInventoryItem()">Salva DEV</button></div>
+        <div class="modal-actions"><button class="btn-cancel" onclick="closeAddModal()">Annulla</button><button class="btn-save" onclick="saveInventoryItem()">Salva</button></div>
     </div>
 
     <!-- MODALE FORNITORE CON SELETTORE PALETTE A 12 COLORI -->
     <div class="modal" id="add-supplier-modal">
-        <div class="modal-title" id="supplier-modal-title">Fornitore DEV</div>
+        <div class="modal-title" id="supplier-modal-title">Fornitore</div>
         <input type="hidden" id="edit-supplier-id">
-        <input type="hidden" id="supp-color-val" value="#0288d1">
+        <input type="hidden" id="supp-color-val" value="#1565c0">
         
         <div class="form-group"><label>Nome Fornitore</label><input type="text" id="supp-name" class="form-control"></div>
         
         <div class="form-group">
-            <label style="font-weight:bold; color:#b45309;">🎨 Scegli Colore Identificativo:</label>
+            <label style="font-weight:bold; color:var(--primary);">🎨 Scegli Colore Identificativo:</label>
             <div id="supplier-color-palette-grid" style="display:grid; grid-template-columns: repeat(6, 1fr); gap:8px; margin-top:6px; background:#f8fafc; padding:8px; border-radius:8px; border:1px solid #cbd5e1;"></div>
         </div>
 
@@ -497,148 +523,159 @@
 
         <div class="form-group"><label>Telefono</label><input type="tel" id="supp-phone" class="form-control"></div>
         <div class="form-group"><label>Email</label><input type="email" id="supp-email" class="form-control"></div>
-        <div class="modal-actions"><button class="btn-cancel" onclick="closeAddSupplierModal()">Annulla</button><button class="btn-save" style="background:#b45309;" onclick="saveSupplier()">Salva DEV</button></div>
+        <div class="modal-actions"><button class="btn-cancel" onclick="closeAddSupplierModal()">Annulla</button><button class="btn-save" onclick="saveSupplier()">Salva</button></div>
     </div>
 
     <style>
         :root {
-            --primary: #b45309; 
-            --primary-dark: #78350f;
-            --bg: #f7f4ec; 
-            --card-bg: #ffffff; 
-            --text: #1c1917;
-            --text-secondary: #78350f; 
-            --border: #e7dfd3; 
-            --warning: #f59e0b; 
-            --danger: #dc2626; 
-            --whatsapp: #25d366;
-            --excel-green: #107c41; 
-            --star-gold: #f59e0b;
+            --primary: #043927; --bg: #e6e3dc; --card-bg: #f5f3ed; --text: #1c1c1a;
+            --text-secondary: #5a5854; --border: #d4d0c7; --warning: #ff9800; --danger: #e53935; --whatsapp: #25d366;
+            --excel-green: #107c41; --star-gold: #b45309;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
         html, body { width: 100%; overflow-x: hidden; background-color: var(--bg); color: var(--text); }
         body { display: flex; justify-content: center; min-height: 100vh; }
 
-        .app-container { width: 100%; max-width: 430px; min-height: 100vh; background-color: var(--bg); position: relative; box-shadow: 0 0 25px rgba(0,0,0,0.06); display: flex; flex-direction: column; transition: max-width 0.3s ease; overflow-x: hidden; }
+        .app-container { width: 100%; max-width: 430px; min-height: 100vh; background-color: var(--bg); position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.1); display: flex; flex-direction: column; transition: max-width 0.3s ease; overflow-x: hidden; }
         
-        .header { background: linear-gradient(135deg, #b45309, #78350f); color: white; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: 0 3px 6px rgba(0,0,0,0.12); }
+        .header { background-color: var(--primary); color: white; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 4px rgba(0,0,0,0.15); }
         .menu-btn { background: none; border: none; color: white; font-size: 24px; cursor: pointer; }
         .header-brand-text { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
         .brand-title { font-family: 'Cinzel', 'Times New Roman', serif; font-size: 20px; font-weight: 700; color: #ffffff; letter-spacing: 2px; line-height: 1; text-transform: uppercase; }
         .brand-subtitle { font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 8px; font-weight: 700; color: #ffffff; letter-spacing: 1px; margin-top: 3px; text-transform: uppercase; padding: 2px 6px; border-radius: 4px; }
-        .page-badge { font-size: 11px; background: rgba(0, 0, 0, 0.22); color: #fff; padding: 4px 8px; border-radius: 6px; font-weight: 600; }
+        .page-badge { font-size: 11px; background: rgba(0, 0, 0, 0.25); color: #fff; padding: 4px 8px; border-radius: 6px; font-weight: 600; }
 
-        .top-bar-container { padding: 12px 16px; background: linear-gradient(180deg, #ffffff, #fcfbfa); border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; width: 100%; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .top-bar-container { padding: 12px 16px; background-color: rgba(255, 255, 255, 0.92); backdrop-filter: blur(5px); border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; width: 100%; }
         .top-bar-container div { min-width: 0; }
 
         .search-row { display: flex; gap: 8px; width: 100%; }
-        .search-input { flex: 1; min-width: 0; padding: 9px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; outline: none; width: 100%; background: #ffffff; transition: border-color 0.2s; }
-        .search-input:focus { border-color: var(--primary); }
+        .search-input { flex: 1; min-width: 0; padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; outline: none; width: 100%; }
+        .filter-select, .location-select, .date-picker, .operator-input { flex: 1; min-width: 0; padding: 8px 10px; border: 1px solid var(--primary); border-radius: 8px; font-size: 13px; font-weight: 600; background-color: #f0f7f4; color: var(--primary); outline: none; width: 100%; text-overflow: ellipsis; }
         
-        .filter-select, .location-select, .date-picker, .operator-input { flex: 1; min-width: 0; padding: 8px 10px; border: 1px solid #ebd5b3; border-radius: 8px; font-size: 13px; font-weight: 600; background-color: #fefcf6; color: var(--primary-dark); outline: none; width: 100%; text-overflow: ellipsis; }
-        
-        .add-btn { background: linear-gradient(135deg, #b45309, #92400e); color: white; border: none; padding: 8px 12px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; white-space: nowrap; flex-shrink: 0; box-shadow: 0 2px 4px rgba(180,83,9,0.2); }
-        .btn-excel { background: linear-gradient(135deg, #107c41, #0c5e31); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; box-shadow: 0 2px 6px rgba(16, 124, 65, 0.25); }
-        .reset-btn { background-color: #fef2f2; color: var(--danger); border: 1px solid #fecaca; padding: 8px 12px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; width: 100%; }
+        .add-btn { background-color: var(--primary); color: white; border: none; padding: 8px 12px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
+        .btn-excel { background-color: var(--excel-green); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; box-shadow: 0 2px 6px rgba(16, 124, 65, 0.3); }
+        .reset-btn { background-color: #fff3f0; color: var(--danger); border: 1px solid var(--danger); padding: 8px 12px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; width: 100%; }
 
-        .star-toggle-btn { background: none; border: none; font-size: 20px; cursor: pointer; transition: transform 0.15s ease; padding: 2px 4px; }
+        /* PULSANTE STELLA PREFERITI SULLA DESTRA (PULITO ED ESSENZIALE) */
+        .star-toggle-btn {
+            background: #fff8e7;
+            border: 1px solid #fde68a;
+            color: #b45309;
+            font-size: 11px;
+            font-weight: 800;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            white-space: nowrap;
+            flex-shrink: 0;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+        }
+        .star-toggle-btn.active {
+            background: #fef3c7;
+            border-color: #f59e0b;
+            color: #92400e;
+        }
 
-        .location-active-banner { background: linear-gradient(135deg, #fefbf3, #fdf4e3); border-bottom: 1px solid #f5e6cd; padding: 8px 16px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: bold; color: #92400e; }
+        .location-active-banner { background: #e8f5e9; border-bottom: 1px solid #c8e6c9; padding: 8px 16px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: bold; color: #2e7d32; }
 
         .view-section { display: none; flex-direction: column; flex: 1; padding-bottom: 20px; position: relative; width: 100%; }
         .view-section.active { display: flex; }
         #view-ordini { padding-bottom: 140px; }
 
-        .page-lock-banner { position: absolute; top: 0; left: 0; width: 100%; height: 100%; min-height: 100vh; background-color: rgba(247, 244, 236, 0.96); backdrop-filter: blur(8px); z-index: 500; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 80px 20px 20px 20px; text-align: center; }
-        .page-lock-box { background: white; padding: 24px; border-radius: 14px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); width: 100%; max-width: 320px; border: 1px solid var(--border); }
+        .page-lock-banner { position: absolute; top: 0; left: 0; width: 100%; height: 100%; min-height: 100vh; background-color: rgba(244, 246, 248, 0.98); backdrop-filter: blur(8px); z-index: 500; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 80px 20px 20px 20px; text-align: center; }
+        .page-lock-box { background: white; padding: 24px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); width: 100%; max-width: 320px; border: 1px solid var(--border); }
 
         .content-list { padding: 12px 16px; display: flex; flex-direction: column; gap: 12px; flex: 1; width: 100%; }
-        .card-item { background: linear-gradient(180deg, #ffffff, #faf8f5); border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); border: 1px solid var(--border); overflow: hidden; width: 100%; transition: transform 0.1s ease; }
+        .card-item { background-color: var(--card-bg); border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); border: 1px solid var(--border); overflow: hidden; width: 100%; }
         
         @keyframes pulseBorder {
-            0% { border-color: var(--danger); box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.3); }
-            50% { border-color: #fca5a5; box-shadow: 0 0 8px 2px rgba(220, 38, 38, 0.4); }
-            100% { border-color: var(--danger); box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.3); }
+            0% { border-color: var(--danger); box-shadow: 0 0 0 0 rgba(229, 57, 53, 0.4); }
+            50% { border-color: #ff8a80; box-shadow: 0 0 8px 2px rgba(229, 57, 53, 0.6); }
+            100% { border-color: var(--danger); box-shadow: 0 0 0 0 rgba(229, 57, 53, 0.4); }
         }
-        .card-item.low-stock-alert { border: 2px solid var(--danger); background: linear-gradient(180deg, #ffffff, #fff5f5); animation: pulseBorder 1.5s infinite; }
+        .card-item.low-stock-alert { border: 2px solid var(--danger); background-color: #fff8f8; animation: pulseBorder 1.5s infinite; }
 
-        .item-name-box { padding: 10px 12px; border-radius: 8px; display: flex; flex-direction: column; gap: 4px; border-left-width: 4px; border-left-style: solid; background: #faf8f5; }
-        .item-name { font-size: 17px; font-weight: 800; color: #1c1917; line-height: 1.25; display: flex; align-items: center; justify-content: space-between; width: 100%; }
-        .item-subtext { font-size: 12px; color: #78350f; margin-top: 2px; }
+        .item-name-box { padding: 10px 12px; border-radius: 6px; display: flex; flex-direction: column; gap: 4px; border-left-width: 4px; border-left-style: solid; background: #faf8f5; }
+        .item-name { font-size: 18px; font-weight: 800; color: #111111; line-height: 1.25; display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 8px; }
+        .item-subtext { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
 
-        .stock-warning-badge { display: inline-flex; align-items: center; font-size: 12px; font-weight: 800; padding: 4px 8px; border-radius: 6px; margin-top: 6px; line-height: 1.3; }
-        .stock-warning-badge.alert { background-color: #fef2f2; color: #991b1b; border: 1px solid #fca5a5; }
-        .stock-warning-badge.normal { background-color: #fefbf3; color: #92400e; border: 1px solid #f3e8d2; }
+        .stock-warning-badge { display: inline-flex; align-items: center; font-size: 13px; font-weight: 800; padding: 4px 8px; border-radius: 6px; margin-top: 6px; line-height: 1.3; }
+        .stock-warning-badge.alert { background-color: #ffebee; color: #c62828; border: 1px solid #ef9a9a; }
+        .stock-warning-badge.normal { background-color: #f1f8e9; color: #33691e; border: 1px solid #c5e1a5; }
 
         .badges-row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-top: 6px; }
-        .category-label-tag { font-size: 11px; font-weight: 700; color: #78350f; text-transform: uppercase; background: #fefbf3; padding: 3px 8px; border-radius: 6px; border: 1px solid #f3e8d2; }
-        .supplier-badge { font-size: 12px; padding: 3px 8px; border-radius: 6px; display: inline-block; font-weight: 800; color: white; box-shadow: 0 1px 2px rgba(0,0,0,0.12); }
+        .category-label-tag { font-size: 11px; font-weight: 700; color: #444; text-transform: uppercase; background: #e8f5e9; padding: 3px 8px; border-radius: 4px; border: 1px solid #c8e6c9; }
+        .supplier-badge { font-size: 13px; padding: 4px 10px; border-radius: 6px; display: inline-block; font-weight: 800; color: white; box-shadow: 0 1px 2px rgba(0,0,0,0.15); }
 
-        .item-controls { display: flex; align-items: center; justify-content: flex-end; gap: 6px; flex-wrap: nowrap; margin-top: 4px; border-top: 1px dashed #e7dfd3; padding-top: 8px; }
-        .qty-btn { width: 36px; height: 36px; min-width: 36px; border-radius: 50%; border: 1px solid #ebd5b3; background: linear-gradient(180deg, #ffffff, #fefcf6); font-weight: bold; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #92400e; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-        .qty-input { width: 58px; min-width: 58px; text-align: center; padding: 6px 2px; border: 1px solid #ebd5b3; border-radius: 8px; font-size: 15px; font-weight: 700; background: #ffffff; }
+        .item-controls { display: flex; align-items: center; justify-content: flex-end; gap: 6px; flex-wrap: nowrap; margin-top: 4px; border-top: 1px dashed #f0f0f0; padding-top: 8px; }
+        .qty-btn { width: 36px; height: 36px; min-width: 36px; border-radius: 50%; border: 1px solid var(--border); background-color: #f0f0f0; font-weight: bold; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .qty-input { width: 58px; min-width: 58px; text-align: center; padding: 6px 2px; border: 1px solid var(--border); border-radius: 6px; font-size: 15px; font-weight: 700; }
         .unit-label { font-size: 13px; color: var(--text-secondary); font-weight: 700; min-width: 38px; }
 
         .stock-label-box { display: flex; flex-direction: column; margin-right: auto; line-height: 1.25; min-width: 0; }
         .stock-label-main { font-size: 13px; font-weight: 600; color: var(--text-secondary); display: flex; align-items: center; }
         .stock-label-sub { font-size: 11px; font-weight: bold; margin-top: 2px; }
 
-        .action-row-btn { display: flex; gap: 8px; margin-top: 6px; border-top: 1px solid #e7dfd3; padding-top: 8px; }
-        .btn-action-edit { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; }
-        .btn-action-del { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; }
+        .action-row-btn { display: flex; gap: 8px; margin-top: 6px; border-top: 1px solid #f0f0f0; padding-top: 8px; }
+        .btn-action-edit { background: #e3f2fd; color: #0d47a1; border: 1px solid #bbdefb; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; }
+        .btn-action-del { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; }
 
-        .faq-item-box { background: white; border-radius: 10px; border: 1px solid var(--border); padding: 12px; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .faq-item-box { background: white; border-radius: 8px; border: 1px solid var(--border); padding: 12px; margin-bottom: 10px; }
         .faq-question { font-size: 14px; font-weight: 800; color: var(--primary); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
         .faq-answer { font-size: 13px; color: #334155; line-height: 1.4; }
 
-        .drawer { position: absolute; top: 0; left: -280px; width: 280px; height: 100%; min-height: 100vh; background-color: #faf7f0; box-shadow: 4px 0 20px rgba(0,0,0,0.12); transition: left 0.3s ease; z-index: 2000; padding: 20px; overflow-y: auto; border-right: 1px solid #e7dfd3; }
+        .drawer { position: absolute; top: 0; left: -280px; width: 280px; height: 100%; min-height: 100vh; background-color: #faf8f5; box-shadow: 4px 0 15px rgba(0,0,0,0.15); transition: left 0.3s ease; z-index: 2000; padding: 20px; overflow-y: auto; border-right: 1px solid #e6e2d8; }
         .drawer.open { left: 0; }
-        .drawer-header { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 16px; background: linear-gradient(135deg, #b45309, #78350f); border-radius: 12px; padding: 16px 12px; }
+        .drawer-header { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 16px; border-bottom: 1px solid #1b4332; background-color: var(--primary); border-radius: 10px; padding: 16px 12px; }
         .drawer-menu { list-style: none; }
-        .drawer-menu li { padding: 12px 10px; font-size: 14px; font-weight: 600; color: #2d3748; border-bottom: 1px solid #e7dfd3; cursor: pointer; display: flex; justify-content: space-between; align-items: center; border-radius: 6px; transition: background 0.15s ease; }
-        .drawer-menu li:active { background-color: #fefbf3; color: #b45309; }
+        .drawer-menu li { padding: 12px 10px; font-size: 14px; font-weight: 600; color: #2d3748; border-bottom: 1px solid #eae6df; cursor: pointer; display: flex; justify-content: space-between; align-items: center; border-radius: 6px; transition: background 0.15s ease; }
+        .drawer-menu li:active { background-color: #e8f3ee; color: #043927; }
 
-        .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; min-height: 100vh; background: rgba(0,0,0,0.5); display: none; z-index: 1000; backdrop-filter: blur(3px); }
+        .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; min-height: 100vh; background: rgba(0,0,0,0.6); display: none; z-index: 1000; backdrop-filter: blur(4px); }
         .overlay.active { display: block; }
 
-        .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #ffffff; padding: 22px; border-radius: 16px; width: 92%; max-width: 480px; max-height: 88vh; overflow-y: auto; box-shadow: 0 15px 30px rgba(0,0,0,0.15); display: none; z-index: 9999; border: 1px solid var(--border); }
+        .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #fdfcf7; padding: 22px; border-radius: 14px; width: 92%; max-width: 480px; max-height: 88vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.2); display: none; z-index: 9999; border: 1px solid #e2ded4; }
         .modal.active { display: block !important; }
         
-        .modal-title { font-size: 17px; font-weight: 800; margin-bottom: 14px; padding: 8px 12px; background: #fefbf3; color: #b45309; border-radius: 8px; border-left: 4px solid #b45309; border: 1px solid #f3e8d2; }
+        .modal-title { font-size: 17px; font-weight: 800; margin-bottom: 14px; padding: 8px 12px; background: #e8f0ec; color: #043927; border-radius: 8px; border-left: 4px solid #2d6a4f; }
         .form-group { margin-bottom: 12px; }
         .form-group label { display: block; font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; }
-        .form-control { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; background-color: white; }
+        .form-control { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; background-color: white; }
         .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
-        .btn-cancel { background: #e2e8f0; color: #475569; border: none; padding: 10px 14px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; }
-        .btn-save { background: linear-gradient(135deg, #b45309, #92400e); color: white; border: none; padding: 10px 14px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; }
-        .btn-danger { background: linear-gradient(135deg, #dc2626, #b91c1c); color: white; border: none; padding: 10px 14px; border-radius: 8px; cursor: pointer; font-size: 14px; }
+        .btn-cancel { background: #e5e2d9; color: #4a5568; border: none; padding: 10px 14px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; }
+        .btn-save { background: #2d6a4f; color: white; border: none; padding: 10px 14px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; }
+        .btn-danger { background: var(--danger); color: white; border: none; padding: 10px 14px; border-radius: 6px; cursor: pointer; font-size: 14px; }
 
         .toast-notification { 
             position: fixed; 
             top: 40%; 
             left: 50%; 
             transform: translate(-50%, -50%); 
-            background-color: rgba(30, 41, 59, 0.96); 
+            background-color: rgba(38, 50, 56, 0.95); 
             color: white; 
-            padding: 16px 22px; 
+            padding: 18px 24px; 
             border-radius: 12px; 
-            font-size: 15px; 
+            font-size: 16px; 
             font-weight: 700; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3); 
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4); 
             z-index: 99999; 
             display: none; 
             text-align: center; 
             max-width: 85%; 
-            border-left: 5px solid var(--warning); 
+            border-left: 6px solid var(--warning); 
         }
         .toast-notification.show { display: block; }
 
-        .sticky-checkout-container { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; padding: 10px 16px 14px 16px; background: rgba(255, 255, 255, 0.94); backdrop-filter: blur(8px); border-top: 1px solid var(--border); z-index: 100; }
-        .btn-checkout { width: 100%; background: linear-gradient(135deg, #b45309, #92400e); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: bold; font-size: 15px; cursor: pointer; box-shadow: 0 3px 8px rgba(180,83,9,0.3); }
+        .sticky-checkout-container { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; padding: 10px 16px 14px 16px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px); border-top: 1px solid var(--border); z-index: 100; }
+        .btn-checkout { width: 100%; background-color: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; }
 
-        .settings-card { background: white; border-radius: 12px; padding: 16px; margin: 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.03); display: flex; flex-direction: column; gap: 10px; border: 1px solid var(--border); }
-        .history-card { background: white; border-radius: 10px; border: 1px solid var(--border); padding: 12px; margin-bottom: 10px; position: relative; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .settings-card { background: white; border-radius: 10px; padding: 16px; margin: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 10px; }
+        .history-card { background: white; border-radius: 8px; border: 1px solid var(--border); padding: 12px; margin-bottom: 10px; position: relative; }
         .history-header { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; border-bottom: 1px solid #eee; padding-bottom: 4px; }
 
         .report-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; font-size: 12px; }
@@ -649,7 +686,7 @@
         .badge-notification { background: var(--danger); color: white; border-radius: 12px; font-size: 11px; font-weight: 800; padding: 2px 8px; display: inline-block; }
     </style>
     <script type="module">
-        // 1. DEREGISTRAZIONE SERVICE WORKER
+        // 1. DEREGISTRAZIONE DIRETTA DEI SERVICE WORKER PER INVALIDARE VECCHIE COPIE IN CACHE
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.getRegistrations().then(registrations => {
                 for (let registration of registrations) {
@@ -685,16 +722,14 @@
             where
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // ====================================================================
-        // CONFIGURAZIONE FIREBASE AMBIENTE DEVELOPMENT / TEST (magari-app-dev)
-        // ====================================================================
+        // CONFIGURAZIONE FIREBASE AMBIENTE SVILUPPO (magari-dev)
         const firebaseConfig = {
-            apiKey: "AIzaSyCv1G_nShEHX3_Yho1sWSK0ceK6gWbEEPU",
-            authDomain: "magari-app-dev.firebaseapp.com",
-            projectId: "magari-app-dev",
-            storageBucket: "magari-app-dev.firebasestorage.app",
-            messagingSenderId: "653540923043",
-            appId: "1:653540923043:web:387815ffd7b79385ff1116"
+            apiKey: "AIzaSyDEV_KEY_PLACEHOLDER_MAGARI_DEV",
+            authDomain: "magari-dev.firebaseapp.com",
+            projectId: "magari-dev",
+            storageBucket: "magari-dev.firebasestorage.app",
+            messagingSenderId: "135472598053",
+            appId: "1:135472598053:web:dev_app_id_placeholder"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -740,7 +775,7 @@
         window.orderHistoryData = [];
         window.bugReportsData = [];
 
-        // ESPORTAZIONE FUNZIONI GENERALI SU WINDOW
+        // HELPERS GENERALI E MULTI-SEDE
         window.getLocationKey = () => (window.activeLocation && window.activeLocation.includes('Östermalm')) ? 'ostermalm' : 'vasastan';
         window.getQty = (i) => window.getLocationKey() === 'ostermalm' ? (i.qty_ostermalm ?? 0) : (i.qty_vasastan ?? i.qty ?? 0);
         window.getOrderQty = (i) => window.getLocationKey() === 'ostermalm' ? (i.orderQty_ostermalm ?? 0) : (i.orderQty_vasastan ?? i.orderQty ?? 0);
@@ -772,7 +807,7 @@
             if (guardBanner) guardBanner.style.display = 'none';
             
             const activeTxt = document.getElementById('active-location-text');
-            if (activeTxt) activeTxt.innerText = `📍 Sede DEV: ${loc}`;
+            if (activeTxt) activeTxt.innerText = `📍 Sede: ${loc}`;
             
             const activeBanner = document.getElementById('active-location-banner');
             if (activeBanner) activeBanner.style.display = 'flex';
@@ -812,7 +847,7 @@
             window.closeAll();
 
             if (adminProtectedSections.includes(sec) && !isAdmin) {
-                window.showAlert("🔒 Sezione Riservata Admin DEV: Effettua il Login.");
+                window.showAlert("🔒 Sezione Riservata Admin: Effettua il Login.");
                 setTimeout(() => { window.openAuthModal(); }, 150);
                 return;
             }
@@ -821,9 +856,9 @@
             const targetSec = document.getElementById(`view-${sec}`);
             if (targetSec) targetSec.classList.add('active');
             
-            const titles = { 'ordini': 'Ordini DEV', 'scorte': 'Scorte DEV', 'storico': 'Storico DEV', 'magazzino': 'Magazzino DEV', 'fornitori': 'Fornitori DEV', 'sprechi': 'Report Consumi DEV', 'faq': 'Guida DEV', 'bugreport': 'Segnala Bug DEV', 'impostazioni': 'Impostazioni DEV' };
+            const titles = { 'ordini': 'Ordini', 'scorte': 'Scorte', 'storico': 'Storico Ordini', 'magazzino': 'Magazzino', 'fornitori': 'Fornitori', 'sprechi': 'Report Consumi', 'faq': 'Guida & FAQ', 'bugreport': 'Segnala Bug', 'impostazioni': 'Impostazioni' };
             const pageTitle = document.getElementById('page-title');
-            if (pageTitle) pageTitle.innerText = titles[sec] || 'Magari DEV';
+            if (pageTitle) pageTitle.innerText = titles[sec] || 'Magari';
             
             window.scrollTo({ top: 0, behavior: 'instant' });
 
@@ -832,7 +867,7 @@
             }
         };
 
-        // MONITORAGGIO AUTENTICAZIONE
+        // MONITORAGGIO AUTENTICAZIONE UTENTE
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 const isMasterAdmin = user.email && user.email.toLowerCase() === "nicolas@magaripizza.com";
@@ -869,7 +904,7 @@
             window.refreshAllViews();
         });
 
-        // NOTIFICHE PERSISTENTI NUOVI REGISTRATI (FIRESTORE BACKED)
+        // NOTIFICHE PERSISTENTI NUOVI REGISTRATI
         window.activeNotificationsUnsubscribe = null;
 
         window.listenToPersistentUserNotifications = function() {
@@ -908,14 +943,14 @@
             const toast = document.createElement('div');
             toast.id = `toast-notif-${notifId}`;
             toast.style.cssText = `
-                background: linear-gradient(135deg, #b45309, #78350f);
+                background: linear-gradient(135deg, #043927, #1b5e20);
                 color: white;
                 padding: 12px 16px;
                 border-radius: 12px;
                 font-size: 13px;
                 font-weight: bold;
-                box-shadow: 0 8px 20px rgba(120, 53, 15, 0.35);
-                border: 1px solid #fde68a;
+                box-shadow: 0 8px 20px rgba(4, 57, 39, 0.4);
+                border: 1px solid #a7f3d0;
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
@@ -928,7 +963,7 @@
                 <div style="display:flex; align-items:center; gap:10px;">
                     <span style="font-size:20px;">🔔</span>
                     <div>
-                        <div style="font-size:10px; text-transform:uppercase; opacity:0.9; color:#fde68a; font-weight:800;">Nuova Registrazione Staff</div>
+                        <div style="font-size:10px; text-transform:uppercase; opacity:0.9; color:#a7f3d0; font-weight:800;">Nuova Registrazione Staff (DEV)</div>
                         <div style="margin-top:2px; font-size:13px;">Si è registrato <u>${identifier}</u></div>
                         ${timestamp ? `<div style="font-size:10px; opacity:0.8; margin-top:2px; font-weight:normal;">🕒 ${timestamp}</div>` : ''}
                     </div>
@@ -959,10 +994,10 @@
 
             if (window.currentUserProfile) {
                 const isAdmin = window.currentUserProfile.role === 'admin';
-                const roleBadge = isAdmin ? '⭐ Admin DEV' : '👤 Operatore DEV';
+                const roleBadge = isAdmin ? '⭐ Admin' : '👤 Operatore';
 
                 if (statusTxt) statusTxt.innerHTML = `${roleBadge}: <b>${window.currentUserProfile.name}</b>`;
-                if (authBtn) { authBtn.innerText = '🚪 Logout DEV'; authBtn.style.background = 'linear-gradient(135deg, #dc2626, #b91c1c)'; authBtn.onclick = window.handleLogoutSubmit; }
+                if (authBtn) { authBtn.innerText = '🚪 Logout'; authBtn.style.background = 'linear-gradient(135deg, #dc2626, #b91c1c)'; authBtn.onclick = window.handleLogoutSubmit; }
                 if (btnDeleteNotice) btnDeleteNotice.style.display = isAdmin ? 'inline-block' : 'none';
                 
                 const opText = window.currentUserProfile.name;
@@ -975,13 +1010,13 @@
                     if (banner) banner.style.display = isAdmin ? 'none' : 'flex';
                 });
             } else {
-                if (statusTxt) statusTxt.innerHTML = '👁️ Modalità Lettura (Guest DEV)';
+                if (statusTxt) statusTxt.innerHTML = '👁️ Modalità Lettura (Guest)';
                 if (authBtn) { authBtn.innerText = '🔑 Accedi / Registrati'; authBtn.style.background = 'linear-gradient(135deg, #2563eb, #1d4ed8)'; authBtn.onclick = window.openAuthModal; }
                 if (btnDeleteNotice) btnDeleteNotice.style.display = 'none';
                 
-                if (opOrderInput) opOrderInput.value = '👁 Nessun Operatore DEV';
-                if (opStockInput) opStockInput.value = '👁 Nessun Operatore DEV';
-                if (opBugInput) opBugInput.value = '👁 Nessun Operatore DEV';
+                if (opOrderInput) opOrderInput.value = '👁 Nessun Operatore (Accedi)';
+                if (opStockInput) opStockInput.value = '👁 Nessun Operatore (Accedi)';
+                if (opBugInput) opBugInput.value = '👁 Nessun Operatore (Accedi)';
 
                 ['magazzino', 'fornitori', 'sprechi', 'impostazioni'].forEach(sec => {
                     const banner = document.getElementById(`lock-banner-${sec}`);
@@ -1023,7 +1058,7 @@
                 if (docSnap.exists() && docSnap.data().text) {
                     const data = docSnap.data();
                     if (txt) txt.innerText = data.text;
-                    if (meta) meta.innerText = `📍 ${data.location || locKey.toUpperCase()} (DEV) • Pubblicato da ${data.author || 'Admin'} - ${data.date ? new Date(data.date.toDate ? data.date.toDate() : data.date).toLocaleString('it-IT') : ''}`;
+                    if (meta) meta.innerText = `📍 ${data.location || locKey.toUpperCase()} • Pubblicato da ${data.author || 'Admin'} - ${data.date ? new Date(data.date.toDate ? data.date.toDate() : data.date).toLocaleString('it-IT') : ''}`;
                     if (banner) banner.style.display = 'block';
                 } else {
                     if (banner) banner.style.display = 'none';
@@ -1048,7 +1083,7 @@
             });
 
             if (input) input.value = '';
-            window.showAlert(`📢 Avviso pubblicato in DEV per ${window.activeLocation || locKey}!`);
+            window.showAlert(`📢 Avviso pubblicato per ${window.activeLocation || locKey}!`);
         };
 
         window.deleteNoticeFromDb = async function() {
@@ -1078,9 +1113,9 @@
             const isLogin = tab === 'login';
             document.getElementById('auth-form-login').style.display = isLogin ? 'block' : 'none';
             document.getElementById('auth-form-register').style.display = isLogin ? 'none' : 'block';
-            document.getElementById('tab-btn-login').style.background = isLogin ? '#b45309' : '#f1f5f9';
+            document.getElementById('tab-btn-login').style.background = isLogin ? 'var(--primary)' : '#f1f5f9';
             document.getElementById('tab-btn-login').style.color = isLogin ? 'white' : '#334155';
-            document.getElementById('tab-btn-register').style.background = isLogin ? '#f1f5f9' : '#b45309';
+            document.getElementById('tab-btn-register').style.background = isLogin ? '#f1f5f9' : 'var(--primary)';
             document.getElementById('tab-btn-register').style.color = isLogin ? '#334155' : 'white';
         };
 
@@ -1096,9 +1131,9 @@
                 await setPersistence(auth, persistenceType);
                 await signInWithEmailAndPassword(auth, email, pass);
                 closeAuthModal(); 
-                window.showAlert("🎉 Login DEV effettuato con successo!");
+                window.showAlert("🎉 Login effettuato con successo!");
             } catch(e) { 
-                window.showAlert(`❌ Errore Login DEV: ${e.message}`); 
+                window.showAlert(`❌ Errore Login: ${e.message}`); 
             }
         };
 
@@ -1120,7 +1155,6 @@
                 
                 await setDoc(doc(db, "users", res.user.uid), newUser);
 
-                // CREAZIONE NOTIFICA PERSISTENTE IN FIRESTORE PER L'ADMIN
                 const notifId = `reg_${Date.now()}`;
                 const nowDisplay = new Date().toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
                 await setDoc(doc(db, "notifications", notifId), {
@@ -1133,13 +1167,13 @@
                 });
 
                 closeAuthModal(); 
-                window.showAlert("🎉 Account DEV registrato ed attivo!");
-            } catch(e) { window.showAlert(`❌ Errore Registrazione DEV: ${e.message}`); }
+                window.showAlert("🎉 Account registrato ed attivo!");
+            } catch(e) { window.showAlert(`❌ Errore Registrazione: ${e.message}`); }
         };
 
         window.handleLogoutSubmit = async function() {
             await signOut(auth);
-            window.showAlert("🚪 Logout DEV effettuato.");
+            window.showAlert("🚪 Logout effettuato.");
         };
 
         // GESTIONE STAFF IN ADMIN
@@ -1152,16 +1186,16 @@
             const isAdmin = isMaster || (window.currentUserProfile && window.currentUserProfile.role === 'admin');
 
             if (!isAdmin) {
-                container.innerHTML = '<div style="font-size:12px; color:#666; text-align:center; padding:10px;">Riservato agli Admin DEV.</div>';
+                container.innerHTML = '<div style="font-size:12px; color:#666; text-align:center; padding:10px;">Riservato agli Admin.</div>';
                 return;
             }
 
             try {
-                container.innerHTML = '<div style="font-size:12px; color:#666; text-align:center; padding:10px;">Caricamento utenti test in corso...</div>';
+                container.innerHTML = '<div style="font-size:12px; color:#666; text-align:center; padding:10px;">Caricamento utenti in corso...</div>';
                 const querySnapshot = await getDocs(collection(db, "users"));
                 
                 if (querySnapshot.empty) {
-                    container.innerHTML = '<div style="font-size:12px; color:#666; text-align:center; padding:10px;">Nessun operatore presente nel DB DEV.</div>';
+                    container.innerHTML = '<div style="font-size:12px; color:#666; text-align:center; padding:10px;">Nessun operatore presente nel database.</div>';
                     return;
                 }
 
@@ -1172,13 +1206,13 @@
                     const isUserAdmin = uData.role === 'admin';
                     const isMasterEmail = uData.email && uData.email.toLowerCase() === "nicolas@magaripizza.com";
 
-                    const roleBadge = isMasterEmail ? '⭐ Master Admin DEV' : (isUserAdmin ? '⭐ Admin DEV' : '👤 Operatore DEV');
+                    const roleBadge = isMasterEmail ? '⭐ Master Admin' : (isUserAdmin ? '⭐ Admin' : '👤 Operatore');
 
                     container.innerHTML += `
                         <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; padding:10px; display:flex; flex-direction:column; gap:6px; box-shadow:0 1px 2px rgba(0,0,0,0.05);">
                             <div style="display:flex; justify-content:space-between; align-items:center;">
                                 <div>
-                                    <div style="font-weight:bold; color:#b45309; font-size:13px;">${uData.name || 'Senza Nome'}</div>
+                                    <div style="font-weight:bold; color:var(--primary); font-size:13px;">${uData.name || 'Senza Nome'}</div>
                                     <div style="font-size:11px; color:#64748b;">${uData.email || 'N/D'}</div>
                                 </div>
                                 <div style="font-size:11px; font-weight:600; background:#f1f5f9; padding:2px 8px; border-radius:12px; color:#334155;">${roleBadge}</div>
@@ -1193,8 +1227,8 @@
                         </div>`;
                 });
             } catch(e) {
-                console.error("Errore lettura utenti DEV:", e);
-                container.innerHTML = `<div style="font-size:12px; color:#c62828; text-align:center; padding:10px;">⚠️ Impossibile caricare la lista utenti DEV (${e.message}).</div>`;
+                console.error("Errore lettura utenti:", e);
+                container.innerHTML = `<div style="font-size:12px; color:#c62828; text-align:center; padding:10px;">⚠️ Impossibile caricare la lista utenti (${e.message}).</div>`;
             }
         };
 
@@ -1210,7 +1244,7 @@
             const passGroup = document.getElementById('user-field-pass-group');
 
             if (uid) {
-                document.getElementById('user-modal-title').innerText = '✏️ Modifica Profilo DEV';
+                document.getElementById('user-modal-title').innerText = '✏️ Modifica Profilo Operatore';
                 passGroup.style.display = 'none';
                 const userDoc = await getDoc(doc(db, "users", uid));
                 if (userDoc.exists()) {
@@ -1221,7 +1255,7 @@
                     document.getElementById('user-field-role').value = data.role || 'operator';
                 }
             } else {
-                document.getElementById('user-modal-title').innerText = '➕ Nuovo Operatore DEV';
+                document.getElementById('user-modal-title').innerText = '➕ Nuovo Operatore';
                 passGroup.style.display = 'block';
             }
 
@@ -1246,13 +1280,13 @@
 
             if (uid) {
                 await updateDoc(doc(db, "users", uid), { name, email, role });
-                window.showAlert("✅ Operatore DEV aggiornato!");
+                window.showAlert("✅ Operatore aggiornato!");
             } else {
                 if (!pass || pass.length < 6) return window.showAlert("⚠️ Password di almeno 6 caratteri.");
                 try {
                     const res = await createUserWithEmailAndPassword(auth, email, pass);
                     await setDoc(doc(db, "users", res.user.uid), { uid: res.user.uid, name, email, role });
-                    window.showAlert("🎉 Nuovo operatore DEV creato!");
+                    window.showAlert("🎉 Nuovo operatore creato!");
                 } catch(e) {
                     return window.showAlert(`❌ Errore Creazione: ${e.message}`);
                 }
@@ -1264,9 +1298,9 @@
 
         window.deleteUserFromAdmin = async function(uid, name) {
             if (!window.checkAuthGuard()) return;
-            if (confirm(`Eliminare il profilo DEV dell'operatore "${name}"?`)) {
+            if (confirm(`Eliminare il profilo dell'operatore "${name}"?`)) {
                 await deleteDoc(doc(db, "users", uid));
-                window.showAlert("🗑 Profilo eliminato dal database DEV.");
+                window.showAlert("🗑 Profilo eliminato dal database.");
                 window.loadUsersListForAdmin();
             }
         };
@@ -1338,7 +1372,7 @@
             const container = document.getElementById('admin-bug-reports-container');
             if (container) {
                 if (!window.bugReportsData || window.bugReportsData.length === 0) {
-                    container.innerHTML = '<div style="font-size:12px; color:#666; text-align:center; padding:8px;">Nessuna segnalazione presente nel DB DEV.</div>';
+                    container.innerHTML = '<div style="font-size:12px; color:#666; text-align:center; padding:8px;">Nessuna segnalazione presente nel database.</div>';
                 } else {
                     container.innerHTML = '';
                     const sortedBugs = [...window.bugReportsData].sort((a, b) => {
@@ -1357,7 +1391,7 @@
 
                         container.innerHTML += `
                             <div style="${bgStyle} border:1px solid #cbd5e1; padding:10px; border-radius:8px; font-size:12px; display:flex; flex-direction:column; gap:6px;">
-                                <div style="display:flex; justify-content:space-between; align-items:center; font-weight:bold; color:#b45309;">
+                                <div style="display:flex; justify-content:space-between; align-items:center; font-weight:bold; color:var(--primary);">
                                     <span style="font-size:13px;">${b.type || '🐛 Bug'} - 👤 ${b.operator || 'Staff'}</span>
                                     <span>${statusLabel}</span>
                                 </div>
@@ -1426,13 +1460,18 @@
 
                 c.innerHTML += `
                     <div class="card-item ${isLow ? 'low-stock-alert' : ''}">
-                        <div class="item-name-box" style="border-left-color:${sup?.color || '#78350f'};">
-                            <div class="item-name"><span>${item.isFavorite ? '⭐ ' : ''}${item.name}</span></div>
-                            <div class="item-subtext" style="font-size:11px; color:#78350f;">${lastUpdate}</div>
-                            <div class="badges-row"><span class="category-label-tag">${window.getCategoryEmoji(item.category)} ${item.category}</span><span class="supplier-badge" style="background:${sup?.color || '#78350f'}">${sup?.name || 'N/D'}</span></div>
+                        <div class="item-name-box" style="border-left-color:${sup?.color || '#334155'};">
+                            <div class="item-name">
+                                <span>${item.name}</span>
+                                <button class="star-toggle-btn ${item.isFavorite ? 'active' : ''}" onclick="toggleFavorite(${item.id})">
+                                    ${item.isFavorite ? '⭐ Preferito' : '☆ Preferito'}
+                                </button>
+                            </div>
+                            <div class="item-subtext" style="font-size:11px; color:#555;">${lastUpdate}</div>
+                            <div class="badges-row"><span class="category-label-tag">${window.getCategoryEmoji(item.category)} ${item.category}</span><span class="supplier-badge" style="background:${sup?.color || '#334155'}">${sup?.name || 'N/D'}</span></div>
                         </div>
                         <div class="item-controls">
-                            <div class="stock-label-box"><span class="stock-label-main">Giacenza</span><span class="stock-label-sub" style="color:${isLow?'var(--danger)':'#78350f'};">(Min: ${min})</span></div>
+                            <div class="stock-label-box"><span class="stock-label-main">Giacenza</span><span class="stock-label-sub" style="color:${isLow?'var(--danger)':'#666'};">(Min: ${min})</span></div>
                             <button class="qty-btn" onclick="updateStock(${item.id}, -1)">-</button>
                             <input type="number" class="qty-input" value="${qty}" onchange="setStock(${item.id}, this.value)">
                             <span class="unit-label">${item.unit}</span>
@@ -1465,13 +1504,18 @@
 
                 c.innerHTML += `
                     <div class="card-item ${isLow ? 'low-stock-alert' : ''}">
-                        <div class="item-name-box" style="border-left-color:${sup?.color || '#78350f'};">
-                            <div class="item-name"><span>${item.isFavorite ? '⭐ ' : ''}${item.name}</span></div>
+                        <div class="item-name-box" style="border-left-color:${sup?.color || '#334155'};">
+                            <div class="item-name">
+                                <span>${item.name}</span>
+                                <button class="star-toggle-btn ${item.isFavorite ? 'active' : ''}" onclick="toggleFavorite(${item.id})">
+                                    ${item.isFavorite ? '⭐ Preferito' : '☆ Preferito'}
+                                </button>
+                            </div>
                             <div class="stock-warning-badge ${isLow?'alert':'normal'}">Scorta: ${qty} ${item.unit} (Min: ${min})</div>
-                            <div class="item-subtext" style="font-size:11px; color:#78350f; background:#fefbf3; padding:4px 8px; border-radius:6px; border:1px solid #f3e8d2; margin-top:4px;">
+                            <div class="item-subtext" style="font-size:11px; color:#555; background:#f8fafc; padding:4px 8px; border-radius:4px; border:1px solid #e2e8f0; margin-top:4px;">
                                 ${lastUpdateText}
                             </div>
-                            <div class="badges-row"><span class="category-label-tag">${window.getCategoryEmoji(item.category)} ${item.category}</span><span class="supplier-badge" style="background:${sup?.color || '#78350f'}">${sup?.name || 'N/D'}</span></div>
+                            <div class="badges-row"><span class="category-label-tag">${window.getCategoryEmoji(item.category)} ${item.category}</span><span class="supplier-badge" style="background:${sup?.color || '#334155'}">${sup?.name || 'N/D'}</span></div>
                         </div>
                         <div class="item-controls">
                             <span style="font-size:13px; font-weight:600; margin-right:auto;">Da Ordinare:</span>
@@ -1521,37 +1565,37 @@
             items.forEach(i => { if(!groups[i.supplierId]) groups[i.supplierId] = []; groups[i.supplierId].push(i); });
             
             const c = document.getElementById('summary-content'); c.innerHTML = '';
-            const locNameClean = (window.activeLocation || 'Magari DEV').split(' ')[0].toUpperCase();
+            const locNameClean = (window.activeLocation || 'Magari').split(' ')[0].toUpperCase();
             const todayFormatted = new Date().toLocaleDateString('it-IT');
 
             for (let sId in groups) {
                 const sup = window.suppliersData.find(s => String(s.id) === String(sId));
                 const supName = sup?.name || 'Fornitore';
-                const emailSubject = `Beställning Magari DEV ${locNameClean} - ${todayFormatted} (Leverans: ${dateVal})`;
+                const emailSubject = `Beställning Magari ${locNameClean} - ${todayFormatted} (Leverans: ${dateVal})`;
                 
-                let emailBody = `BESTÄLLNING MAGARI DEV - ${locNameClean}\n========================================\n👤 BESTÄLLARE: ${op.toUpperCase()}\n🚚 ÖNSKAT LEVERANSDATUM: ${dateVal}\n\nCiao ${supName},\n\nPRODUKTER:\n`;
-                let waTxt = `*BESTÄLLNING MAGARI DEV - ${locNameClean}*\n👤 Beställare: *${op.toUpperCase()}*\n🚚 Önskat leveransdatum: *${dateVal}*\n\nCiao ${supName},\n\n*PRODUKTER:*\n`;
+                let emailBody = `BESTÄLLNING MAGARI - ${locNameClean}\n========================================\n👤 BESTÄLLARE: ${op.toUpperCase()}\n🚚 ÖNSKAT LEVERANSDATUM: ${dateVal}\n\nCiao ${supName},\n\nPRODUKTER:\n`;
+                let waTxt = `*BESTÄLLNING MAGARI - ${locNameClean}*\n👤 Beställare: *${op.toUpperCase()}*\n🚚 Önskat leveransdatum: *${dateVal}*\n\nCiao ${supName},\n\n*PRODUKTER:*\n`;
                 
                 groups[sId].forEach(p => { 
                     const q = window.getOrderQty(p), u = window.translateUnitToSwedish(p.unit).toUpperCase();
                     emailBody += `• ${p.name.toUpperCase()} -> ${q} ${u}\n`; 
                     waTxt += `• *${p.name.toUpperCase()}*  ->  *${q} ${u}*\n`; 
                 });
-                emailBody += `\nMed vänliga hälsningar,\nMagari DEV`; waTxt += `\nMed vänliga hälsningar,\nMagari DEV`;
+                emailBody += `\nMed vänliga hälsningar,\nMagari`; waTxt += `\nMed vänliga hälsningar,\nMagari`;
                 
                 const wa = `whatsapp://send?phone=${(sup?.phone || '').replace(/[^0-9]/g,'')}&text=${encodeURIComponent(waTxt)}`;
-                const itemsListHtml = groups[sId].map(p => `• <b>${p.name.toUpperCase()}</b>  ->  <span style="color:#b45309;">${window.getOrderQty(p)} ${window.translateUnitToSwedish(p.unit).toUpperCase()}</span>`).join('<br>');
+                const itemsListHtml = groups[sId].map(p => `• <b>${p.name.toUpperCase()}</b>  ->  <span style="color:var(--primary);">${window.getOrderQty(p)} ${window.translateUnitToSwedish(p.unit).toUpperCase()}</span>`).join('<br>');
 
                 c.innerHTML += `
-                    <div style="background:#fffbe8; padding:16px; border-radius:10px; margin-bottom:16px; border:1px solid #fde68a;">
-                        <div style="font-weight:800; color:#b45309; font-size:18px; margin-bottom:8px;">🚚 ${supName}</div>
+                    <div style="background:#f9f9f9; padding:16px; border-radius:10px; margin-bottom:16px; border:1px solid #cbd5e1;">
+                        <div style="font-weight:800; color:var(--primary); font-size:18px; margin-bottom:8px;">🚚 ${supName}</div>
                         <div style="margin:12px 0; background:#fff; padding:10px; border-radius:6px; border:1px solid #e2e8f0;">${itemsListHtml}</div>
                         <a href="${wa}" style="background:var(--whatsapp); color:white; padding:12px; display:block; text-align:center; border-radius:8px; text-decoration:none; font-weight:bold; margin-bottom:6px;">💬 Invia via WhatsApp</a>
-                        <a href="mailto:${sup?.email||''}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}" style="background: linear-gradient(135deg, #2563eb, #1d4ed8); color:white; padding:12px; display:block; text-align:center; border-radius:8px; text-decoration:none; font-weight:bold; margin-bottom:6px;">✉️ Invia via Email</a>
-                        <button onclick="confirmSingleSupplierOrder('${sId}', '${op}', '${dateVal}')" class="btn-save" style="width:100%; background: linear-gradient(135deg, #166534, #14532d);">✅ Conferma Ordine DEV per ${supName}</button>
+                        <a href="mailto:${sup?.email||''}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}" style="background:#2563eb; color:white; padding:12px; display:block; text-align:center; border-radius:8px; text-decoration:none; font-weight:bold; margin-bottom:6px;">✉️ Invia via Email</a>
+                        <button onclick="confirmSingleSupplierOrder('${sId}', '${op}', '${dateVal}')" class="btn-save" style="width:100%; background:#1b5e20;">✅ Conferma Ordine per ${supName}</button>
                     </div>`;
             }
-            c.innerHTML += `<button onclick="confirmAndSaveOrderToHistory('${op}')" class="btn-save" style="width:100%; padding:14px; background: linear-gradient(135deg, #b45309, #92400e);">✅ Conferma TUTTI gli Ordini DEV</button>`;
+            c.innerHTML += `<button onclick="confirmAndSaveOrderToHistory('${op}')" class="btn-save" style="width:100%; padding:14px; background:#043927;">✅ Conferma TUTTI gli Ordini</button>`;
         };
 
         window.confirmSingleSupplierOrder = async function(sId, operator, dateVal) {
@@ -1563,7 +1607,7 @@
 
             const batch = writeBatch(db);
             batch.set(doc(db, "history", String(entryId)), {
-                id: entryId, timestamp: nowStr, destination: window.activeLocation || 'Sede Non Specifica DEV',
+                id: entryId, timestamp: nowStr, destination: window.activeLocation || 'Sede Non Specifica',
                 operatorName: operator, supplierName: sup?.name || 'Fornitore',
                 items: items.map(i => ({ id: i.id, name: i.name, qty: window.getOrderQty(i), unit: i.unit })),
                 checked: false, verificationDetails: null
@@ -1573,7 +1617,7 @@
             items.forEach(i => batch.update(doc(db, "inventory", String(i.id)), { [field]: 0 }));
             
             await batch.commit();
-            closeSummaryModal(); window.showAlert("✅ Ordine salvato nello storico DEV!");
+            closeSummaryModal(); window.showAlert("✅ Ordine salvato nello storico!");
         };
 
         window.confirmAndSaveOrderToHistory = async function(operator) {
@@ -1587,7 +1631,7 @@
                 const sup = window.suppliersData.find(s => String(s.id) === String(sId));
                 const entryId = Date.now() + Math.random();
                 batch.set(doc(db, "history", String(entryId)), {
-                    id: entryId, timestamp: nowStr, destination: window.activeLocation || 'Sede Non Specifica DEV',
+                    id: entryId, timestamp: nowStr, destination: window.activeLocation || 'Sede Non Specifica',
                     operatorName: operator, supplierName: sup?.name || 'Fornitore',
                     items: groups[sId].map(i => ({ id: i.id, name: i.name, qty: window.getOrderQty(i), unit: i.unit })),
                     checked: false, verificationDetails: null
@@ -1598,7 +1642,7 @@
             items.forEach(i => batch.update(doc(db, "inventory", String(i.id)), { [field]: 0 }));
             
             await batch.commit();
-            closeSummaryModal(); window.showAlert("🎉 Ordini salvati nello storico DEV!");
+            closeSummaryModal(); window.showAlert("🎉 Ordini salvati nello storico!");
         };
 
         window.closeSummaryModal = () => { document.getElementById('summary-modal').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); };
@@ -1664,7 +1708,7 @@
             });
 
             await batch.commit();
-            closeVerifyDeliveryModal(); window.showAlert("✅ Merce verificata, stornata e aggiunta alle giacenze DEV!");
+            closeVerifyDeliveryModal(); window.showAlert("✅ Merce verificata, stornata e aggiunta alle giacenze!");
         };
 
         window.filterHistoryItems = function() {
@@ -1680,7 +1724,7 @@
                 return matchesQuery && matchesLoc;
             });
 
-            if (filtered.length === 0) return c.innerHTML = '<div style="padding:16px; text-align:center; color:#666;">Nessun ordine nello storico DEV.</div>';
+            if (filtered.length === 0) return c.innerHTML = '<div style="padding:16px; text-align:center; color:#666;">Nessun ordine nello storico per questa sede.</div>';
 
             filtered.forEach((h, idx) => {
                 let itemsHtml = Array.isArray(h.items) ? h.items.map(it => `• ${it.name}: <b>${it.qty} ${it.unit}</b>`).join('<br>') : '';
@@ -1689,20 +1733,20 @@
 
                 if (!isChecked) {
                     checkStatusHtml = `
-                        <div style="background:#fef2f2; border:1px solid #fecaca; padding:8px; border-radius:6px; font-size:12px; color:#dc2626; margin-top:8px; display:flex; justify-content:space-between; align-items:center;">
-                            <span>⚠️ <b>Da Controllare</b></span><button class="btn-save" style="padding:6px 10px; font-size:11px; background:#dc2626;" onclick="openVerifyDeliveryModal(${h.id})">✍️ Verifica DEV</button>
+                        <div style="background:#fff3f0; border:1px solid #ffcdd2; padding:8px; border-radius:6px; font-size:12px; color:#c62828; margin-top:8px; display:flex; justify-content:space-between; align-items:center;">
+                            <span>⚠️ <b>Da Controllare</b></span><button class="btn-save" style="padding:6px 10px; font-size:11px; background:#c62828;" onclick="openVerifyDeliveryModal(${h.id})">✍️ Verifica & Storna</button>
                         </div>`;
                 } else if (h.verificationDetails && !h.verificationDetails.includes("100%")) {
-                    checkStatusHtml = `<div style="background:#fffbe8; border:1px solid #fde68a; padding:8px; border-radius:6px; font-size:12px; color:#b45309; margin-top:8px;">⚠ <b>Discrepanze:</b> ${h.verificationDetails}</div>`;
+                    checkStatusHtml = `<div style="background:#fff8e1; border:1px solid #ffe0b2; padding:8px; border-radius:6px; font-size:12px; color:#b45309; margin-top:8px;">⚠ <b>Discrepanze:</b> ${h.verificationDetails}</div>`;
                 } else {
-                    checkStatusHtml = `<div style="background:#f0fdf4; border:1px solid #bbf7d0; padding:8px; border-radius:6px; font-size:12px; color:#166534; margin-top:8px;">✅ <b>Completo</b> (${h.checkedBy} - ${h.checkedAt})</div>`;
+                    checkStatusHtml = `<div style="background:#e8f5e9; border:1px solid #c8e6c9; padding:8px; border-radius:6px; font-size:12px; color:#2e7d32; margin-top:8px;">✅ <b>Completo</b> (${h.checkedBy} - ${h.checkedAt})</div>`;
                 }
                 
                 c.innerHTML += `
-                    <div class="history-card" style="border-left: 4px solid ${!isChecked ? '#dc2626' : (h.verificationDetails && !h.verificationDetails.includes("100%") ? '#f59e0b' : '#166534')};">
+                    <div class="history-card" style="border-left: 4px solid ${!isChecked ? '#e53935' : (h.verificationDetails && !h.verificationDetails.includes("100%") ? '#ffb300' : '#2e7d32')};">
                         <div class="history-header"><span>🕒 ${h.timestamp}</span><span>📍 ${h.destination}</span></div>
                         <div style="font-weight:bold; font-size:14px; margin-bottom:4px;">🚚 ${h.supplierName} <span style="font-size:12px; font-weight:normal; color:#666;">(👤 ${h.operatorName})</span></div>
-                        ${itemsHtml ? `<div style="font-size:12px; margin-top:6px; background:#faf8f5; padding:6px; border-radius:4px;">${itemsHtml}</div>` : ''}
+                        ${itemsHtml ? `<div style="font-size:12px; margin-top:6px; background:#f8fafc; padding:6px; border-radius:4px;">${itemsHtml}</div>` : ''}
                         ${checkStatusHtml}
                         <div style="margin-top:8px; text-align:right;"><button class="btn-action-del" onclick="deleteHistoryItemGuard(${idx})">🗑 Elimina</button></div>
                     </div>`;
@@ -1714,8 +1758,9 @@
             if (!window.checkAuthGuard()) return;
             const item = window.inventoryData.find(x => x.id === itemId);
             if (item) {
-                await updateDoc(doc(db, "inventory", String(itemId)), { isFavorite: !item.isFavorite });
-                window.showAlert(!item.isFavorite ? `⭐ ${item.name} aggiunto ai Preferiti!` : `☆ ${item.name} rimosso dai Preferiti.`);
+                const newStatus = !item.isFavorite;
+                await updateDoc(doc(db, "inventory", String(itemId)), { isFavorite: newStatus });
+                window.showAlert(newStatus ? `⭐ ${item.name} segnato come Preferito!` : `☆ ${item.name} rimosso dai Preferiti.`);
             }
         };
 
@@ -1736,10 +1781,15 @@
 
                 c.innerHTML += `
                     <div class="card-item">
-                        <div class="item-name-box" style="border-left-color:${supObj?.color || '#78350f'};">
-                            <div class="item-name"><span>${item.name}</span><button class="star-toggle-btn" onclick="toggleFavorite(${item.id})">${item.isFavorite ? '⭐' : '☆'}</button></div>
+                        <div class="item-name-box" style="border-left-color:${supObj?.color || '#334155'};">
+                            <div class="item-name">
+                                <span>${item.name}</span>
+                                <button class="star-toggle-btn ${item.isFavorite ? 'active' : ''}" onclick="toggleFavorite(${item.id})">
+                                    ${item.isFavorite ? '⭐ Preferito' : '☆ Preferito'}
+                                </button>
+                            </div>
                             <div class="item-subtext">Prezzo: ${item.price} SEK | Unità: ${item.unit}</div>
-                            <div class="item-subtext" style="font-weight: 600; color: #b45309; margin-top: 4px;">
+                            <div class="item-subtext" style="font-weight: 600; color: var(--primary); margin-top: 4px;">
                                 📉 Min: Vasastan ${minVas} ${item.unit} | Östermalm ${minOst} ${item.unit}
                             </div>
                         </div>
@@ -1805,9 +1855,9 @@
                     orderQty_vasastan: 0, orderQty_ostermalm: 0, unit, price, qty_vasastan: 0, qty_ostermalm: 0, isFavorite: false 
                 });
             }
-            closeAddModal(); window.showAlert("✅ Prodotto salvato in DEV!");
+            closeAddModal(); window.showAlert("✅ Prodotto salvato!");
         };
-        window.deleteInventoryItem = async function(id) { if (window.checkAuthGuard() && confirm("Eliminare prodotto DEV?")) await deleteDoc(doc(db, "inventory", String(id))); };
+        window.deleteInventoryItem = async function(id) { if (window.checkAuthGuard() && confirm("Eliminare prodotto?")) await deleteDoc(doc(db, "inventory", String(id))); };
 
         // FORNITORI, PALETTE COLORI E ORDINAMENTO
         window.renderSupplierColorGrid = function(selectedHex) {
@@ -1821,7 +1871,7 @@
                 circle.style.cssText = `
                     width: 34px; height: 34px; border-radius: 50%; background-color: ${col.hex};
                     cursor: pointer; border: ${isSelected ? '3px solid #1e293b' : '2px solid white'};
-                    box-shadow: ${isSelected ? '0 0 0 2px #b45309' : '0 1px 3px rgba(0,0,0,0.2)'};
+                    box-shadow: ${isSelected ? '0 0 0 2px #043927' : '0 1px 3px rgba(0,0,0,0.2)'};
                     display: flex; align-items: center; justify-content: center; color: white; font-size: 14px;
                     transition: transform 0.1s ease;
                 `;
@@ -1861,8 +1911,8 @@
             sortedSupps.filter(s => s.name.toLowerCase().includes(q)).forEach((s, index) => {
                 c.innerHTML += `
                     <div class="card-item">
-                        <div class="item-name-box" style="border-left-color:${s.color || '#0288d1'};">
-                            <div class="item-name" style="color:${s.color || '#0288d1'};">
+                        <div class="item-name-box" style="border-left-color:${s.color || '#1565c0'};">
+                            <div class="item-name" style="color:${s.color || '#1565c0'};">
                                 <span>🚚 ${s.name}</span>
                                 <div style="display:flex; gap:4px;">
                                     <button onclick="moveSupplierOrder(${s.id}, -1)" style="background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; padding:2px 6px; font-size:12px; cursor:pointer;" title="Sposta In Alto">⬆️</button>
@@ -1912,7 +1962,7 @@
             if (id) {
                 const s = window.suppliersData.find(x => String(x.id) === String(id));
                 if (s) {
-                    document.getElementById('supplier-modal-title').innerText = '✏️ Modifica Fornitore DEV';
+                    document.getElementById('supplier-modal-title').innerText = '✏️ Modifica Fornitore';
                     document.getElementById('edit-supplier-id').value = s.id;
                     document.getElementById('supp-name').value = s.name || '';
                     document.getElementById('supp-phone').value = s.phone || '';
@@ -1920,7 +1970,7 @@
                     chosenHex = s.color || chosenHex;
                 }
             } else {
-                document.getElementById('supplier-modal-title').innerText = '➕ Nuovo Fornitore DEV';
+                document.getElementById('supplier-modal-title').innerText = '➕ Nuovo Fornitore';
             }
 
             window.selectSupplierColor(chosenHex);
@@ -1945,12 +1995,12 @@
 
             if (idVal) {
                 await updateDoc(doc(db, "suppliers", String(idVal)), { name, phone, email, color });
-                window.showAlert("✅ Fornitore DEV aggiornato!");
+                window.showAlert("✅ Fornitore aggiornato!");
             } else {
                 const newId = Date.now();
                 const nextOrderIndex = window.suppliersData.length + 1;
                 await setDoc(doc(db, "suppliers", String(newId)), { id: newId, name, phone, email, color, orderIndex: nextOrderIndex });
-                window.showAlert("✅ Nuovo fornitore DEV salvato!");
+                window.showAlert("✅ Nuovo fornitore salvato!");
             }
 
             closeAddSupplierModal();
@@ -1958,7 +2008,7 @@
 
         window.deleteSupplier = async function(id) {
             if (!window.checkAuthGuard()) return;
-            if (confirm("Eliminare fornitore DEV?")) {
+            if (confirm("Sei sicuro di voler eliminare questo fornitore?")) {
                 await deleteDoc(doc(db, "suppliers", String(id)));
                 window.showAlert("🗑️ Fornitore eliminato.");
             }
@@ -1976,13 +2026,13 @@
         window.generateAndExportExcel = function() {
             const type = document.getElementById('export-type-select').value;
             const opName = window.currentUserProfile ? window.currentUserProfile.name : 'Operatore';
-            const locName = window.activeLocation || 'Magari DEV';
+            const locName = window.activeLocation || 'Magari';
             const todayStr = new Date().toLocaleDateString('it-IT');
             const isAlcoholCategory = (cat) => (cat === 'Alcolici' || cat === 'Bevande');
 
             const buildStandardSheetData = (itemsList, titleHeader) => {
                 const rows = [
-                    [`MAGARI DEV INVENTORY REPORT - ${titleHeader.toUpperCase()}`],
+                    [`MAGARI INVENTORY REPORT - ${titleHeader.toUpperCase()}`],
                     [`Location: ${locName}`, `Date: ${todayStr}`, `Operator: ${opName}`],
                     [""],
                     ["ITEM NAME", "CATEGORY", "SUPPLIER", "PRICE (SEK)", "STOCK QTY", "TOTAL VALUE (SEK)", "UNIT"]
@@ -2006,14 +2056,14 @@
             const wb = XLSX.utils.book_new();
             const foodItems = window.inventoryData.filter(i => !isAlcoholCategory(i.category)).sort((a, b) => a.name.localeCompare(b.name));
 
-            XLSX.utils.book_append_sheet(wb, buildStandardSheetData(foodItems, "Food & Supplies DEV"), "Food & Supplies");
+            XLSX.utils.book_append_sheet(wb, buildStandardSheetData(foodItems, "Food & Supplies"), "Food & Supplies");
 
             const cleanLoc = locName.split(' ')[0];
             const dateStr = new Date().toISOString().split('T')[0];
             
-            XLSX.writeFile(wb, `Inventory_Magari_DEV_${cleanLoc}_${dateStr}.xlsx`);
+            XLSX.writeFile(wb, `Inventory_Magari_${cleanLoc}_${dateStr}.xlsx`);
             closeExportExcelModal(); 
-            window.showAlert("📊 File Excel DEV scaricato!");
+            window.showAlert("📊 File Excel scaricato!");
         };
 
         // REPORT CONSUMI
@@ -2038,7 +2088,7 @@
             let itemTotals = {}; 
 
             if (periodType === 'stock') {
-                titleDisplay.innerText = `📊 Report Valore Giacenze DEV (${window.activeLocation || 'Tutte le sedi'})`;
+                titleDisplay.innerText = `📊 Report Valore Giacenze Attuali (${window.activeLocation || 'Tutte le sedi'})`;
                 window.inventoryData.forEach(item => {
                     const qty = window.getQty(item);
                     if (qty > 0) {
@@ -2051,8 +2101,8 @@
                     }
                 });
             } else {
-                const label = periodType === 'month' ? `Mese: ${monthVal}` : 'Totale Storico DEV';
-                titleDisplay.innerText = `📋 Report Consumi DEV (${label} - ${window.activeLocation || 'Tutte le sedi'})`;
+                const label = periodType === 'month' ? `Mese: ${monthVal}` : 'Totale Storico';
+                titleDisplay.innerText = `📋 Report Consumi & Ordini (${label} - ${window.activeLocation || 'Tutte le sedi'})`;
 
                 const filteredHistory = window.orderHistoryData.filter(h => {
                     return !activeLocShort || (h.destination && h.destination.includes(activeLocShort));
@@ -2094,13 +2144,13 @@
             });
 
             const grandTotal = parseFloat((totalAlcCost + totalFoodCost).toFixed(2));
-            grandTotalBox.innerHTML = `💰 COSTO TOTALE DEV: <span style="font-size:16px;">${grandTotal.toFixed(2)} SEK</span>`;
+            grandTotalBox.innerHTML = `💰 COSTO TOTALE STIMATO: <span style="font-size:16px;">${grandTotal.toFixed(2)} SEK</span>`;
 
             resultsContainer.style.display = 'block';
-            window.showAlert("📊 Report DEV generato!");
+            window.showAlert("📊 Report generato con successo!");
         };
 
-        // BUG & RESETS
+        // BUG REPORT & RESETS
         window.submitBugReport = async function() {
             if (!window.checkAuthGuard()) return;
             const op = window.currentUserProfile.name;
@@ -2111,11 +2161,11 @@
 
             await setDoc(doc(db, "bugReports", String(newId)), {
                 id: newId, timestamp: nowStr, operator: op, type: document.getElementById('bug-type-select').value,
-                description: desc, location: document.getElementById('bug-location-display').value || window.activeLocation || 'Sede Non Specifica DEV', resolved: false
+                description: desc, location: document.getElementById('bug-location-display').value || window.activeLocation || 'Sede Non Specifica', resolved: false
             });
 
             document.getElementById('bug-desc-input').value = '';
-            window.showAlert("🚀 Segnalazione DEV inviata!"); window.navigateTo('ordini');
+            window.showAlert("🚀 Segnalazione inviata!"); window.navigateTo('ordini');
         };
 
         window.toggleBugStatus = async function(bugId) {
@@ -2124,13 +2174,13 @@
             if (bug) {
                 const currentStatus = (bug.resolved === true || bug.resolved === "true" || bug.status === "resolved");
                 await updateDoc(doc(db, "bugReports", String(bugId)), { resolved: !currentStatus });
-                window.showAlert(!currentStatus ? "✅ Segnalazione DEV Risolta!" : "🔄 Segnalazione DEV riaperta!");
+                window.showAlert(!currentStatus ? "✅ Segnalazione contrassegnata come Risolta!" : "🔄 Segnalazione riaperta!");
             }
         };
 
         window.deleteBugReport = async function(bugId) {
             if (!window.checkAuthGuard()) return;
-            if (confirm("Eliminare la segnalazione DEV?")) {
+            if (confirm("Eliminare definitivamente la segnalazione?")) {
                 await deleteDoc(doc(db, "bugReports", String(bugId)));
                 window.showAlert("🗑️ Segnalazione eliminata.");
             }
@@ -2138,7 +2188,7 @@
 
         window.deleteHistoryItemGuard = async function(idx) {
             if (!window.checkAuthGuard()) return;
-            if (confirm("Eliminare dalla storico DEV?")) {
+            if (confirm("Eliminare questa voce dallo storico?")) {
                 const h = window.orderHistoryData[idx];
                 await deleteDoc(doc(db, "history", String(h.id)));
             }
@@ -2147,39 +2197,39 @@
         window.executeResetStockGuard = async function() {
             if (!window.checkAuthGuard()) return;
             const key = window.getLocationKey();
-            if (confirm(`Azzerare giacenze per la sede attiva DEV (${key})?`)) {
+            if (confirm(`Azzerare giacenze per la sede attiva (${key})?`)) {
                 const batch = writeBatch(db);
                 window.inventoryData.forEach(i => {
                     const ref = doc(db, "inventory", String(i.id));
                     if (key === 'ostermalm') batch.update(ref, { qty_ostermalm: 0 });
                     else batch.update(ref, { qty_vasastan: 0 });
                 });
-                await batch.commit(); window.showAlert("✅ Giacenze DEV azzerate!");
+                await batch.commit(); window.showAlert("✅ Giacenze azzerate!");
             }
         };
 
         window.executeClearHistoryGuard = async function() {
             if (!window.checkAuthGuard()) return;
-            if (confirm("Svuotare lo storico ordini DEV?")) {
+            if (confirm("Svuotare lo storico ordini?")) {
                 const batch = writeBatch(db);
                 window.orderHistoryData.forEach(h => batch.delete(doc(db, "history", String(h.id))));
-                await batch.commit(); window.showAlert("🗑️ Storico DEV svuotato!");
+                await batch.commit(); window.showAlert("🗑️ Storico svuotato!");
             }
         };
 
         window.executeResetSuppliersGuard = async function() {
             if (!window.checkAuthGuard()) return;
-            if (confirm("Ripristinare i fornitori DEV?")) {
+            if (confirm("Ripristinare i fornitori di default?")) {
                 const batch = writeBatch(db);
                 window.suppliersData.forEach(s => batch.delete(doc(db, "suppliers", String(s.id))));
                 window.defaultSuppliers.forEach(s => batch.set(doc(db, "suppliers", String(s.id)), s));
-                await batch.commit(); window.showAlert("✅ Fornitori DEV ripristinati!");
+                await batch.commit(); window.showAlert("✅ Fornitori ripristinati!");
             }
         };
 
         window.executeResetAllGuard = async function() {
             if (!window.checkAuthGuard()) return;
-            if (confirm("RESET TOTALE DATABASE DEV TEST?")) {
+            if (confirm("RESET TOTALE DATABASE SVILUPPO (DEV)? Questa azione elimina tutti i dati sul database di test.")) {
                 const batch = writeBatch(db);
                 window.inventoryData.forEach(i => batch.delete(doc(db, "inventory", String(i.id))));
                 window.orderHistoryData.forEach(h => batch.delete(doc(db, "history", String(h.id))));
