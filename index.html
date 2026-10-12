@@ -4,14 +4,9 @@
 <!--
 ====================================================================
 [MAGARI APP - DEVELOPMENT / TEST ENVIRONMENT]
-- VERSION: v4.2.0-DEV (OFFLINE STOCK SYNC & STABLE SYNC)
+- VERSION: v4.1.9-DEV
 - FIREBASE PROJECT: magari-app-dev
 - TARGET: Ambiente isolato di test e sviluppo
-- NEW FEATURES IN v4.2.0-DEV:
-  1. Abilitata la persistenza locale IndexedDB di Firestore per aggiornare le scorte offline.
-  2. Banner dinamico di stato rete (Online/Offline) con sync automatica al riconnessione.
-  3. Service Worker PWA abilitato per avvio applicazione offline.
-  4. Sincronizzati tutti i correttivi v4.2.0 STABLE (Report mese, Excel auto-cols, Preferiti Admin/Operator).
 ====================================================================
 -->
     <meta charset="UTF-8">
@@ -30,11 +25,11 @@
     <meta name="apple-mobile-web-app-title" content="Magari DEV">
     
     <!-- Icone Schermata Home & Favicon -->
-    <link rel="manifest" href="manifest.json?v=4.2.0-dev">
-    <link rel="apple-touch-icon" href="logo-square.png?v=4.2.0-dev">
-    <link rel="icon" type="image/png" href="logo-square.png?v=4.2.0-dev">
+    <link rel="manifest" href="manifest.json?v=4.1.9-dev">
+    <link rel="apple-touch-icon" href="logo-square.png?v=4.1.9-dev">
+    <link rel="icon" type="image/png" href="logo-square.png?v=4.1.9-dev">
 
-    <title>Magari v4.2.0-DEV [OFFLINE TEST]</title>
+    <title>Magari v4.1.9 [DEV TEST]</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -45,11 +40,6 @@
 
     <div id="toast-notification" class="toast-notification"></div>
     
-    <!-- BANNER STATO RETE OFFLINE / ONLINE -->
-    <div id="network-status-banner" style="display:none; position:fixed; top:0; left:0; width:100%; background:#d97706; color:white; font-size:12px; font-weight:bold; text-align:center; padding:6px 10px; z-index:99999; box-shadow:0 2px 6px rgba(0,0,0,0.2);">
-        📡 MODALITÀ OFFLINE ATTIVA — Le modifiche alle scorte sono salvate in locale e verranno sincronizzate in automatico appena torna la connessione.
-    </div>
-
     <!-- CONTENITORE NOTIFICHE REALTIME PERSISTENTI (IN ALTO AL CENTRO) -->
     <div id="realtime-user-toast-container" style="position: fixed; top: 68px; left: 50%; transform: translateX(-50%); z-index: 99999; display: flex; flex-direction: column; gap: 8px; width: 92%; max-width: 410px;"></div>
 
@@ -57,8 +47,8 @@
     <div class="page-lock-banner" id="location-guard-banner" style="display: flex; position: fixed; z-index: 3000; padding-top: 100px;">
         <div class="page-lock-box" style="max-width: 340px;">
             <div style="font-size: 32px; margin-bottom: 8px;">🧪</div>
-            <h3 style="margin-bottom: 6px; color: #92400e;">Seleziona Sede (DEV v4.2.0)</h3>
-            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 14px;">Sei nell'ambiente di test con supporto Offline. Seleziona il locale per caricare i dati di prova.</p>
+            <h3 style="margin-bottom: 6px; color: #92400e;">Seleziona Sede (DEV v4.1.9)</h3>
+            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 14px;">Sei nell'ambiente di test. Seleziona il locale per caricare i dati di prova.</p>
             <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;">
                 <button class="btn-save" style="padding: 12px; font-size: 14px; background: linear-gradient(135deg, #064e3b, #043927);" onclick="setActiveLocation('Vasastan (Sankt Eriksgatan 110)')">📍 Vasastan<br><span style="font-size:10px; opacity:0.8;">Sankt Eriksgatan 110</span></button>
                 <button class="btn-save" style="padding: 12px; font-size: 14px; background: linear-gradient(135deg, #166534, #14532d);" onclick="setActiveLocation('Östermalm (Styrmansgatan 52)')">📍 Östermalm<br><span style="font-size:10px; opacity:0.8;">Styrmansgatan 52</span></button>
@@ -74,7 +64,7 @@
             <div class="drawer-header" style="text-align: center;">
                 <img src="logo-header.png" alt="Magari Logo" style="max-width: 170px; height: auto; margin-bottom: 4px;" onerror="this.style.display='none'; document.getElementById('drawer-text-fallback').style.display='block';">
                 <div id="drawer-text-fallback" class="brand-title" style="display:none; font-size: 24px;">MAGARI</div>
-                <div class="brand-subtitle" style="font-size: 9px; background: rgba(255,255,255,0.2); font-weight:800;">🧪 DEV MODE • v4.2.0 (OFFLINE)</div>
+                <div class="brand-subtitle" style="font-size: 9px; background: rgba(255,255,255,0.2); font-weight:800;">🧪 DEV MODE • v4.1.9</div>
             </div>
 
             <!-- USER ACCOUNT BANNER NELLO MENU -->
@@ -110,7 +100,7 @@
             <div class="header-brand-text">
                 <img src="logo-header.png" alt="Magari" style="height: 34px; width: auto;" onerror="this.style.display='none'; document.getElementById('header-text-fallback').style.display='block';">
                 <div id="header-text-fallback" class="brand-title" style="display:none;">MAGARI</div>
-                <div class="brand-subtitle" style="background: rgba(255,255,255,0.2); font-weight:800;">🧪 DEV • v4.2.0 (OFFLINE)</div>
+                <div class="brand-subtitle" style="background: rgba(255,255,255,0.2); font-weight:800;">🧪 DEV • v4.1.9</div>
             </div>
             <div class="page-badge" id="page-title">Ordini</div>
         </div>
@@ -290,28 +280,28 @@
         <!-- 7. FAQ & GUIDA RAPIDA -->
         <div id="view-faq" class="view-section">
             <div class="top-bar-container">
-                <div style="font-size:16px; font-weight:800; color:#b45309;">❓ Guida Rapida DEV Environment (v4.2.0 OFFLINE)</div>
-                <div style="font-size:12px; color:var(--text-secondary);">Manuale ed indicazioni operative per l'ambiente di test ed aggiornamenti offline.</div>
+                <div style="font-size:16px; font-weight:800; color:#b45309;">❓ Guida Rapida DEV Environment (v4.1.9)</div>
+                <div style="font-size:12px; color:var(--text-secondary);">Manuale ed indicazioni operative per l'ambiente di test.</div>
             </div>
             <div class="content-list">
                 <div class="faq-item-box">
-                    <div class="faq-question">📡 1. Come funziona l'aggiornamento scorte OFFLINE?</div>
+                    <div class="faq-question">🧪 1. Che cos'è questa versione DEV?</div>
                     <div class="faq-answer">
-                        Se ti trovi in una cella frigorifera o in uno scantinato senza segnale Wi-Fi/4G, puoi continuare a modificare le scorte normalmente. Le modifiche vengono salvate nella memoria locale del dispositivo e inviate al server non appena torna internet.
+                        Questa è la copia speculare di test collegata al progetto Firebase <b>magari-app-dev</b> (Versione corrente: <b>v4.1.9-DEV</b>). Qualsiasi modifica effettuata qui non tocca il database dei locali reali.
                     </div>
                 </div>
 
                 <div class="faq-item-box">
-                    <div class="faq-question">🧪 2. Che cos'è questa versione DEV?</div>
+                    <div class="faq-question">🔑 2. Come funziona il Login nel DEV?</div>
                     <div class="faq-answer">
-                        Questa è la copia speculare di test collegata al progetto Firebase <b>magari-app-dev</b>. Qualsiasi modifica effettuata qui non altera i dati reali delle pizzerie.
+                        Gli account staff creati qui sono registrati nel database di test. Puoi creare liberamente utenti per fare prove senza alterare gli account del personale reale.
                     </div>
                 </div>
 
                 <div class="faq-item-box">
-                    <div class="faq-question">📊 3. Export Excel ed Auto-Fit Colonne</div>
+                    <div class="faq-question">🎨 3. Gestione Colori e Posizione Fornitori</div>
                     <div class="faq-answer">
-                        L'export Excel calcola automaticamente la larghezza ideale delle colonne ed include sia il foglio <i>Food & Supplies</i> che il foglio <i>Alcohol & Beverages</i> con subtotali separati.
+                        La palette fornisce 12 tonalità ad alto contrasto. Puoi riordinare i fornitori con le frecce ⬆️ ⬇️ per spostare in alto quelli usati più di frequente nei filtri.
                     </div>
                 </div>
             </div>
@@ -337,7 +327,7 @@
                 <div class="page-lock-box"><div style="font-size: 32px; margin-bottom: 8px;">🔒</div><h3 style="margin-bottom: 6px;">Sezione Riservata Admin DEV</h3><p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Effettua il Login con account Admin per accedere.</p><button class="btn-save" onclick="openAuthModal()">Accedi come Admin</button></div>
             </div>
             <div class="settings-card">
-                <h3>⚙️ Gestione Impostazioni (DEV MODE v4.2.0)</h3>
+                <h3>⚙️ Gestione Impostazioni (DEV MODE v4.1.9)</h3>
 
                 <!-- PUBBLICAZIONE AVVISO STAFF -->
                 <div style="background:#fefbf3; border:1px solid #f3e8d2; padding:12px; border-radius:10px; margin-top:8px;">
@@ -373,7 +363,7 @@
 
         <!-- FOOTER FIRMA DEVELOPER -->
         <footer style="background: linear-gradient(135deg, #78350f, #451a03); color:#fffbe8; text-align:center; padding:16px 14px; font-size:11px; border-top:1px solid #92400e; margin-top:auto; width:100%; position:relative; z-index:80;">
-            <div>&copy; 2026 <b>Magari Pizzeria DEV</b> - Versione <span style="background:rgba(255,255,255,0.15); padding:2px 6px; border-radius:4px; font-weight:bold;">v4.2.0-DEV (OFFLINE)</span></div>
+            <div>&copy; 2026 <b>Magari Pizzeria DEV</b> - Versione <span style="background:rgba(255,255,255,0.15); padding:2px 6px; border-radius:4px; font-weight:bold;">v4.1.9-DEV</span></div>
             <div style="margin-top:6px; font-size:11px; color:#ffffff;">
                 Sviluppato da <span style="color:#ffffff; font-weight:bold; background:rgba(0,0,0,0.25); padding:2px 6px; border-radius:4px;">Nicolas Cappiello</span>
             </div>
@@ -404,7 +394,7 @@
 
     <!-- MODALE AUTHENTICATION -->
     <div class="modal" id="auth-modal">
-        <div class="modal-title" id="auth-modal-title" style="text-align:center;">🔑 Login - Magari DEV v4.2.0</div>
+        <div class="modal-title" id="auth-modal-title" style="text-align:center;">🔑 Login - Magari DEV v4.1.9</div>
         <div style="display:flex; justify-content:center; gap:10px; margin-bottom:12px;">
             <button id="tab-btn-login" onclick="switchAuthTab('login')" style="flex:1; padding:6px; border-radius:6px; font-weight:bold; border:1px solid #b45309; background:#b45309; color:white;">Login</button>
             <button id="tab-btn-register" onclick="switchAuthTab('register')" style="flex:1; padding:6px; border-radius:6px; font-weight:bold; border:1px solid #cbd5e1; background:#f1f5f9; color:#334155;">Nuovo Account DEV</button>
@@ -594,6 +584,11 @@
         }
         .card-item.low-stock-alert { border: 2px solid var(--danger); background: linear-gradient(180deg, #ffffff, #fff5f5); animation: pulseBorder 1.5s infinite; }
 
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .item-name-box { padding: 10px 12px; border-radius: 8px; display: flex; flex-direction: column; gap: 4px; border-left-width: 4px; border-left-style: solid; background: #faf8f5; }
         .item-name { font-size: 17px; font-weight: 800; color: #1c1917; line-height: 1.25; display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 8px; }
         .item-subtext { font-size: 12px; color: #78350f; margin-top: 2px; }
@@ -680,38 +675,16 @@
         .badge-notification { background: var(--danger); color: white; border-radius: 12px; font-size: 11px; font-weight: 800; padding: 2px 8px; display: inline-block; }
     </style>
     <script type="module">
-        // 1. REGISTRAZIONE SERVICE WORKER PWA PER IL SUPPORTO OFFLINE COMPLETO
+        // 1. DEREGISTRAZIONE SERVICE WORKER
         if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js').catch(err => {
-                    console.log("Service Worker Offline dev register:", err);
-                });
+            navigator.serviceWorker.getRegistrations().then(registrations => {
+                for (let registration of registrations) {
+                    registration.unregister();
+                }
             });
         }
 
-        // MONITORAGGIO EVENTI CONNETIVITÀ RETE
-        const updateNetworkStatusUI = () => {
-            const banner = document.getElementById('network-status-banner');
-            if (banner) {
-                banner.style.display = navigator.onLine ? 'none' : 'block';
-            }
-        };
-
-        window.addEventListener('online', () => {
-            updateNetworkStatusUI();
-            if (typeof window.showAlert === 'function') {
-                window.showAlert("📶 Connessione ripristinata! Sincronizzazione scorte in corso...");
-            }
-        });
-        window.addEventListener('offline', () => {
-            updateNetworkStatusUI();
-            if (typeof window.showAlert === 'function') {
-                window.showAlert("📡 Dispositivo offline: Le modifiche scorte verranno salvate in locale.");
-            }
-        });
-        updateNetworkStatusUI();
-
-        // 2. MODULI FIREBASE SDKS CON INDEXEDDB PERSISTENCE ABILITATO
+        // 2. MODULI FIREBASE SDKS
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { 
             getAuth, 
@@ -725,7 +698,6 @@
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { 
             getFirestore, 
-            enableIndexedDbPersistence,
             doc, 
             setDoc, 
             getDoc,
@@ -753,22 +725,11 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // ABILITAZIONE PERSISTENZA FIRESTORE OFFLINE (INDEXEDDB)
-        enableIndexedDbPersistence(db).then(() => {
-            console.log("✅ FIRESTORE OFFLINE PERSISTENCE ACTIVATED SUCCESSFULLY!");
-        }).catch((err) => {
-            if (err.code === 'failed-precondition') {
-                console.warn('⚠️ Firestore Offline Persistence: Schede multiple aperte.');
-            } else if (err.code === 'unimplemented') {
-                console.warn('⚠️ Firestore Offline Persistence non supportato dal browser.');
-            }
-        });
-
         window.currentUserProfile = null;
         window.activeLocation = null;
         window.activeVerifyHistoryId = null;
 
-        // PALETTE CURATA A 12 COLORI UNICI
+        // PALETTE CURATA A 12 COLORI UNICI E DISTINTI
         window.supplierColorPalette = [
             { name: "Rosso Pomodoro", hex: "#dc2626", textColor: "#ffffff" },
             { name: "Arancio Agrumi", hex: "#ea580c", textColor: "#ffffff" },
@@ -803,7 +764,7 @@
         window.orderHistoryData = [];
         window.bugReportsData = [];
 
-        // FUNZIONI GENERALI
+        // FUNZIONI GENERALI SU WINDOW
         window.getLocationKey = () => (window.activeLocation && window.activeLocation.includes('Östermalm')) ? 'ostermalm' : 'vasastan';
         window.getQty = (i) => window.getLocationKey() === 'ostermalm' ? (i.qty_ostermalm ?? 0) : (i.qty_vasastan ?? i.qty ?? 0);
         window.getOrderQty = (i) => window.getLocationKey() === 'ostermalm' ? (i.orderQty_ostermalm ?? 0) : (i.orderQty_vasastan ?? i.orderQty ?? 0);
@@ -829,37 +790,40 @@
 
         window.setActiveLocation = function(loc) {
             window.activeLocation = loc;
-            document.getElementById('location-guard-banner').style.display = 'none';
-            document.getElementById('active-location-text').innerText = `📍 Sede DEV: ${loc}`;
-            document.getElementById('active-location-banner').style.display = 'flex';
+            const guardBanner = document.getElementById('location-guard-banner');
+            if (guardBanner) guardBanner.style.display = 'none';
+            
+            const activeTxt = document.getElementById('active-location-text');
+            if (activeTxt) activeTxt.innerText = `📍 Sede DEV: ${loc}`;
+            
+            const activeBanner = document.getElementById('active-location-banner');
+            if (activeBanner) activeBanner.style.display = 'flex';
+            
             const bugLocInput = document.getElementById('bug-location-display');
             if (bugLocInput) bugLocInput.value = loc;
+            
             if (typeof window.listenToStaffNotice === 'function') window.listenToStaffNotice();
-            window.refreshAllViews();
+            if (typeof window.refreshAllViews === 'function') window.refreshAllViews();
         };
 
-        window.promptChangeLocation = () => document.getElementById('location-guard-banner').style.display = 'flex';
-        window.toggleMenu = () => { document.getElementById('drawer').classList.toggle('open'); document.getElementById('overlay').classList.toggle('active'); };
+        window.promptChangeLocation = () => {
+            const guardBanner = document.getElementById('location-guard-banner');
+            if (guardBanner) guardBanner.style.display = 'flex';
+        };
 
-        window.toggleReportPeriodInputs = function() {
-            const type = document.getElementById('report-period-type')?.value;
-            const monthGroup = document.getElementById('report-month-select-group');
-            const monthPicker = document.getElementById('report-month-picker');
-
-            if (monthGroup) monthGroup.style.display = (type === 'month') ? 'block' : 'none';
-
-            if (type === 'month' && monthPicker && !monthPicker.value) {
-                const now = new Date();
-                const yr = now.getFullYear();
-                const mo = String(now.getMonth() + 1).padStart(2, '0');
-                monthPicker.value = `${yr}-${mo}`;
-            }
+        window.toggleMenu = () => { 
+            const drawer = document.getElementById('drawer');
+            const overlay = document.getElementById('overlay');
+            if (drawer) drawer.classList.toggle('open'); 
+            if (overlay) overlay.classList.toggle('active'); 
         };
 
         window.closeAll = () => { 
             document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); 
-            document.getElementById('overlay').classList.remove('active'); 
-            document.getElementById('drawer').classList.remove('open'); 
+            const overlay = document.getElementById('overlay');
+            const drawer = document.getElementById('drawer');
+            if (overlay) overlay.classList.remove('active'); 
+            if (drawer) drawer.classList.remove('open'); 
         };
 
         // NAVIGAZIONE
@@ -876,24 +840,33 @@
             }
 
             document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
-            document.getElementById(`view-${sec}`).classList.add('active');
+            const targetSec = document.getElementById(`view-${sec}`);
+            if (targetSec) targetSec.classList.add('active');
             
             const titles = { 'ordini': 'Ordini DEV', 'scorte': 'Scorte DEV', 'storico': 'Storico DEV', 'magazzino': 'Magazzino DEV', 'fornitori': 'Fornitori DEV', 'sprechi': 'Report Consumi DEV', 'faq': 'Guida DEV', 'bugreport': 'Segnala Bug DEV', 'impostazioni': 'Impostazioni DEV' };
-            document.getElementById('page-title').innerText = titles[sec] || 'Magari DEV';
+            const pageTitle = document.getElementById('page-title');
+            if (pageTitle) pageTitle.innerText = titles[sec] || 'Magari DEV';
             
             window.scrollTo({ top: 0, behavior: 'instant' });
 
-            if (sec === 'impostazioni' && isAdmin) window.loadUsersListForAdmin();
+            if (sec === 'impostazioni' && isAdmin) {
+                window.loadUsersListForAdmin();
+            }
         };
 
-        // AUTH
+        // AUTENTICAZIONE
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 const isMasterAdmin = user.email && user.email.toLowerCase() === "nicolas@magaripizza.com";
                 const userRole = isMasterAdmin ? "admin" : "operator";
                 const userName = user.displayName || user.email.split('@')[0];
 
-                window.currentUserProfile = { uid: user.uid, email: user.email, name: userName, role: userRole };
+                window.currentUserProfile = {
+                    uid: user.uid,
+                    email: user.email,
+                    name: userName,
+                    role: userRole
+                };
 
                 try {
                     const userDocRef = doc(db, "users", user.uid);
@@ -915,6 +888,72 @@
             window.listenToPersistentUserNotifications();
             window.refreshAllViews();
         });
+
+        // NOTIFICHE REGISTRAZIONE STAFF
+        window.activeNotificationsUnsubscribe = null;
+
+        window.listenToPersistentUserNotifications = function() {
+            if (window.activeNotificationsUnsubscribe) window.activeNotificationsUnsubscribe();
+
+            const currentUser = window.currentUserProfile;
+            const isMaster = currentUser && currentUser.email && currentUser.email.toLowerCase() === "nicolas@magaripizza.com";
+            const isAdmin = isMaster || (currentUser && currentUser.role === 'admin');
+
+            const container = document.getElementById('realtime-user-toast-container');
+            if (!container) return;
+
+            if (!isAdmin) {
+                container.innerHTML = '';
+                return;
+            }
+
+            const q = query(collection(db, "notifications"), where("status", "==", "unread"));
+            
+            window.activeNotificationsUnsubscribe = onSnapshot(q, (snapshot) => {
+                container.innerHTML = '';
+                snapshot.docs.forEach((docSnap) => {
+                    const notif = docSnap.data();
+                    window.renderPersistentUserToast(docSnap.id, notif.userName || notif.email || "Nuovo Operatore", notif.timestamp);
+                });
+            });
+        };
+
+        window.renderPersistentUserToast = function(notifId, identifier, timestamp) {
+            const container = document.getElementById('realtime-user-toast-container');
+            if (!container) return;
+
+            const toast = document.createElement('div');
+            toast.id = `toast-notif-${notifId}`;
+            toast.style.cssText = `
+                background: linear-gradient(135deg, #b45309, #78350f);
+                color: white; padding: 12px 16px; border-radius: 12px; font-size: 13px; font-weight: bold;
+                box-shadow: 0 8px 20px rgba(120, 53, 15, 0.35); border: 1px solid #fde68a;
+                display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%;
+                animation: slideDown 0.3s ease;
+            `;
+            
+            toast.innerHTML = `
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <span style="font-size:20px;">🔔</span>
+                    <div>
+                        <div style="font-size:10px; text-transform:uppercase; opacity:0.9; color:#fde68a; font-weight:800;">Nuova Registrazione Staff</div>
+                        <div style="margin-top:2px; font-size:13px;">Si è registrato <u>${identifier}</u></div>
+                        ${timestamp ? `<div style="font-size:10px; opacity:0.8; margin-top:2px; font-weight:normal;">🕒 ${timestamp}</div>` : ''}
+                    </div>
+                </div>
+                <button onclick="dismissUserNotification('${notifId}')" title="Segna come letto" style="background:rgba(255,255,255,0.2); border:none; color:white; width:26px; height:26px; border-radius:50%; font-weight:bold; cursor:pointer; font-size:13px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">✕</button>
+            `;
+
+            container.appendChild(toast);
+        };
+
+        window.dismissUserNotification = async function(notifId) {
+            try {
+                await updateDoc(doc(db, "notifications", notifId), { status: "read", dismissedBy: window.currentUserProfile?.name || 'Admin' });
+                const el = document.getElementById(`toast-notif-${notifId}`);
+                if (el) el.remove();
+            } catch(e) { console.error(e); }
+        };
 
         window.updateAuthUIState = function() {
             const statusTxt = document.getElementById('user-status-text');
@@ -971,7 +1010,218 @@
             if (toast) { toast.innerText = msg; toast.classList.add('show'); setTimeout(() => { toast.classList.remove('show'); }, 3500); }
         };
 
-        // LISTENERS REALTIME CON CACHE OFFLINE AUTOMATICA
+        // AVVISI STAFF
+        window.activeNoticeUnsubscribe = null;
+
+        window.listenToStaffNotice = function() {
+            if (window.activeNoticeUnsubscribe) window.activeNoticeUnsubscribe();
+            const locKey = window.getLocationKey ? window.getLocationKey() : 'vasastan';
+
+            window.activeNoticeUnsubscribe = onSnapshot(doc(db, "settings", `staffNotice_${locKey}`), (docSnap) => {
+                const banner = document.getElementById('staff-notice-banner');
+                const txt = document.getElementById('staff-notice-text');
+                const meta = document.getElementById('staff-notice-meta');
+
+                if (docSnap.exists() && docSnap.data().text) {
+                    const data = docSnap.data();
+                    if (txt) txt.innerText = data.text;
+                    if (meta) meta.innerText = `📍 ${data.location || locKey.toUpperCase()} (DEV) • Pubblicato da ${data.author || 'Admin'} - ${data.date ? new Date(data.date).toLocaleString('it-IT') : ''}`;
+                    if (banner) banner.style.display = 'block';
+                } else {
+                    if (banner) banner.style.display = 'none';
+                }
+            });
+        };
+
+        window.publishStaffNotice = async function() {
+            if (!window.checkAuthGuard()) return;
+            const input = document.getElementById('notice-input-field');
+            const text = input ? input.value.trim() : '';
+            if (!text) return window.showAlert("⚠️ Inserisci un testo per l'avviso.");
+
+            const locKey = window.getLocationKey();
+            await setDoc(doc(db, "settings", `staffNotice_${locKey}`), {
+                text: text, author: window.currentUserProfile.name, location: window.activeLocation || locKey, date: new Date().toISOString()
+            });
+
+            if (input) input.value = '';
+            window.showAlert(`📢 Avviso pubblicato in DEV per ${window.activeLocation || locKey}!`);
+        };
+
+        window.deleteNoticeFromDb = async function() {
+            if (!window.checkAuthGuard()) return;
+            const locKey = window.getLocationKey();
+            await deleteDoc(doc(db, "settings", `staffNotice_${locKey}`));
+            window.showAlert(`🗑️ Avviso rimosso per ${window.activeLocation || locKey}.`);
+        };
+
+        // MODALE AUTH
+        window.openAuthModal = () => { window.closeAll(); document.getElementById('auth-modal')?.classList.add('active'); document.getElementById('overlay')?.classList.add('active'); };
+        window.closeAuthModal = () => { document.getElementById('auth-modal')?.classList.remove('active'); document.getElementById('overlay')?.classList.remove('active'); };
+
+        window.switchAuthTab = function(tab) {
+            const isLogin = tab === 'login';
+            document.getElementById('auth-form-login').style.display = isLogin ? 'block' : 'none';
+            document.getElementById('auth-form-register').style.display = isLogin ? 'none' : 'block';
+            document.getElementById('tab-btn-login').style.background = isLogin ? '#b45309' : '#f1f5f9';
+            document.getElementById('tab-btn-login').style.color = isLogin ? 'white' : '#334155';
+            document.getElementById('tab-btn-register').style.background = isLogin ? '#f1f5f9' : '#b45309';
+            document.getElementById('tab-btn-register').style.color = isLogin ? '#334155' : 'white';
+        };
+
+        window.handleLoginSubmit = async function() {
+            const email = document.getElementById('login-email').value.trim();
+            const pass = document.getElementById('login-password').value.trim();
+            const rememberMe = document.getElementById('remember-me-checkbox').checked;
+
+            if (!email || !pass) return window.showAlert("⚠️ Compila tutti i campi.");
+
+            try {
+                await setPersistence(auth, rememberMe ? browserLocalPersistence : browserSessionPersistence);
+                await signInWithEmailAndPassword(auth, email, pass);
+                closeAuthModal(); 
+                window.showAlert("🎉 Login DEV effettuato!");
+            } catch(e) { window.showAlert(`❌ Errore Login DEV: ${e.message}`); }
+        };
+
+        window.handleRegisterSubmit = async function() {
+            const name = document.getElementById('reg-name').value.trim();
+            const email = document.getElementById('reg-email').value.trim();
+            const pass = document.getElementById('reg-password').value.trim();
+            if (!name || !email || !pass) return window.showAlert("⚠️ Compila tutti i campi.");
+            try {
+                const res = await createUserWithEmailAndPassword(auth, email, pass);
+                const isMasterAdmin = email.toLowerCase() === "nicolas@magaripizza.com";
+                
+                await setDoc(doc(db, "users", res.user.uid), { uid: res.user.uid, email, name, role: isMasterAdmin ? 'admin' : 'operator' });
+
+                const notifId = `reg_${Date.now()}`;
+                const nowDisplay = new Date().toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+                await setDoc(doc(db, "notifications", notifId), { id: notifId, type: "new_registration", userName: name, email: email, status: "unread", timestamp: nowDisplay });
+
+                closeAuthModal(); 
+                window.showAlert("🎉 Account DEV registrato ed attivo!");
+            } catch(e) { window.showAlert(`❌ Errore Registrazione DEV: ${e.message}`); }
+        };
+
+        window.handleLogoutSubmit = async function() {
+            await signOut(auth);
+            window.showAlert("🚪 Logout DEV effettuato.");
+        };
+
+        // AMMINISTRAZIONE UTENTI
+        window.loadUsersListForAdmin = async function() {
+            const container = document.getElementById('admin-users-list-container');
+            if (!container) return;
+            const currentUser = auth.currentUser;
+            const isMaster = currentUser && currentUser.email && currentUser.email.toLowerCase() === "nicolas@magaripizza.com";
+            const isAdmin = isMaster || (window.currentUserProfile && window.currentUserProfile.role === 'admin');
+
+            if (!isAdmin) {
+                container.innerHTML = '<div style="font-size:12px; color:#666; text-align:center; padding:10px;">Riservato agli Admin DEV.</div>';
+                return;
+            }
+
+            try {
+                const querySnapshot = await getDocs(collection(db, "users"));
+                if (querySnapshot.empty) {
+                    container.innerHTML = '<div style="font-size:12px; color:#666; text-align:center; padding:10px;">Nessun operatore presente nel DB DEV.</div>';
+                    return;
+                }
+
+                container.innerHTML = '';
+                querySnapshot.forEach((docSnap) => {
+                    const uData = docSnap.data(), uUid = docSnap.id;
+                    const isMasterEmail = uData.email && uData.email.toLowerCase() === "nicolas@magaripizza.com";
+                    const roleBadge = isMasterEmail ? '⭐ Master Admin DEV' : (uData.role === 'admin' ? '⭐ Admin DEV' : '👤 Operatore DEV');
+
+                    container.innerHTML += `
+                        <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; padding:10px; display:flex; flex-direction:column; gap:6px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <div>
+                                    <div style="font-weight:bold; color:#b45309; font-size:13px;">${uData.name || 'Senza Nome'}</div>
+                                    <div style="font-size:11px; color:#64748b;">${uData.email || 'N/D'}</div>
+                                </div>
+                                <div style="font-size:11px; font-weight:600; background:#f1f5f9; padding:2px 8px; border-radius:12px; color:#334155;">${roleBadge}</div>
+                            </div>
+                            <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:4px; border-top:1px dashed #e2e8f0; padding-top:6px;">
+                                ${!isMasterEmail ? `
+                                    <button onclick="openUserModal('${uUid}')" style="background:#e3f2fd; color:#0d47a1; border:1px solid #bbdefb; padding:4px 8px; border-radius:4px; font-size:11px; font-weight:600; cursor:pointer;">✏️ Modifica</button>
+                                    <button onclick="deleteUserFromAdmin('${uUid}', '${(uData.name || '').replace(/'/g, "\\'")}')" style="background:#ffebee; color:#c62828; border:1px solid #ffcdd2; padding:4px 8px; border-radius:4px; font-size:11px; font-weight:600; cursor:pointer;">🗑️ Elimina</button>
+                                ` : '<span style="font-size:10px; color:#94a3b8; font-style:italic;">Account Principale</span>'}
+                            </div>
+                        </div>`;
+                });
+            } catch(e) { container.innerHTML = `<div style="font-size:12px; color:#c62828; text-align:center;">Errore caricamento: ${e.message}</div>`; }
+        };
+
+        window.openUserModal = async function(uid = null) {
+            if (!window.checkAuthGuard()) return;
+            window.closeAll();
+            document.getElementById('edit-user-uid').value = '';
+            document.getElementById('user-field-name').value = '';
+            document.getElementById('user-field-email').value = '';
+            document.getElementById('user-field-pass').value = '';
+            document.getElementById('user-field-role').value = 'operator';
+
+            const passGroup = document.getElementById('user-field-pass-group');
+
+            if (uid) {
+                document.getElementById('user-modal-title').innerText = '✏️ Modifica Profilo DEV';
+                passGroup.style.display = 'none';
+                const userDoc = await getDoc(doc(db, "users", uid));
+                if (userDoc.exists()) {
+                    const data = userDoc.data();
+                    document.getElementById('edit-user-uid').value = uid;
+                    document.getElementById('user-field-name').value = data.name || '';
+                    document.getElementById('user-field-email').value = data.email || '';
+                    document.getElementById('user-field-role').value = data.role || 'operator';
+                }
+            } else {
+                document.getElementById('user-modal-title').innerText = '➕ Nuovo Operatore DEV';
+                passGroup.style.display = 'block';
+            }
+
+            document.getElementById('user-edit-modal').classList.add('active');
+            document.getElementById('overlay').classList.add('active');
+        };
+
+        window.closeUserModal = () => { document.getElementById('user-edit-modal').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); };
+
+        window.saveUserFromAdmin = async function() {
+            if (!window.checkAuthGuard()) return;
+            const uid = document.getElementById('edit-user-uid').value;
+            const name = document.getElementById('user-field-name').value.trim();
+            const email = document.getElementById('user-field-email').value.trim();
+            const role = document.getElementById('user-field-role').value;
+            const pass = document.getElementById('user-field-pass').value.trim();
+
+            if (!name || !email) return window.showAlert("⚠️ Inserisci Nome ed Email.");
+
+            if (uid) {
+                await updateDoc(doc(db, "users", uid), { name, email, role });
+                window.showAlert("✅ Operatore DEV aggiornato!");
+            } else {
+                if (!pass || pass.length < 6) return window.showAlert("⚠️ Password di almeno 6 caratteri.");
+                try {
+                    const res = await createUserWithEmailAndPassword(auth, email, pass);
+                    await setDoc(doc(db, "users", res.user.uid), { uid: res.user.uid, name, email, role });
+                    window.showAlert("🎉 Nuovo operatore DEV creato!");
+                } catch(e) { return window.showAlert(`❌ Errore Creazione: ${e.message}`); }
+            }
+
+            closeUserModal(); window.loadUsersListForAdmin();
+        };
+
+        window.deleteUserFromAdmin = async function(uid, name) {
+            if (!window.checkAuthGuard()) return;
+            if (confirm(`Eliminare l'operatore "${name}" dal DB DEV?`)) {
+                await deleteDoc(doc(db, "users", uid));
+                window.showAlert("🗑 Profilo eliminato."); window.loadUsersListForAdmin();
+            }
+        };
+
+        // REALTIME SNAPSHOTS
         onSnapshot(collection(db, "inventory"), (snapshot) => {
             window.inventoryData = snapshot.docs.map(doc => doc.data());
             window.refreshAllViews();
@@ -982,8 +1232,7 @@
                 window.suppliersData = snapshot.docs.map(doc => doc.data());
                 window.suppliersData.sort((a, b) => (a.orderIndex || 999) - (b.orderIndex || 999));
             }
-            window.populateAllSupplierFilters();
-            window.refreshAllViews();
+            window.populateAllSupplierFilters(); window.refreshAllViews();
         });
 
         onSnapshot(collection(db, "history"), (snapshot) => {
@@ -1010,46 +1259,108 @@
             try { filterItems(); filterStockItems(); filterOrderItems(); filterSuppliers(); filterHistoryItems(); updateCartBadge(); updateHistoryBadge(); updateBugBadgesAndAdminList(); } catch(e){} 
         };
 
-        // AGGIORNAMENTO SCORTE
+        window.updateCartBadge = function() {
+            const activeItemsCount = window.inventoryData.filter(i => window.getOrderQty(i) > 0).length;
+            const badge = document.getElementById('cart-badge-drawer');
+            if (badge) { badge.innerText = `${activeItemsCount} da ordinare`; badge.style.display = activeItemsCount > 0 ? 'inline-block' : 'none'; }
+        };
+
+        window.updateHistoryBadge = function() {
+            const activeLocShort = window.activeLocation ? window.activeLocation.split(' ')[0] : '';
+            const uncheckedCount = Array.isArray(window.orderHistoryData) ? window.orderHistoryData.filter(h => !h.checked && (h.destination && h.destination.includes(activeLocShort))).length : 0;
+            const badge = document.getElementById('history-badge-drawer');
+            if (badge) { badge.innerText = uncheckedCount; badge.style.display = uncheckedCount > 0 ? 'inline-block' : 'none'; }
+        };
+
+        window.updateBugBadgesAndAdminList = function() {
+            const isResolvedCheck = (b) => (b.resolved === true || b.resolved === "true" || b.status === "resolved");
+            const unresolvedCount = Array.isArray(window.bugReportsData) ? window.bugReportsData.filter(b => !isResolvedCheck(b)).length : 0;
+            
+            const settingsBadge = document.getElementById('bug-badge-settings');
+            if (settingsBadge) { settingsBadge.innerText = unresolvedCount; settingsBadge.style.display = unresolvedCount > 0 ? 'inline-block' : 'none'; }
+
+            const container = document.getElementById('admin-bug-reports-container');
+            if (container) {
+                if (!window.bugReportsData || window.bugReportsData.length === 0) {
+                    container.innerHTML = '<div style="font-size:12px; color:#666; text-align:center; padding:8px;">Nessuna segnalazione presente nel DB DEV.</div>';
+                } else {
+                    container.innerHTML = '';
+                    const sortedBugs = [...window.bugReportsData].sort((a, b) => {
+                        const resA = isResolvedCheck(a) ? 1 : 0, resB = isResolvedCheck(b) ? 1 : 0;
+                        if (resA !== resB) return resA - resB;
+                        return b.id - a.id;
+                    });
+
+                    sortedBugs.forEach((b) => {
+                        const isResolved = isResolvedCheck(b);
+                        const statusLabel = isResolved 
+                            ? '<span style="color:#2e7d32; font-weight:bold; background:#e8f5e9; padding:2px 6px; border-radius:4px;">✅ Risolto</span>' 
+                            : '<span style="color:#c2410c; font-weight:bold; background:#ffedd5; padding:2px 6px; border-radius:4px;">⏳ Da Gestire</span>';
+
+                        container.innerHTML += `
+                            <div style="${isResolved ? 'background:#f8fafc; opacity:0.85;' : 'background:#fff8f0; border-color:#f97316;'} border:1px solid #cbd5e1; padding:10px; border-radius:8px; font-size:12px; display:flex; flex-direction:column; gap:6px;">
+                                <div style="display:flex; justify-content:space-between; align-items:center; font-weight:bold; color:#b45309;">
+                                    <span>${b.type || '🐛 Bug'} - 👤 ${b.operator || 'Staff'}</span>
+                                    <span>${statusLabel}</span>
+                                </div>
+                                <div style="display:flex; justify-content:space-between; color:#666; font-size:11px;">
+                                    <span>📍 <b>Sede:</b> ${b.location || 'N/D'}</span>
+                                    <span>🕒 ${b.timestamp || ''}</span>
+                                </div>
+                                <div style="color:#1e293b; background:#ffffff; padding:8px; border-radius:6px; border:1px solid #e2e8f0; font-size:12px;">
+                                    ${b.description || 'Nessun dettaglio.'}
+                                </div>
+                                <div style="display:flex; justify-content:flex-end; gap:6px;">
+                                    <button class="btn-action-edit" onclick="toggleBugStatus('${b.id}')" style="padding:4px 8px; font-size:11px;">${isResolved ? '🔄 Riapri' : '✅ Risolto'}</button>
+                                    <button class="btn-action-del" onclick="deleteBugReport('${b.id}')" style="padding:4px 8px; font-size:11px;">🗑 Elimina</button>
+                                </div>
+                            </div>`;
+                    });
+                }
+            }
+        };
+
+        // GESTIONE SCORTE & ORDINAMENTI
         window.updateStock = async function(id, d) { 
             if (!window.checkAuthGuard()) return;
             const opName = window.currentUserProfile.name;
             const i = window.inventoryData.find(x => x.id === id); 
-            if(i) { 
-                const newQty = Math.max(0, window.getQty(i) + d);
-                // La chiamata updateDoc aggiorna IndexedDB localmente anche senza internet!
-                await updateDoc(doc(db, "inventory", String(id)), window.getStockUpdatesObj(newQty, opName)); 
-                if (!navigator.onLine) {
-                    window.showAlert(`💾 Giacenza di ${i.name} salvata in locale (Offline)`);
-                }
-            } 
+            if(i) await updateDoc(doc(db, "inventory", String(id)), window.getStockUpdatesObj(Math.max(0, window.getQty(i) + d), opName)); 
         };
 
         window.setStock = async function(id, v) { 
             if (!window.checkAuthGuard()) return;
             const opName = window.currentUserProfile.name;
             const i = window.inventoryData.find(x => x.id === id); 
-            if(i) { 
-                const newQty = Math.max(0, parseFloat(v) || 0);
-                await updateDoc(doc(db, "inventory", String(id)), window.getStockUpdatesObj(newQty, opName)); 
-                if (!navigator.onLine) {
-                    window.showAlert(`💾 Giacenza di ${i.name} salvata in locale (Offline)`);
-                }
-            } 
+            if(i) await updateDoc(doc(db, "inventory", String(id)), window.getStockUpdatesObj(Math.max(0, parseFloat(v) || 0), opName)); 
         };
 
         window.filterStockItems = function() {
             const q = (document.getElementById('search-stock-input')?.value || '').toLowerCase();
             const cat = document.getElementById('filter-stock-category')?.value || '';
             const sup = document.getElementById('filter-stock-supplier')?.value || '';
+            const sortVal = document.getElementById('sort-stock-select')?.value || 'name-asc';
 
             let filtered = window.inventoryData.filter(i => {
                 const matchesCat = !cat ? true : (cat === 'FAVORITES' ? i.isFavorite === true : i.category === cat);
                 return i.name.toLowerCase().includes(q) && matchesCat && (!sup || String(i.supplierId) === String(sup));
             });
 
-            filtered.sort((a, b) => a.name.localeCompare(b.name));
-            
+            filtered.sort((a, b) => {
+                if (sortVal === 'low-stock') {
+                    const isLowA = window.getQty(a) < window.getMin(a) ? 0 : 1;
+                    const isLowB = window.getQty(b) < window.getMin(b) ? 0 : 1;
+                    if (isLowA !== isLowB) return isLowA - isLowB;
+                } else if (sortVal === 'stock-asc') {
+                    return window.getQty(a) - window.getQty(b);
+                } else if (sortVal === 'last-update') {
+                    const dateA = new Date(a.lastUpdateRaw_vasastan || a.lastUpdateRaw_ostermalm || 0);
+                    const dateB = new Date(b.lastUpdateRaw_vasastan || b.lastUpdateRaw_ostermalm || 0);
+                    return dateB - dateA;
+                }
+                return a.name.localeCompare(b.name);
+            });
+
             const c = document.getElementById('stock-list'); 
             if (!c) return;
             c.innerHTML = '';
@@ -1057,20 +1368,15 @@
                 const sup = window.suppliersData.find(s => String(s.id) === String(item.supplierId));
                 const qty = window.getQty(item), min = window.getMin(item), isLow = qty < min;
                 const lastBy = window.getLastUpdateBy(item), lastDate = window.getLastUpdateDate(item);
-                const lastUpdate = lastDate ? `🕒 ${lastDate} (${lastBy || 'N/D'})` : '🕒 Non aggiornato';
-
-                const favBadgeHtml = item.isFavorite 
-                    ? `<span style="font-size:11px; font-weight:800; color:#92400e; background:#fef3c7; border:1px solid #f59e0b; padding:3px 8px; border-radius:6px; display:inline-flex; align-items:center; gap:3px;">⭐ Preferito</span>`
-                    : `<span style="font-size:11px; font-weight:600; color:#a8a29e; background:#f5f5f4; border:1px solid #e7e5e4; padding:3px 8px; border-radius:6px; display:inline-flex; align-items:center; gap:3px;">☆ Preferito</span>`;
 
                 c.innerHTML += `
                     <div class="card-item ${isLow ? 'low-stock-alert' : ''}">
                         <div class="item-name-box" style="border-left-color:${sup?.color || '#78350f'};">
                             <div class="item-name">
                                 <span>${item.name}</span>
-                                ${favBadgeHtml}
+                                ${item.isFavorite ? `<span style="font-size:11px; font-weight:800; color:#92400e; background:#fef3c7; border:1px solid #f59e0b; padding:3px 8px; border-radius:6px;">⭐ Preferito</span>` : `<span style="font-size:11px; font-weight:600; color:#a8a29e; background:#f5f5f4; border:1px solid #e7e5e4; padding:3px 8px; border-radius:6px;">☆ Preferito</span>`}
                             </div>
-                            <div class="item-subtext" style="font-size:11px; color:#78350f;">${lastUpdate}</div>
+                            <div class="item-subtext">🕒 ${lastDate ? `${lastDate} (${lastBy || 'N/D'})` : 'Non ancora aggiornato'}</div>
                             <div class="badges-row"><span class="category-label-tag">${window.getCategoryEmoji(item.category)} ${item.category}</span><span class="supplier-badge" style="background:${sup?.color || '#78350f'}">${sup?.name || 'N/D'}</span></div>
                         </div>
                         <div class="item-controls">
@@ -1084,7 +1390,284 @@
             });
         };
 
-        // MAGAZZINO ED EDITOR - GESTIONE PREFERITI RISERVATA AD ADMIN
+        // GESTIONE ORDINI & ORDINAMENTI
+        window.filterOrderItems = function() {
+            const q = (document.getElementById('search-order-input')?.value || '').toLowerCase();
+            const cat = document.getElementById('filter-order-category')?.value || '';
+            const sup = document.getElementById('filter-order-supplier')?.value || '';
+            const sortVal = document.getElementById('sort-order-select')?.value || 'name-asc';
+
+            let filtered = window.inventoryData.filter(i => {
+                const matchesCat = !cat ? true : (cat === 'FAVORITES' ? i.isFavorite === true : i.category === cat);
+                return i.name.toLowerCase().includes(q) && matchesCat && (!sup || String(i.supplierId) === String(sup));
+            });
+
+            filtered.sort((a, b) => {
+                if (sortVal === 'low-stock') {
+                    const isLowA = window.getQty(a) < window.getMin(a) ? 0 : 1;
+                    const isLowB = window.getQty(b) < window.getMin(b) ? 0 : 1;
+                    if (isLowA !== isLowB) return isLowA - isLowB;
+                }
+                return a.name.localeCompare(b.name);
+            });
+
+            const c = document.getElementById('order-list'); 
+            if (!c) return;
+            c.innerHTML = '';
+            filtered.forEach(item => {
+                const sup = window.suppliersData.find(s => String(s.id) === String(item.supplierId));
+                const qty = window.getQty(item), min = window.getMin(item), isLow = qty < min;
+                const lastBy = window.getLastUpdateBy(item), lastDate = window.getLastUpdateDate(item);
+
+                c.innerHTML += `
+                    <div class="card-item ${isLow ? 'low-stock-alert' : ''}">
+                        <div class="item-name-box" style="border-left-color:${sup?.color || '#78350f'};">
+                            <div class="item-name">
+                                <span>${item.name}</span>
+                                ${item.isFavorite ? `<span style="font-size:11px; font-weight:800; color:#92400e; background:#fef3c7; border:1px solid #f59e0b; padding:3px 8px; border-radius:6px;">⭐ Preferito</span>` : `<span style="font-size:11px; font-weight:600; color:#a8a29e; background:#f5f5f4; border:1px solid #e7e5e4; padding:3px 8px; border-radius:6px;">☆ Preferito</span>`}
+                            </div>
+                            <div class="stock-warning-badge ${isLow?'alert':'normal'}">Scorta: ${qty} ${item.unit} (Min: ${min})</div>
+                            <div class="item-subtext" style="font-size:11px; background:#fefbf3; padding:4px 8px; border-radius:6px; border:1px solid #f3e8d2; margin-top:4px;">
+                                ${lastDate ? `🕒 Ultima modifica: <b>${lastBy || 'Operatore'}</b> (${lastDate})` : '🕒 Non modificato'}
+                            </div>
+                            <div class="badges-row"><span class="category-label-tag">${window.getCategoryEmoji(item.category)} ${item.category}</span><span class="supplier-badge" style="background:${sup?.color || '#78350f'}">${sup?.name || 'N/D'}</span></div>
+                        </div>
+                        <div class="item-controls">
+                            <span style="font-size:13px; font-weight:600; margin-right:auto;">Da Ordinare:</span>
+                            <button class="qty-btn" onclick="updateOrder(${item.id}, -1)">-</button>
+                            <input type="number" class="qty-input" value="${window.getOrderQty(item)}" onchange="setOrder(${item.id}, this.value)">
+                            <span class="unit-label">${item.unit}</span>
+                            <button class="qty-btn" onclick="updateOrder(${item.id}, 1)">+</button>
+                        </div>
+                    </div>`;
+            });
+        };
+
+        window.updateOrder = async function(id, d) { 
+            if (!window.checkAuthGuard()) return;
+            const i = window.inventoryData.find(x => x.id === id); 
+            if(i) {
+                const field = window.getLocationKey() === 'ostermalm' ? 'orderQty_ostermalm' : 'orderQty_vasastan';
+                await updateDoc(doc(db, "inventory", String(id)), { [field]: Math.max(0, window.getOrderQty(i) + d) }); 
+            }
+        };
+
+        window.setOrder = async function(id, v) { 
+            if (!window.checkAuthGuard()) return;
+            const i = window.inventoryData.find(x => x.id === id); 
+            if(i) {
+                const field = window.getLocationKey() === 'ostermalm' ? 'orderQty_ostermalm' : 'orderQty_vasastan';
+                await updateDoc(doc(db, "inventory", String(id)), { [field]: Math.max(0, parseFloat(v) || 0) }); 
+            }
+        };
+
+        window.generateOrderSummary = function() {
+            if (!window.checkAuthGuard()) return;
+            const dateVal = document.getElementById('order-date-picker').value;
+            if (!dateVal) return window.showAlert("🚚 Seleziona una data di consegna.");
+
+            const items = window.inventoryData.filter(i => window.getOrderQty(i) > 0);
+            if (items.length === 0) return window.showAlert("🛒 Nessun prodotto selezionato.");
+
+            window.renderSummaryModalContent(window.currentUserProfile.name, dateVal);
+            document.getElementById('summary-modal').classList.add('active');
+            document.getElementById('overlay').classList.add('active');
+        };
+
+        window.renderSummaryModalContent = function(op, dateVal) {
+            const items = window.inventoryData.filter(i => window.getOrderQty(i) > 0);
+            let groups = {}; items.forEach(i => { if(!groups[i.supplierId]) groups[i.supplierId] = []; groups[i.supplierId].push(i); });
+            
+            const c = document.getElementById('summary-content'); c.innerHTML = '';
+            const locNameClean = (window.activeLocation || 'Magari DEV').split(' ')[0].toUpperCase();
+            const todayFormatted = new Date().toLocaleDateString('it-IT');
+
+            for (let sId in groups) {
+                const sup = window.suppliersData.find(s => String(s.id) === String(sId));
+                const supName = sup?.name || 'Fornitore';
+                const emailSubject = `Beställning Magari DEV ${locNameClean} - ${todayFormatted} (Leverans: ${dateVal})`;
+                
+                let emailBody = `BESTÄLLNING MAGARI DEV - ${locNameClean}\n========================================\n👤 BESTÄLLARE: ${op.toUpperCase()}\n🚚 ÖNSKAT LEVERANSDATUM: ${dateVal}\n\nCiao ${supName},\n\nPRODUKTER:\n`;
+                let waTxt = `*BESTÄLLNING MAGARI DEV - ${locNameClean}*\n👤 Beställare: *${op.toUpperCase()}*\n🚚 Önskat leveransdatum: *${dateVal}*\n\nCiao ${supName},\n\n*PRODUKTER:*\n`;
+                
+                groups[sId].forEach(p => { 
+                    const q = window.getOrderQty(p), u = window.translateUnitToSwedish(p.unit).toUpperCase();
+                    emailBody += `• ${p.name.toUpperCase()} -> ${q} ${u}\n`; 
+                    waTxt += `• *${p.name.toUpperCase()}*  ->  *${q} ${u}*\n`; 
+                });
+                emailBody += `\nMed vänliga hälsningar,\nMagari DEV`; waTxt += `\nMed vänliga hälsningar,\nMagari DEV`;
+                
+                const wa = `whatsapp://send?phone=${(sup?.phone || '').replace(/[^0-9]/g,'')}&text=${encodeURIComponent(waTxt)}`;
+                const itemsListHtml = groups[sId].map(p => `• <b>${p.name.toUpperCase()}</b>  ->  <span style="color:#b45309;">${window.getOrderQty(p)} ${window.translateUnitToSwedish(p.unit).toUpperCase()}</span>`).join('<br>');
+
+                c.innerHTML += `
+                    <div style="background:#fffbe8; padding:16px; border-radius:10px; margin-bottom:16px; border:1px solid #fde68a;">
+                        <div style="font-weight:800; color:#b45309; font-size:18px; margin-bottom:8px;">🚚 ${supName}</div>
+                        <div style="margin:12px 0; background:#fff; padding:10px; border-radius:6px; border:1px solid #e2e8f0;">${itemsListHtml}</div>
+                        <a href="${wa}" style="background:var(--whatsapp); color:white; padding:12px; display:block; text-align:center; border-radius:8px; text-decoration:none; font-weight:bold; margin-bottom:6px;">💬 Invia via WhatsApp</a>
+                        <a href="mailto:${sup?.email||''}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}" style="background: linear-gradient(135deg, #2563eb, #1d4ed8); color:white; padding:12px; display:block; text-align:center; border-radius:8px; text-decoration:none; font-weight:bold; margin-bottom:6px;">✉️ Invia via Email</a>
+                        <button onclick="confirmSingleSupplierOrder('${sId}', '${op}', '${dateVal}')" class="btn-save" style="width:100%; background: linear-gradient(135deg, #166534, #14532d);">✅ Conferma Ordine DEV per ${supName}</button>
+                    </div>`;
+            }
+            c.innerHTML += `<button onclick="confirmAndSaveOrderToHistory('${op}')" class="btn-save" style="width:100%; padding:14px; background: linear-gradient(135deg, #b45309, #92400e);">✅ Conferma TUTTI gli Ordini DEV</button>`;
+        };
+
+        window.confirmSingleSupplierOrder = async function(sId, operator, dateVal) {
+            const items = window.inventoryData.filter(i => String(i.supplierId) === String(sId) && window.getOrderQty(i) > 0);
+            if (items.length === 0) return;
+            const sup = window.suppliersData.find(s => String(s.id) === String(sId));
+            const nowStr = new Date().toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+            const entryId = Date.now() + Math.random();
+
+            const batch = writeBatch(db);
+            batch.set(doc(db, "history", String(entryId)), {
+                id: entryId, timestamp: nowStr, destination: window.activeLocation || 'Sede Non Specifica DEV',
+                operatorName: operator, supplierName: sup?.name || 'Fornitore',
+                items: items.map(i => ({ id: i.id, name: i.name, qty: window.getOrderQty(i), unit: i.unit })),
+                checked: false, verificationDetails: null
+            });
+
+            const field = window.getLocationKey() === 'ostermalm' ? 'orderQty_ostermalm' : 'orderQty_vasastan';
+            items.forEach(i => batch.update(doc(db, "inventory", String(i.id)), { [field]: 0 }));
+            
+            await batch.commit();
+            closeSummaryModal(); window.showAlert("✅ Ordine salvato nello storico DEV!");
+        };
+
+        window.confirmAndSaveOrderToHistory = async function(operator) {
+            const items = window.inventoryData.filter(i => window.getOrderQty(i) > 0);
+            if (items.length === 0) return;
+            let groups = {}; items.forEach(i => { if(!groups[i.supplierId]) groups[i.supplierId] = []; groups[i.supplierId].push(i); });
+            const nowStr = new Date().toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+            const batch = writeBatch(db);
+            for (let sId in groups) {
+                const sup = window.suppliersData.find(s => String(s.id) === String(sId));
+                const entryId = Date.now() + Math.random();
+                batch.set(doc(db, "history", String(entryId)), {
+                    id: entryId, timestamp: nowStr, destination: window.activeLocation || 'Sede Non Specifica DEV',
+                    operatorName: operator, supplierName: sup?.name || 'Fornitore',
+                    items: groups[sId].map(i => ({ id: i.id, name: i.name, qty: window.getOrderQty(i), unit: i.unit })),
+                    checked: false, verificationDetails: null
+                });
+            }
+
+            const field = window.getLocationKey() === 'ostermalm' ? 'orderQty_ostermalm' : 'orderQty_vasastan';
+            items.forEach(i => batch.update(doc(db, "inventory", String(i.id)), { [field]: 0 }));
+            
+            await batch.commit();
+            closeSummaryModal(); window.showAlert("🎉 Ordini salvati nello storico DEV!");
+        };
+
+        window.closeSummaryModal = () => { document.getElementById('summary-modal').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); };
+
+        // STORICO & VERIFICA
+        window.openVerifyDeliveryModal = function(historyId) {
+            if (!window.checkAuthGuard()) return;
+            window.activeVerifyHistoryId = historyId;
+            const entry = window.orderHistoryData.find(x => x.id === historyId);
+            if (!entry) return;
+
+            const container = document.getElementById('verify-items-checklist-container');
+            container.innerHTML = '';
+            entry.items.forEach((it, idx) => {
+                container.innerHTML += `
+                    <div style="background:white; padding:8px 10px; border-radius:6px; border:1px solid #cbd5e1; display:flex; flex-direction:column; gap:4px;">
+                        <div style="font-weight:bold; font-size:13px; color:#1e293b;">• ${it.name}</div>
+                        <div style="display:flex; justify-content:space-between; font-size:12px; color:#555;">
+                            <span>Ordinato: <b>${it.qty} ${it.unit}</b></span>
+                            <div style="display:flex; align-items:center; gap:6px;">
+                                <label style="font-size:11px; font-weight:600;">Ricevuti:</label>
+                                <input type="number" id="verify-item-qty-${idx}" class="form-control" value="${it.qty}" style="width:60px; padding:4px; text-align:center; font-weight:bold;" min="0">
+                                <span style="font-size:11px;">${it.unit}</span>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+            document.getElementById('verify-note-input').value = '';
+            document.getElementById('verify-delivery-modal').classList.add('active');
+            document.getElementById('overlay').classList.add('active');
+        };
+
+        window.closeVerifyDeliveryModal = () => { document.getElementById('verify-delivery-modal').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); window.activeVerifyHistoryId = null; };
+
+        window.submitDeliveryVerification = async function() {
+            if (!window.checkAuthGuard()) return;
+            const opName = window.currentUserProfile.name;
+            const customNote = document.getElementById('verify-note-input').value.trim();
+            const entry = window.orderHistoryData.find(x => x.id === window.activeVerifyHistoryId);
+            if (!entry) return;
+
+            let discrepancies = customNote ? [customNote] : [];
+            const batch = writeBatch(db);
+            
+            entry.items.forEach((it, idx) => {
+                const receivedInput = document.getElementById(`verify-item-qty-${idx}`);
+                const receivedQty = receivedInput ? parseFloat(receivedInput.value) || 0 : it.qty;
+                if (receivedQty !== it.qty) discrepancies.push(`${it.name}: attesi ${it.qty}, ricevuti ${receivedQty}`);
+
+                if (receivedQty > 0) {
+                    let invItem = window.inventoryData.find(x => x.id === it.id || x.name.toLowerCase() === it.name.toLowerCase());
+                    if (invItem) {
+                        const newQty = window.getQty(invItem) + receivedQty;
+                        batch.update(doc(db, "inventory", String(invItem.id)), window.getStockUpdatesObj(newQty, opName));
+                    }
+                }
+            });
+
+            const nowStr = new Date().toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+            batch.update(doc(db, "history", String(entry.id)), {
+                checked: true, checkedBy: opName, checkedAt: nowStr,
+                verificationDetails: discrepancies.length > 0 ? discrepancies.join(' | ') : "Merce completa al 100%"
+            });
+
+            await batch.commit();
+            closeVerifyDeliveryModal(); window.showAlert("✅ Merce verificata e aggiunta alle giacenze DEV!");
+        };
+
+        window.filterHistoryItems = function() {
+            const c = document.getElementById('history-list'); 
+            if (!c) return;
+            c.innerHTML = '';
+            const query = (document.getElementById('search-history-input')?.value || '').toLowerCase();
+            const activeLocShort = window.activeLocation ? window.activeLocation.split(' ')[0] : '';
+
+            const filtered = window.orderHistoryData.filter(h => {
+                const matchesQuery = (h.supplierName || '').toLowerCase().includes(query) || (h.operatorName || '').toLowerCase().includes(query);
+                const matchesLoc = h.destination && h.destination.includes(activeLocShort);
+                return matchesQuery && matchesLoc;
+            });
+
+            if (filtered.length === 0) return c.innerHTML = '<div style="padding:16px; text-align:center; color:#666;">Nessun ordine nello storico DEV.</div>';
+
+            filtered.forEach((h, idx) => {
+                let itemsHtml = Array.isArray(h.items) ? h.items.map(it => `• ${it.name}: <b>${it.qty} ${it.unit}</b>`).join('<br>') : '';
+                const isChecked = h.checked === true;
+                let checkStatusHtml = '';
+
+                if (!isChecked) {
+                    checkStatusHtml = `
+                        <div style="background:#fef2f2; border:1px solid #fecaca; padding:8px; border-radius:6px; font-size:12px; color:#dc2626; margin-top:8px; display:flex; justify-content:space-between; align-items:center;">
+                            <span>⚠️ <b>Da Controllare</b></span><button class="btn-save" style="padding:6px 10px; font-size:11px; background:#dc2626;" onclick="openVerifyDeliveryModal(${h.id})">✍️ Verifica DEV</button>
+                        </div>`;
+                } else if (h.verificationDetails && !h.verificationDetails.includes("100%")) {
+                    checkStatusHtml = `<div style="background:#fffbe8; border:1px solid #fde68a; padding:8px; border-radius:6px; font-size:12px; color:#b45309; margin-top:8px;">⚠ <b>Discrepanze:</b> ${h.verificationDetails}</div>`;
+                } else {
+                    checkStatusHtml = `<div style="background:#f0fdf4; border:1px solid #bbf7d0; padding:8px; border-radius:6px; font-size:12px; color:#166534; margin-top:8px;">✅ <b>Completo</b> (${h.checkedBy} - ${h.checkedAt})</div>`;
+                }
+                
+                c.innerHTML += `
+                    <div class="history-card" style="border-left: 4px solid ${!isChecked ? '#dc2626' : (h.verificationDetails && !h.verificationDetails.includes("100%") ? '#f59e0b' : '#166534')};">
+                        <div class="history-header"><span>🕒 ${h.timestamp}</span><span>📍 ${h.destination}</span></div>
+                        <div style="font-weight:bold; font-size:14px; margin-bottom:4px;">🚚 ${h.supplierName} <span style="font-size:12px; font-weight:normal; color:#666;">(👤 ${h.operatorName})</span></div>
+                        ${itemsHtml ? `<div style="font-size:12px; margin-top:6px; background:#faf8f5; padding:6px; border-radius:4px;">${itemsHtml}</div>` : ''}
+                        ${checkStatusHtml}
+                        <div style="margin-top:8px; text-align:right;"><button class="btn-action-del" onclick="deleteHistoryItemGuard(${idx})">🗑 Elimina</button></div>
+                    </div>`;
+            });
+        };
+
+        // MAGAZZINO ED EDITOR ANAGRAFICA
         window.toggleFavorite = async function(itemId) {
             if (!window.checkAuthGuard()) return;
             if (!window.currentUserProfile || window.currentUserProfile.role !== 'admin') {
@@ -1134,6 +1717,434 @@
                         </div>
                     </div>`;
             });
+        };
+
+        window.openAddModal = function(id = null) {
+            if (!window.checkAuthGuard()) return;
+            window.closeAll();
+            window.populateAllSupplierFilters();
+            document.getElementById('edit-item-id').value = ''; 
+            document.getElementById('new-name').value = ''; 
+            document.getElementById('new-price').value = '0';
+            document.getElementById('new-min-vasastan').value = '2';
+            document.getElementById('new-min-ostermalm').value = '2';
+            
+            if (id) {
+                const item = window.inventoryData.find(x => x.id === id);
+                if (item) {
+                    document.getElementById('edit-item-id').value = item.id; 
+                    document.getElementById('new-name').value = item.name;
+                    document.getElementById('new-category-select').value = item.category; 
+                    document.getElementById('new-supplier-select').value = item.supplierId;
+                    document.getElementById('new-min-vasastan').value = (item.minQty_vasastan !== undefined && item.minQty_vasastan !== null) ? item.minQty_vasastan : (item.minQty ?? 2);
+                    document.getElementById('new-min-ostermalm').value = (item.minQty_ostermalm !== undefined && item.minQty_ostermalm !== null) ? item.minQty_ostermalm : 2;
+                    document.getElementById('new-price').value = item.price || 0; 
+                    document.getElementById('new-unit').value = item.unit || 'Bottiglie';
+                }
+            }
+            document.getElementById('add-modal').classList.add('active'); 
+            document.getElementById('overlay').classList.add('active');
+        };
+
+        window.closeAddModal = () => { document.getElementById('add-modal').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); };
+
+        window.saveInventoryItem = async function() {
+            if (!window.checkAuthGuard()) return;
+            const idVal = document.getElementById('edit-item-id').value;
+            const name = document.getElementById('new-name').value.trim();
+            if (!name) return window.showAlert("⚠️ Inserisci il nome.");
+            
+            const cat = document.getElementById('new-category-select').value;
+            const supId = parseInt(document.getElementById('new-supplier-select').value);
+            const price = parseFloat(document.getElementById('new-price').value) || 0;
+            const unit = document.getElementById('new-unit').value;
+            const valVas = parseFloat(document.getElementById('new-min-vasastan').value);
+            const minVasastan = isNaN(valVas) ? 2 : valVas;
+            const valOst = parseFloat(document.getElementById('new-min-ostermalm').value);
+            const minOstermalm = isNaN(valOst) ? 2 : valOst;
+
+            if (idVal) {
+                await updateDoc(doc(db, "inventory", String(idVal)), { 
+                    name, category: cat, supplierId: supId, price, unit, minQty_vasastan: minVasastan, minQty_ostermalm: minOstermalm
+                });
+            } else {
+                const newId = Date.now();
+                await setDoc(doc(db, "inventory", String(newId)), { 
+                    id: newId, name, category: cat, supplierId: supId, minQty_vasastan: minVasastan, minQty_ostermalm: minOstermalm, 
+                    orderQty_vasastan: 0, orderQty_ostermalm: 0, unit, price, qty_vasastan: 0, qty_ostermalm: 0, isFavorite: false 
+                });
+            }
+            closeAddModal(); window.showAlert("✅ Prodotto salvato in DEV!");
+        };
+
+        window.deleteInventoryItem = async function(id) { if (window.checkAuthGuard() && confirm("Eliminare prodotto DEV?")) await deleteDoc(doc(db, "inventory", String(id))); };
+
+        // GESTIONE FORNITORI & PALETTE
+        window.renderSupplierColorGrid = function(selectedHex) {
+            const grid = document.getElementById('supplier-color-palette-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            window.supplierColorPalette.forEach(col => {
+                const isSelected = (col.hex.toLowerCase() === (selectedHex || '').toLowerCase());
+                const circle = document.createElement('div');
+                circle.style.cssText = `
+                    width: 34px; height: 34px; border-radius: 50%; background-color: ${col.hex};
+                    cursor: pointer; border: ${isSelected ? '3px solid #1e293b' : '2px solid white'};
+                    box-shadow: ${isSelected ? '0 0 0 2px #b45309' : '0 1px 3px rgba(0,0,0,0.2)'};
+                    display: flex; align-items: center; justify-content: center; color: white; font-size: 14px;
+                `;
+                if (isSelected) circle.innerHTML = '✓';
+                circle.onclick = () => { window.selectSupplierColor(col.hex); };
+                grid.appendChild(circle);
+            });
+        };
+
+        window.selectSupplierColor = function(hex) {
+            document.getElementById('supp-color-val').value = hex;
+            window.renderSupplierColorGrid(hex);
+            const badge = document.getElementById('supplier-color-preview-badge');
+            if (badge) {
+                badge.style.backgroundColor = hex; badge.style.color = '#ffffff';
+                badge.innerText = `🚚 ${document.getElementById('supp-name').value.trim() || 'Anteprima Fornitore'}`;
+            }
+        };
+
+        window.getAutoAvailableColor = function() {
+            const usedColors = window.suppliersData.map(s => (s.color || '').toLowerCase());
+            const free = window.supplierColorPalette.find(c => !usedColors.includes(c.hex.toLowerCase()));
+            return free ? free.hex : window.supplierColorPalette[0].hex;
+        };
+
+        window.filterSuppliers = function() {
+            const q = (document.getElementById('search-supplier-input')?.value || '').toLowerCase();
+            const c = document.getElementById('suppliers-list'); 
+            if (!c) return;
+            c.innerHTML = '';
+
+            let sortedSupps = [...window.suppliersData].sort((a, b) => (a.orderIndex || 999) - (b.orderIndex || 999));
+
+            sortedSupps.filter(s => s.name.toLowerCase().includes(q)).forEach((s) => {
+                c.innerHTML += `
+                    <div class="card-item">
+                        <div class="item-name-box" style="border-left-color:${s.color || '#0288d1'};">
+                            <div class="item-name" style="color:${s.color || '#0288d1'};">
+                                <span>🚚 ${s.name}</span>
+                                <div style="display:flex; gap:4px;">
+                                    <button onclick="moveSupplierOrder(${s.id}, -1)" style="background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; padding:2px 6px; font-size:12px; cursor:pointer;" title="Sposta In Alto">⬆️</button>
+                                    <button onclick="moveSupplierOrder(${s.id}, 1)" style="background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; padding:2px 6px; font-size:12px; cursor:pointer;" title="Sposta In Basso">⬇️</button>
+                                </div>
+                            </div>
+                            <div class="item-subtext">📞 ${s.phone || 'N/D'} | ✉ ${s.email || 'N/D'}</div>
+                        </div>
+                        <div class="action-row-btn">
+                            <button class="btn-action-edit" onclick="openAddSupplierModal('${s.id}')">✏️ Modifica</button>
+                            <button class="btn-action-del" onclick="deleteSupplier('${s.id}')">🗑 Elimina</button>
+                        </div>
+                    </div>`;
+            });
+        };
+
+        window.moveSupplierOrder = async function(supId, direction) {
+            if (!window.checkAuthGuard()) return;
+            let sorted = [...window.suppliersData].sort((a, b) => (a.orderIndex || 999) - (b.orderIndex || 999));
+            const idx = sorted.findIndex(s => String(s.id) === String(supId));
+            if (idx === -1) return;
+
+            const targetIdx = idx + direction;
+            if (targetIdx < 0 || targetIdx >= sorted.length) return;
+
+            const batch = writeBatch(db);
+            batch.update(doc(db, "suppliers", String(sorted[idx].id)), { orderIndex: targetIdx + 1 });
+            batch.update(doc(db, "suppliers", String(sorted[targetIdx].id)), { orderIndex: idx + 1 });
+
+            await batch.commit();
+            window.showAlert("↕️ Ordine fornitori aggiornato!");
+        };
+
+        window.openAddSupplierModal = function(id = null) {
+            if (!window.checkAuthGuard()) return;
+            window.closeAll();
+            document.getElementById('edit-supplier-id').value = '';
+            document.getElementById('supp-name').value = '';
+            document.getElementById('supp-phone').value = '';
+            document.getElementById('supp-email').value = '';
+
+            let chosenHex = window.getAutoAvailableColor();
+
+            if (id) {
+                const s = window.suppliersData.find(x => String(x.id) === String(id));
+                if (s) {
+                    document.getElementById('supplier-modal-title').innerText = '✏️ Modifica Fornitore DEV';
+                    document.getElementById('edit-supplier-id').value = s.id;
+                    document.getElementById('supp-name').value = s.name || '';
+                    document.getElementById('supp-phone').value = s.phone || '';
+                    document.getElementById('supp-email').value = s.email || '';
+                    chosenHex = s.color || chosenHex;
+                }
+            } else {
+                document.getElementById('supplier-modal-title').innerText = '➕ Nuovo Fornitore DEV';
+            }
+
+            window.selectSupplierColor(chosenHex);
+            document.getElementById('add-supplier-modal').classList.add('active');
+            document.getElementById('overlay').classList.add('active');
+        };
+
+        window.closeAddSupplierModal = () => { document.getElementById('add-supplier-modal').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); };
+
+        window.saveSupplier = async function() {
+            if (!window.checkAuthGuard()) return;
+            const idVal = document.getElementById('edit-supplier-id').value;
+            const name = document.getElementById('supp-name').value.trim();
+            const phone = document.getElementById('supp-phone').value.trim();
+            const email = document.getElementById('supp-email').value.trim();
+            const color = document.getElementById('supp-color-val').value;
+
+            if (!name) return window.showAlert("⚠️ Inserisci il nome del fornitore.");
+
+            if (idVal) {
+                await updateDoc(doc(db, "suppliers", String(idVal)), { name, phone, email, color });
+                window.showAlert("✅ Fornitore DEV aggiornato!");
+            } else {
+                const newId = Date.now();
+                await setDoc(doc(db, "suppliers", String(newId)), { id: newId, name, phone, email, color, orderIndex: window.suppliersData.length + 1 });
+                window.showAlert("✅ Nuovo fornitore DEV salvato!");
+            }
+
+            closeAddSupplierModal();
+        };
+
+        window.deleteSupplier = async function(id) {
+            if (!window.checkAuthGuard()) return;
+            if (confirm("Eliminare fornitore DEV?")) {
+                await deleteDoc(doc(db, "suppliers", String(id)));
+                window.showAlert("🗑️ Fornitore eliminato.");
+            }
+        };
+
+        // EXPORT EXCEL CORRETTO MULTI-FOGLIO
+        window.promptExportExcelModal = () => { if (!window.checkAuthGuard()) return; window.closeAll(); document.getElementById('export-excel-modal').classList.add('active'); document.getElementById('overlay').classList.add('active'); };
+        window.closeExportExcelModal = () => { document.getElementById('export-excel-modal').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); };
+
+        window.generateAndExportExcel = function() {
+            const type = document.getElementById('export-type-select').value;
+            const opName = window.currentUserProfile ? window.currentUserProfile.name : 'Operatore';
+            const locName = window.activeLocation || 'Magari DEV';
+            const todayStr = new Date().toLocaleDateString('it-IT');
+            const isAlcoholCategory = (cat) => (cat === 'Alcolici' || cat === 'Bevande');
+
+            const buildStandardSheetData = (itemsList, titleHeader) => {
+                const rows = [
+                    [`MAGARI DEV INVENTORY REPORT - ${titleHeader.toUpperCase()}`],
+                    [`Location: ${locName}`, `Date: ${todayStr}`, `Operator: ${opName}`],
+                    [""],
+                    ["ITEM NAME", "CATEGORY", "SUPPLIER", "PRICE (SEK)", "STOCK QTY", "TOTAL VALUE (SEK)", "UNIT"]
+                ];
+
+                let totalStockSum = 0; let totalValueSum = 0;
+                itemsList.forEach(i => {
+                    const sup = window.suppliersData.find(s => String(s.id) === String(i.supplierId))?.name || 'N/D';
+                    const stock = window.getQty(i); const price = i.price || 0;
+                    const val = parseFloat((stock * price).toFixed(2));
+                    totalStockSum += stock; totalValueSum += val;
+                    rows.push([i.name, i.category, sup, price, stock, val, i.unit]);
+                });
+
+                rows.push([""]);
+                rows.push([`TOTAL ${titleHeader.toUpperCase()}`, "", "", "", totalStockSum, parseFloat(totalValueSum.toFixed(2)), ""]);
+                return XLSX.utils.aoa_to_sheet(rows);
+            };
+
+            const wb = XLSX.utils.book_new();
+            const foodItems = window.inventoryData.filter(i => !isAlcoholCategory(i.category)).sort((a, b) => a.name.localeCompare(b.name));
+            const alcoholItems = window.inventoryData.filter(i => isAlcoholCategory(i.category)).sort((a, b) => a.name.localeCompare(b.name));
+
+            if (type === 'food' || type === 'all') {
+                XLSX.utils.book_append_sheet(wb, buildStandardSheetData(foodItems, "Food & Supplies"), "Food & Supplies");
+            }
+            if (type === 'alcohol' || type === 'all') {
+                XLSX.utils.book_append_sheet(wb, buildStandardSheetData(alcoholItems, "Alcohol & Beverages"), "Alcohol & Beverages");
+            }
+
+            const cleanLoc = locName.split(' ')[0];
+            const dateStr = new Date().toISOString().split('T')[0];
+            
+            XLSX.writeFile(wb, `Inventory_Magari_DEV_${cleanLoc}_${dateStr}.xlsx`);
+            closeExportExcelModal(); 
+            window.showAlert("📊 File Excel DEV scaricato!");
+        };
+
+        // REPORT CONSUMI CON FILTRO MESE
+        window.toggleReportPeriodInputs = function() {
+            const p = document.getElementById('report-period-type')?.value;
+            const grp = document.getElementById('report-month-select-group');
+            if (grp) grp.style.display = (p === 'month') ? 'block' : 'none';
+        };
+
+        window.generateRealReport = function() {
+            if (!window.checkAuthGuard()) return;
+
+            const periodType = document.getElementById('report-period-type').value;
+            const monthVal = document.getElementById('report-month-picker').value;
+            const resultsContainer = document.getElementById('report-results-container');
+            const titleDisplay = document.getElementById('report-title-display');
+            const alcTbody = document.querySelector('#table-alcohol-report tbody');
+            const foodTbody = document.querySelector('#table-food-report tbody');
+            const grandTotalBox = document.getElementById('grand-total-report-box');
+
+            if (periodType === 'month' && !monthVal) return window.showAlert("⚠️ Seleziona un mese per generare il report.");
+
+            const isAlcohol = (cat) => (cat === 'Alcolici' || cat === 'Bevande');
+            const activeLocShort = window.activeLocation ? window.activeLocation.split(' ')[0] : '';
+
+            let itemTotals = {}; 
+
+            if (periodType === 'stock') {
+                titleDisplay.innerText = `📊 Report Valore Giacenze DEV (${window.activeLocation || 'Tutte le sedi'})`;
+                window.inventoryData.forEach(item => {
+                    const qty = window.getQty(item);
+                    if (qty > 0) {
+                        itemTotals[item.name] = { qty: qty, price: item.price || 0, unit: item.unit, isAlc: isAlcohol(item.category) };
+                    }
+                });
+            } else {
+                const label = periodType === 'month' ? `Mese: ${monthVal}` : 'Totale Storico DEV';
+                titleDisplay.innerText = `📋 Report Consumi DEV (${label} - ${window.activeLocation || 'Tutte le sedi'})`;
+
+                const filteredHistory = window.orderHistoryData.filter(h => {
+                    const matchesLoc = !activeLocShort || (h.destination && h.destination.includes(activeLocShort));
+                    if (!matchesLoc) return false;
+
+                    if (periodType === 'month' && monthVal) {
+                        const parts = (h.timestamp || '').split(',')[0].split('/');
+                        if (parts.length === 3) {
+                            const orderYearMonth = `${parts[2].trim()}-${parts[1].trim().padStart(2, '0')}`;
+                            return orderYearMonth === monthVal;
+                        }
+                    }
+                    return true;
+                });
+
+                filteredHistory.forEach(h => {
+                    if (Array.isArray(h.items)) {
+                        h.items.forEach(it => {
+                            const invMatch = window.inventoryData.find(x => x.id === it.id || x.name.toLowerCase() === it.name.toLowerCase());
+                            const price = invMatch ? (invMatch.price || 0) : 0;
+                            const isAlc = invMatch ? isAlcohol(invMatch.category) : false;
+
+                            if (!itemTotals[it.name]) itemTotals[it.name] = { qty: 0, price: price, unit: it.unit, isAlc: isAlc };
+                            itemTotals[it.name].qty += parseFloat(it.qty) || 0;
+                        });
+                    }
+                });
+            }
+
+            alcTbody.innerHTML = ''; foodTbody.innerHTML = '';
+            let totalAlcCost = 0, totalFoodCost = 0;
+
+            Object.keys(itemTotals).sort().forEach(name => {
+                const data = itemTotals[name];
+                const cost = parseFloat((data.qty * data.price).toFixed(2));
+                const rowHtml = `<tr><td><b>${name}</b></td><td>${data.qty} ${data.unit}</td><td>${cost.toFixed(2)} SEK</td></tr>`;
+
+                if (data.isAlc) { alcTbody.innerHTML += rowHtml; totalAlcCost += cost; }
+                else { foodTbody.innerHTML += rowHtml; totalFoodCost += cost; }
+            });
+
+            const grandTotal = parseFloat((totalAlcCost + totalFoodCost).toFixed(2));
+            grandTotalBox.innerHTML = `💰 COSTO TOTALE DEV: <span style="font-size:16px;">${grandTotal.toFixed(2)} SEK</span>`;
+
+            resultsContainer.style.display = 'block';
+            window.showAlert("📊 Report DEV generato!");
+        };
+
+        // BUG & RESET OPERATIONS
+        window.submitBugReport = async function() {
+            if (!window.checkAuthGuard()) return;
+            const desc = document.getElementById('bug-desc-input').value.trim();
+            if (!desc) return window.showAlert("⚠️ Compila la descrizione.");
+            const nowStr = new Date().toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+            const newId = Date.now();
+
+            await setDoc(doc(db, "bugReports", String(newId)), {
+                id: newId, timestamp: nowStr, operator: window.currentUserProfile.name, type: document.getElementById('bug-type-select').value,
+                description: desc, location: document.getElementById('bug-location-display').value || window.activeLocation || 'Sede Non Specifica DEV', resolved: false
+            });
+
+            document.getElementById('bug-desc-input').value = '';
+            window.showAlert("🚀 Segnalazione DEV inviata!"); window.navigateTo('ordini');
+        };
+
+        window.toggleBugStatus = async function(bugId) {
+            if (!window.checkAuthGuard()) return;
+            const bug = window.bugReportsData.find(b => String(b.id) === String(bugId));
+            if (bug) {
+                const currentStatus = (bug.resolved === true || bug.resolved === "true" || bug.status === "resolved");
+                await updateDoc(doc(db, "bugReports", String(bugId)), { resolved: !currentStatus });
+                window.showAlert(!currentStatus ? "✅ Segnalazione DEV Risolta!" : "🔄 Segnalazione DEV riaperta!");
+            }
+        };
+
+        window.deleteBugReport = async function(bugId) {
+            if (!window.checkAuthGuard()) return;
+            if (confirm("Eliminare la segnalazione DEV?")) {
+                await deleteDoc(doc(db, "bugReports", String(bugId)));
+                window.showAlert("🗑️ Segnalazione eliminata.");
+            }
+        };
+
+        window.deleteHistoryItemGuard = async function(idx) {
+            if (!window.checkAuthGuard()) return;
+            if (confirm("Eliminare dalla storico DEV?")) {
+                await deleteDoc(doc(db, "history", String(window.orderHistoryData[idx].id)));
+            }
+        };
+
+        window.executeResetStockGuard = async function() {
+            if (!window.checkAuthGuard()) return;
+            const key = window.getLocationKey();
+            if (confirm(`Azzerare giacenze per la sede attiva DEV (${key})?`)) {
+                const batch = writeBatch(db);
+                window.inventoryData.forEach(i => {
+                    const ref = doc(db, "inventory", String(i.id));
+                    if (key === 'ostermalm') batch.update(ref, { qty_ostermalm: 0 });
+                    else batch.update(ref, { qty_vasastan: 0 });
+                });
+                await batch.commit(); window.showAlert("✅ Giacenze DEV azzerate!");
+            }
+        };
+
+        window.executeClearHistoryGuard = async function() {
+            if (!window.checkAuthGuard()) return;
+            if (confirm("Svuotare lo storico ordini DEV?")) {
+                const batch = writeBatch(db);
+                window.orderHistoryData.forEach(h => batch.delete(doc(db, "history", String(h.id))));
+                await batch.commit(); window.showAlert("🗑️ Storico DEV svuotato!");
+            }
+        };
+
+        window.executeResetSuppliersGuard = async function() {
+            if (!window.checkAuthGuard()) return;
+            if (confirm("Ripristinare i fornitori DEV?")) {
+                const batch = writeBatch(db);
+                window.suppliersData.forEach(s => batch.delete(doc(db, "suppliers", String(s.id))));
+                window.defaultSuppliers.forEach(s => batch.set(doc(db, "suppliers", String(s.id)), s));
+                await batch.commit(); window.showAlert("✅ Fornitori DEV ripristinati!");
+            }
+        };
+
+        window.executeResetAllGuard = async function() {
+            if (!window.checkAuthGuard()) return;
+            if (confirm("RESET TOTALE DATABASE DEV TEST?")) {
+                const batch = writeBatch(db);
+                window.inventoryData.forEach(i => batch.delete(doc(db, "inventory", String(i.id))));
+                window.orderHistoryData.forEach(h => batch.delete(doc(db, "history", String(h.id))));
+                window.bugReportsData.forEach(b => batch.delete(doc(db, "bugReports", String(b.id))));
+                window.suppliersData.forEach(s => batch.delete(doc(db, "suppliers", String(s.id))));
+                window.defaultSuppliers.forEach(s => batch.set(doc(db, "suppliers", String(s.id)), s));
+                await batch.commit(); window.showAlert("⚠️ Reset DEV completato.");
+            }
         };
 
         const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
