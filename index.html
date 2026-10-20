@@ -1266,7 +1266,7 @@
         };
 
         window.updateCartBadge = function() {
-            const activeItemsCount = window.inventoryData.filter(i => window.getOrderQty(i) > 0).length;
+            const activeItemsCount = window.inventoryData.filter(i => window.getOrderQty(i) > 0 && i.isAvailable !== false).length;
             const badge = document.getElementById('cart-badge-drawer');
             if (badge) { badge.innerText = `${activeItemsCount} da ordinare`; badge.style.display = activeItemsCount > 0 ? 'inline-block' : 'none'; }
         };
@@ -1471,13 +1471,24 @@
             }
         };
 
-        window.generateOrderSummary = function() {
+        window.generateOrderSummary = async function() {
             if (!window.checkAuthGuard()) return;
             const dateVal = document.getElementById('order-date-picker').value;
             if (!dateVal) return window.showAlert("🚚 Seleziona una data di consegna.");
 
-            const items = window.inventoryData.filter(i => window.getOrderQty(i) > 0);
-            if (items.length === 0) return window.showAlert("🛒 Nessun prodotto selezionato.");
+            // Azzera e rimuove dal carrello i prodotti diventati Non Disponibili
+            const unavailableInCart = window.inventoryData.filter(i => window.getOrderQty(i) > 0 && i.isAvailable === false);
+            if (unavailableInCart.length > 0) {
+                const removedNames = unavailableInCart.map(i => i.name).join(', ');
+                const batch = writeBatch(db);
+                const field = window.getLocationKey() === 'ostermalm' ? 'orderQty_ostermalm' : 'orderQty_vasastan';
+                unavailableInCart.forEach(i => batch.update(doc(db, "inventory", String(i.id)), { [field]: 0 }));
+                await batch.commit();
+                window.showAlert(`⚠️ Prodotti non disponibili rimossi dall'ordine: ${removedNames}`);
+            }
+
+            const items = window.inventoryData.filter(i => window.getOrderQty(i) > 0 && i.isAvailable !== false);
+            if (items.length === 0) return window.showAlert("🛒 Nessun prodotto disponibile selezionato.");
 
             window.renderSummaryModalContent(window.currentUserProfile.name, dateVal);
             document.getElementById('summary-modal').classList.add('active');
@@ -1523,7 +1534,7 @@
         };
 
         window.confirmSingleSupplierOrder = async function(sId, operator, dateVal) {
-            const items = window.inventoryData.filter(i => String(i.supplierId) === String(sId) && window.getOrderQty(i) > 0);
+            const items = window.inventoryData.filter(i => String(i.supplierId) === String(sId) && window.getOrderQty(i) > 0 && i.isAvailable !== false);
             if (items.length === 0) return;
             const sup = window.suppliersData.find(s => String(s.id) === String(sId));
             const nowStr = new Date().toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
@@ -1545,7 +1556,7 @@
         };
 
         window.confirmAndSaveOrderToHistory = async function(operator) {
-            const items = window.inventoryData.filter(i => window.getOrderQty(i) > 0);
+            const items = window.inventoryData.filter(i => window.getOrderQty(i) > 0 && i.isAvailable !== false);
             if (items.length === 0) return;
             let groups = {}; items.forEach(i => { if(!groups[i.supplierId]) groups[i.supplierId] = []; groups[i.supplierId].push(i); });
             const nowStr = new Date().toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
