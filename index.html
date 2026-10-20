@@ -6,7 +6,7 @@
 [MAGARI APP - DEVELOPMENT / TEST ENVIRONMENT]
 - VERSION: v4.3.0-DEV
 - FIREBASE PROJECT: magari-app-dev
-- TARGET: Ambiente isolato di test e sviluppo
+- FEATURE: Gestione Disponibilità Fornitore (Tasti disabilitati)
 ====================================================================
 -->
     <meta charset="UTF-8">
@@ -219,7 +219,7 @@
             </div>
             <div class="top-bar-container">
                 <div style="font-size:11px; background:#fef3c7; color:#92400e; padding:6px 10px; border-radius:6px; font-weight:600; border:1px solid #fde68a;">
-                    ⭐ <b>Gestione Preferiti:</b> Clicca su <b>"⭐ Preferito"</b> a destra del nome prodotto per cambiare lo stato per gli operatori.
+                    ⭐ <b>Gestione Preferiti & Disponibilità:</b> Clicca su <b>"⭐ Preferito"</b> o sui badge di stato a destra del nome per aggiornare le proprietà del prodotto.
                 </div>
                 <div style="display: flex; gap: 8px; width: 100%;">
                     <select id="filter-inventory-category" class="filter-select" onchange="filterItems()">
@@ -292,16 +292,16 @@
                 </div>
 
                 <div class="faq-item-box">
-                    <div class="faq-question">🔑 2. Come funziona il Login nel DEV?</div>
+                    <div class="faq-question">🚫 2. Come funziona la Gestione Prodotti Non Disponibili?</div>
                     <div class="faq-answer">
-                        Gli account staff creati qui sono registrati nel database di test. Puoi creare liberamente utenti per fare prove senza alterare gli account del personale reale.
+                        Nel Magazzino (Admin) puoi impostare un prodotto come <b>🔴 Non Disponibile dal Fornitore</b>. Nella vista 🛒 <b>Ordini</b> il prodotto rimarrà visibile con il badge rosso di avviso, ma i pulsanti <b>+</b> / <b>-</b> saranno disabilitati per impedirne l'ordinazione.
                     </div>
                 </div>
 
                 <div class="faq-item-box">
-                    <div class="faq-question">🎨 3. Gestione Colori e Posizione Fornitori</div>
+                    <div class="faq-question">🔑 3. Come funziona il Login nel DEV?</div>
                     <div class="faq-answer">
-                        La palette fornisce 12 tonalità ad alto contrasto. Puoi riordinare i fornitori con le frecce ⬆️ ⬇️ per spostare in alto quelli usati più di frequente nei filtri.
+                        Gli account staff creati qui sono registrati nel database di test. Puoi creare liberamente utenti per fare prove senza alterare gli account del personale reale.
                     </div>
                 </div>
             </div>
@@ -474,6 +474,10 @@
             <div class="form-group" style="flex:1;"><label>Prezzo (SEK)</label><input type="number" step="0.01" id="new-price" class="form-control" value="0"></div>
             <div class="form-group" style="flex:1;"><label>Unità</label><select id="new-unit" class="form-control"><option value="Bottiglie">Bottiglie</option><option value="Unità">Unità</option><option value="Kg">Kg</option><option value="Litri">Litri</option><option value="Cartoni">Cartoni</option></select></div>
         </div>
+        <div class="form-group" style="display:flex; align-items:center; gap:8px; margin-top:8px; background:#f8fafc; padding:8px 12px; border-radius:8px; border:1px solid #cbd5e1;">
+            <input type="checkbox" id="new-is-available" checked style="width:18px; height:18px; accent-color:#b45309; cursor:pointer;">
+            <label for="new-is-available" style="font-size:13px; font-weight:600; cursor:pointer; margin-bottom:0; color:#1e293b;">🟢 Prodotto Disponibile dal Fornitore</label>
+        </div>
         <div class="modal-actions"><button class="btn-cancel" onclick="closeAddModal()">Annulla</button><button class="btn-save" style="background:#b45309;" onclick="saveInventoryItem()">Salva DEV</button></div>
     </div>
 
@@ -603,7 +607,9 @@
 
         .item-controls { display: flex; align-items: center; justify-content: flex-end; gap: 6px; flex-wrap: nowrap; margin-top: 4px; border-top: 1px dashed #e7dfd3; padding-top: 8px; }
         .qty-btn { width: 36px; height: 36px; min-width: 36px; border-radius: 50%; border: 1px solid #ebd5b3; background: linear-gradient(180deg, #ffffff, #fefcf6); font-weight: bold; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #92400e; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .qty-btn:disabled { opacity: 0.35; cursor: not-allowed; background: #e2e8f0; color: #64748b; border-color: #cbd5e1; box-shadow: none; }
         .qty-input { width: 58px; min-width: 58px; text-align: center; padding: 6px 2px; border: 1px solid #ebd5b3; border-radius: 8px; font-size: 15px; font-weight: 700; background: #ffffff; }
+        .qty-input:disabled { opacity: 0.45; background: #f1f5f9; color: #64748b; border-color: #cbd5e1; }
         .unit-label { font-size: 13px; color: var(--text-secondary); font-weight: 700; min-width: 38px; }
 
         .stock-label-box { display: flex; flex-direction: column; margin-right: auto; line-height: 1.25; min-width: 0; }
@@ -1417,27 +1423,31 @@
             filtered.forEach(item => {
                 const sup = window.suppliersData.find(s => String(s.id) === String(item.supplierId));
                 const qty = window.getQty(item), min = window.getMin(item), isLow = qty < min;
+                const isAvail = item.isAvailable !== false;
                 const lastBy = window.getLastUpdateBy(item), lastDate = window.getLastUpdateDate(item);
 
                 c.innerHTML += `
-                    <div class="card-item ${isLow ? 'low-stock-alert' : ''}">
+                    <div class="card-item ${isLow ? 'low-stock-alert' : ''}" style="${!isAvail ? 'opacity:0.8; background:#fffcfc;' : ''}">
                         <div class="item-name-box" style="border-left-color:${sup?.color || '#78350f'};">
                             <div class="item-name">
                                 <span>${item.name}</span>
                                 ${item.isFavorite ? `<span style="font-size:11px; font-weight:800; color:#92400e; background:#fef3c7; border:1px solid #f59e0b; padding:3px 8px; border-radius:6px;">⭐ Preferito</span>` : `<span style="font-size:11px; font-weight:600; color:#a8a29e; background:#f5f5f4; border:1px solid #e7e5e4; padding:3px 8px; border-radius:6px;">☆ Preferito</span>`}
                             </div>
-                            <div class="stock-warning-badge ${isLow?'alert':'normal'}">Scorta: ${qty} ${item.unit} (Min: ${min})</div>
+                            ${!isAvail 
+                                ? `<div class="stock-warning-badge alert" style="background:#fee2e2; color:#991b1b; border-color:#fca5a5;">🔴 Non Disponibile dal Fornitore</div>`
+                                : `<div class="stock-warning-badge ${isLow?'alert':'normal'}">Scorta: ${qty} ${item.unit} (Min: ${min})</div>`
+                            }
                             <div class="item-subtext" style="font-size:11px; background:#fefbf3; padding:4px 8px; border-radius:6px; border:1px solid #f3e8d2; margin-top:4px;">
                                 ${lastDate ? `🕒 Ultima modifica: <b>${lastBy || 'Operatore'}</b> (${lastDate})` : '🕒 Non modificato'}
                             </div>
                             <div class="badges-row"><span class="category-label-tag">${window.getCategoryEmoji(item.category)} ${item.category}</span><span class="supplier-badge" style="background:${sup?.color || '#78350f'}">${sup?.name || 'N/D'}</span></div>
                         </div>
                         <div class="item-controls">
-                            <span style="font-size:13px; font-weight:600; margin-right:auto;">Da Ordinare:</span>
-                            <button class="qty-btn" onclick="updateOrder(${item.id}, -1)">-</button>
-                            <input type="number" class="qty-input" value="${window.getOrderQty(item)}" onchange="setOrder(${item.id}, this.value)">
+                            <span style="font-size:13px; font-weight:600; margin-right:auto; ${!isAvail ? 'color:#94a3b8;' : ''}">Da Ordinare:</span>
+                            <button class="qty-btn" onclick="updateOrder(${item.id}, -1)" ${!isAvail ? 'disabled' : ''}>-</button>
+                            <input type="number" class="qty-input" value="${window.getOrderQty(item)}" onchange="setOrder(${item.id}, this.value)" ${!isAvail ? 'disabled' : ''}>
                             <span class="unit-label">${item.unit}</span>
-                            <button class="qty-btn" onclick="updateOrder(${item.id}, 1)">+</button>
+                            <button class="qty-btn" onclick="updateOrder(${item.id}, 1)" ${!isAvail ? 'disabled' : ''}>+</button>
                         </div>
                     </div>`;
             });
@@ -1446,7 +1456,7 @@
         window.updateOrder = async function(id, d) { 
             if (!window.checkAuthGuard()) return;
             const i = window.inventoryData.find(x => x.id === id); 
-            if(i) {
+            if(i && i.isAvailable !== false) {
                 const field = window.getLocationKey() === 'ostermalm' ? 'orderQty_ostermalm' : 'orderQty_vasastan';
                 await updateDoc(doc(db, "inventory", String(id)), { [field]: Math.max(0, window.getOrderQty(i) + d) }); 
             }
@@ -1455,7 +1465,7 @@
         window.setOrder = async function(id, v) { 
             if (!window.checkAuthGuard()) return;
             const i = window.inventoryData.find(x => x.id === id); 
-            if(i) {
+            if(i && i.isAvailable !== false) {
                 const field = window.getLocationKey() === 'ostermalm' ? 'orderQty_ostermalm' : 'orderQty_vasastan';
                 await updateDoc(doc(db, "inventory", String(id)), { [field]: Math.max(0, parseFloat(v) || 0) }); 
             }
@@ -1682,6 +1692,20 @@
             }
         };
 
+        window.toggleAvailability = async function(itemId) {
+            if (!window.checkAuthGuard()) return;
+            if (!window.currentUserProfile || window.currentUserProfile.role !== 'admin') {
+                return window.showAlert("🔒 Solo gli Admin possono gestire la disponibilità dei prodotti.");
+            }
+
+            const item = window.inventoryData.find(x => x.id === itemId);
+            if (item) {
+                const newStatus = !(item.isAvailable !== false);
+                await updateDoc(doc(db, "inventory", String(itemId)), { isAvailable: newStatus });
+                window.showAlert(newStatus ? `🟢 ${item.name} segnato come Disponibile!` : `🔴 ${item.name} segnato come Non Disponibile.`);
+            }
+        };
+
         window.filterItems = function() {
             const q = (document.getElementById('search-input')?.value || '').toLowerCase();
             const cat = document.getElementById('filter-inventory-category')?.value || '';
@@ -1696,15 +1720,21 @@
                 const supObj = window.suppliersData.find(s => String(s.id) === String(item.supplierId));
                 const minVas = (item.minQty_vasastan !== undefined && item.minQty_vasastan !== null) ? item.minQty_vasastan : (item.minQty ?? 2);
                 const minOst = (item.minQty_ostermalm !== undefined && item.minQty_ostermalm !== null) ? item.minQty_ostermalm : 2;
+                const isAvail = item.isAvailable !== false;
 
                 c.innerHTML += `
                     <div class="card-item">
                         <div class="item-name-box" style="border-left-color:${supObj?.color || '#78350f'};">
                             <div class="item-name">
                                 <span>${item.name}</span>
-                                <button class="star-toggle-btn ${item.isFavorite ? 'active' : ''}" onclick="toggleFavorite(${item.id})">
-                                    ${item.isFavorite ? '⭐ Preferito' : '☆ Preferito'}
-                                </button>
+                                <div style="display:flex; gap:6px; align-items:center;">
+                                    <button class="star-toggle-btn" onclick="toggleAvailability(${item.id})" style="${isAvail ? 'background:#e0f2fe; color:#0369a1; border-color:#bae6fd;' : 'background:#fee2e2; color:#991b1b; border-color:#fca5a5;'}">
+                                        ${isAvail ? '🟢 Disponibile' : '🔴 Non Disp.'}
+                                    </button>
+                                    <button class="star-toggle-btn ${item.isFavorite ? 'active' : ''}" onclick="toggleFavorite(${item.id})">
+                                        ${item.isFavorite ? '⭐ Preferito' : '☆ Preferito'}
+                                    </button>
+                                </div>
                             </div>
                             <div class="item-subtext">Prezzo: ${item.price} SEK | Unità: ${item.unit}</div>
                             <div class="item-subtext" style="font-weight: 600; color: #b45309; margin-top: 4px;">
@@ -1728,6 +1758,7 @@
             document.getElementById('new-price').value = '0';
             document.getElementById('new-min-vasastan').value = '2';
             document.getElementById('new-min-ostermalm').value = '2';
+            document.getElementById('new-is-available').checked = true;
             
             if (id) {
                 const item = window.inventoryData.find(x => x.id === id);
@@ -1740,6 +1771,7 @@
                     document.getElementById('new-min-ostermalm').value = (item.minQty_ostermalm !== undefined && item.minQty_ostermalm !== null) ? item.minQty_ostermalm : 2;
                     document.getElementById('new-price').value = item.price || 0; 
                     document.getElementById('new-unit').value = item.unit || 'Bottiglie';
+                    document.getElementById('new-is-available').checked = item.isAvailable !== false;
                 }
             }
             document.getElementById('add-modal').classList.add('active'); 
@@ -1758,6 +1790,7 @@
             const supId = parseInt(document.getElementById('new-supplier-select').value);
             const price = parseFloat(document.getElementById('new-price').value) || 0;
             const unit = document.getElementById('new-unit').value;
+            const isAvailable = document.getElementById('new-is-available').checked;
             const valVas = parseFloat(document.getElementById('new-min-vasastan').value);
             const minVasastan = isNaN(valVas) ? 2 : valVas;
             const valOst = parseFloat(document.getElementById('new-min-ostermalm').value);
@@ -1765,13 +1798,13 @@
 
             if (idVal) {
                 await updateDoc(doc(db, "inventory", String(idVal)), { 
-                    name, category: cat, supplierId: supId, price, unit, minQty_vasastan: minVasastan, minQty_ostermalm: minOstermalm
+                    name, category: cat, supplierId: supId, price, unit, minQty_vasastan: minVasastan, minQty_ostermalm: minOstermalm, isAvailable: isAvailable
                 });
             } else {
                 const newId = Date.now();
                 await setDoc(doc(db, "inventory", String(newId)), { 
                     id: newId, name, category: cat, supplierId: supId, minQty_vasastan: minVasastan, minQty_ostermalm: minOstermalm, 
-                    orderQty_vasastan: 0, orderQty_ostermalm: 0, unit, price, qty_vasastan: 0, qty_ostermalm: 0, isFavorite: false 
+                    orderQty_vasastan: 0, orderQty_ostermalm: 0, unit, price, qty_vasastan: 0, qty_ostermalm: 0, isFavorite: false, isAvailable: isAvailable 
                 });
             }
             closeAddModal(); window.showAlert("✅ Prodotto salvato in DEV!");
